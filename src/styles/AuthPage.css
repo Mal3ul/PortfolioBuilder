@@ -1,0 +1,164 @@
+.auth-page {
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #eff6ff, white, #f3e8ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 28rem;
+}
+
+/* === BOUTON RETOUR === */
+.btn-back {
+  margin-bottom: 1.5rem;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: #374151;
+}
+
+.btn-back:hover {
+  color: #111827;
+}
+
+/* === LOGO === */
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.logo-icon-lg {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: #3b82f6;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-logo-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* === CARD === */
+.auth-card {
+  background: white;
+  border: none;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.auth-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.card-description {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+/* === FORMULAIRE === */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+}
+
+.input {
+  width: 80%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.input-with-icon {
+  padding-left: 2.5rem;
+}
+
+.input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* === BOUTONS === */
+.btn {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: none;
+  transition: 0.2s;
+}
+
+.btn-primary {
+  background: #6366f1;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #4f46e5;
+}
+
+.btn-outline {
+  border: 1px solid #d1d5db;
+  background: white;
+}
+
+.btn-outline:hover {
+  background: #f9fafb;
+}
+
+.w-full {
+  width: 100%;
+}
+
+/* === FOOTER === */
+
+.auth-footer-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+  color: #4b5563;
+}

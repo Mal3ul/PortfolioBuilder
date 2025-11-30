@@ -1,0 +1,128 @@
+.public-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
+}
+
+.public-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #3b82f6;
+  color: white;
+}
+
+.public-header .logo {
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.public-nav a {
+  margin-left: 1.5rem;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.public-nav a:hover {
+  opacity: 0.8;
+}
+
+.public-content {
+  flex: 1;
+  /* padding: 3rem 2rem; */
+  background: #f9fafb;
+}
+
+.public-footer {
+  text-align: center;
+  padding: 1rem 2rem;
+  background: #f3f4f6;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.landing-page {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #eff6ff, white);
+}
+
+.landing-header-content {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hero-section {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 5rem 1.5rem;
+  text-align: center;
+}
+
+.hero-content {
+  max-width: 56rem;
+  margin: 0 auto;
+}
+
+.home-hero {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.home-hero h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.home-hero p {
+  font-size: 1.125rem;
+  color: #4b5563;
+  margin-bottom: 2rem;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+}
+
+.cta-section {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 5rem 1.5rem;
+}
+
+.cta-card {
+  background: linear-gradient(to bottom right,#3b82f6, #9333ea);
+  border-radius: 1rem;
+  padding: 3rem;
+  text-align: center;
+  /* color: white; */
+}
+
+.cta-title {
+  font-size: 2.25rem;
+  margin-bottom: 1rem;
+}
+
+.cta-description {
+  font-size: 1.25rem;
+  color: #dbeafe;
+  margin-bottom: 2rem;
+}
