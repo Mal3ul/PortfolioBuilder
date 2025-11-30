@@ -40,20 +40,21 @@ const router = createBrowserRouter([
   },
 
   {
-    element: <DashboardLayout />,
-    children: [
-      { path: "/dashboard", element: <DashboardHome /> },
-      { path: "/dashboard/profile", element: <Profile /> },
-      { path: "/dashboard/projects", element: <Projects /> },
-      { path: "/dashboard/experience", element: <Experience /> },
-      { path: "/dashboard/education", element: <Education /> },
-      { path: "/dashboard/skills", element: <Skills /> },
-      { path: "/dashboard/certifications", element: <Certifications /> },
-      { path: "/dashboard/media", element: <Media /> },
-      { path: "/dashboard/templates", element: <Templates /> },
-      { path: "/dashboard/settings", element: <Settings /> },
-    ],
-  },
+  path: "/dashboard",
+  element: <DashboardLayout />,
+  children: [
+    { index: true, element: <DashboardHome /> },
+    { path: "profile", element: <Profile /> },
+    { path: "projects", element: <Projects /> },
+    { path: "experience", element: <Experience /> },
+    { path: "education", element: <Education /> },
+    { path: "skills", element: <Skills /> },
+    { path: "certifications", element: <Certifications /> },
+    { path: "media", element: <Media /> },
+    { path: "templates", element: <Templates /> },
+    { path: "settings", element: <Settings /> },
+  ],
+},
 
   {
     element: <AdminLayout />,
