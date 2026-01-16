@@ -14,7 +14,7 @@
 .landing-page {
   background: linear-gradient(180deg, #f1f5f9 0%, #ffffff 30%);
   color: #0f172a;
-  min-height: 100vh;
+  /* min-height: 100vh; */
 }
 
 /** HEADER */
@@ -55,6 +55,7 @@
 .logo-text {
   font-weight: 700;
   font-size: 1.05rem;
+  color: #0f172a;
 }
 
 /** Navigation */
@@ -231,6 +232,8 @@
 
 .cta-section {
   margin: 2.5rem 1rem;
+  margin: 0 auto;
+  padding-bottom: 2.5rem;
   display: flex;
   justify-content: center;
 }
@@ -257,8 +260,7 @@
 /** FOOTER */
 
 .landing-footer {
-  margin-top: 2.5rem;
-  padding: 2rem 1rem;
+  padding: 2rem 15rem;
   background: var(--bg);
   border-top: 1px solid rgba(15, 23, 42, 0.04);
 }
@@ -271,9 +273,21 @@
   grid-template-columns: 1fr;
 }
 
+.footer-column:first-child {
+  align-items: start;
+  text-align: start;
+}
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: center;
+}
+
 @media (min-width: 720px) {
   .footer-content {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -286,11 +300,13 @@
 .footer-text {
   color: var(--muted);
   margin-top: 0.5rem;
+  hyphens: auto;
 }
 
 .footer-heading {
   font-weight: 600;
   margin-bottom: 0.5rem;
+  color: #0f172a;
 }
 
 .footer-links {

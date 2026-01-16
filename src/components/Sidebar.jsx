@@ -13,30 +13,30 @@ export default function Sidebar() {
       </div>
 
       <div className="sidebar-user">
-        <div className="avatar">JD</div>
+        <div className="avatar">?</div>
         <div className="user-info">
-          <p className="user-name">Jean Dupont</p>
+          <p className="user-name">jean dupont</p>
           <p className="user-email">jean@example.com</p>
         </div>
       </div>
 
       <nav className="sidebar-nav">
-        <NavLink className="menu-item" to="/dashboard/profile">
+        <NavLink className="menu-item" to="/editor/profile">
           <User size={20} />
           <span className="menu-label">Profil</span>
         </NavLink>
 
-        <NavLink className="menu-item" to="/dashboard/experience">
+        <NavLink className="menu-item" to="/editor/experience">
           <Briefcase size={20} />
           <span className="menu-label">Expérience</span>
         </NavLink>
 
-        <NavLink className="menu-item" to="/dashboard/projects">
+        <NavLink className="menu-item" to="/editor/projects">
           <FolderOpen size={20} />
           <span className="menu-label">Projets</span>
         </NavLink>
 
-        <NavLink className="menu-item" to="/dashboard/skills">
+        <NavLink className="menu-item" to="/editor/skills">
           <Award size={20} />
           <span className="menu-label">Compétences</span>
         </NavLink>

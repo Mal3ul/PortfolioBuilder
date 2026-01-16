@@ -3,7 +3,7 @@ import {
 } from "lucide-react";
 import "../../styles/Dashboard.css";
 
-export default function DashboardHome({ onNavigateToEditor }) {
+export default function DashboardHome({ onNavigateToEditeur }) {
 
   const recentActivities = [
     { action: 'Projet ajouté', name: 'Application E-commerce', time: 'Il y a 2 heures' },
@@ -50,7 +50,7 @@ export default function DashboardHome({ onNavigateToEditor }) {
         <div className="card">
           <div className="card-header">
             <h2 className="card-title">Complétion du portfolio</h2>
-            <p className="card-description">Continue à enrichir ton profil</p>
+            <p className="card-description">Continuer à compléter votre profil</p>
           </div>
           <div className="card-content">
             <div className="progress-items">
@@ -71,7 +71,7 @@ export default function DashboardHome({ onNavigateToEditor }) {
             </div>
             <button
               className="btn-complete-profile"
-              onClick={onNavigateToEditor}
+              onClick={onNavigateToEditeur}
             >
               Compléter mon profil
             </button>
