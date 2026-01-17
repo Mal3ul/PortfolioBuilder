@@ -1,8 +1,11 @@
-import { createContext, useContext, useState } from "react";
+// src/context/PortfolioContext.jsx
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { portfolioService } from "../services/api";
 
 const PortfolioContext = createContext();
+export const usePortfolio = () => useContext(PortfolioContext);
 
-export function PortfolioProvider({ children }) {
+export const PortfolioProvider = ({ userId, children }) => {
   const [profile, setProfile] = useState({
     firstName: "",
     lastName: "",
@@ -12,61 +15,49 @@ export function PortfolioProvider({ children }) {
     phone: "",
     location: "",
   });
+  const [loading, setLoading] = useState(true);
 
-  const [experiences, setExperiences] = useState([]);
-  const [education, setEducation] = useState([]);
-  const [certifications, setCertifications] = useState([]);
-  const [skills, setSkills] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [media, setMedia] = useState({
-    linkedin: "",
-    github: "",
-    twitter: "",
-    websites: [],
-  });
-  const [links, setLinks] = useState({
-    linkedin: "",
-    github: "",
-    website: [],
-  });
+  // Récupère les données du portfolio au montage
+  useEffect(() => {
+    const fetchPortfolio = async () => {
+      try {
+        setLoading(true);
+        const data = await portfolioService.getPortfolio();
+        if (data.profile) {
+          setProfile(data.profile);
+        }
+      } catch (err) {
+        console.error("Erreur fetch portfolio:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const value = {
-    profile,
-    setProfile,
+    fetchPortfolio();
+  }, []);
 
-    experiences,
-    setExperiences,
-
-    education,
-    setEducation,
-
-    certifications,
-    setCertifications,
-
-    skills,
-    setSkills,
-
-    projects,
-    setProjects,
-
-    media,
-    setMedia,
-
-    links,
-    setLinks,
+  // Met à jour le profil via l'API
+  const saveProfile = async (updatedProfile) => {
+    try {
+      const data = await portfolioService.updatePortfolio({ profile: updatedProfile });
+      setProfile(data.profile); // met à jour le context avec les données sauvegardées
+      return data;
+    } catch (err) {
+      console.error("Erreur update profile:", err);
+      throw err;
+    }
   };
 
   return (
-    <PortfolioContext.Provider value={value}>
+    <PortfolioContext.Provider
+      value={{
+        profile,
+        setProfile,
+        saveProfile,
+        loading,
+      }}
+    >
       {children}
     </PortfolioContext.Provider>
   );
-}
-
-export function usePortfolio() {
-  const context = useContext(PortfolioContext);
-  if (!context) {
-    throw new Error("usePortfolio must be used inside PortfolioProvider");
-  }
-  return context;
-}
+};

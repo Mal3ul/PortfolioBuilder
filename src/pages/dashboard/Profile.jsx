@@ -1,21 +1,21 @@
 import { usePortfolio } from "../../context/PortfolioContext";
 
 export default function Profile() {
-  const { profile, setProfile } = usePortfolio();
+  const { profile, setProfile, saveProfile } = usePortfolio();
 
-  // Mise à jour du context
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfile((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setProfile((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Profil sauvegardé :", profile);
-    // plus tard → appel API
+    try {
+      await saveProfile(profile); // sauvegarde sur l'API et met à jour le context
+      alert("Profil sauvegardé !");
+    } catch (err) {
+      alert("Erreur lors de la sauvegarde");
+    }
   };
 
   return (
@@ -43,8 +43,8 @@ export default function Profile() {
                 <label className="label">Nom</label>
                 <input
                   name="lastName"
-                  placeholder="Dupont"
                   className="input"
+                  placeholder="Dupont"
                   value={profile.lastName}
                   onChange={handleChange}
                 />
@@ -55,8 +55,8 @@ export default function Profile() {
               <label className="label">Titre professionnel</label>
               <input
                 name="title"
-                placeholder="Technicien"
                 className="input"
+                placeholder="Développeur Full-Stack"
                 value={profile.title}
                 onChange={handleChange}
               />
@@ -67,8 +67,8 @@ export default function Profile() {
               <textarea
                 name="bio"
                 className="textarea"
-                placeholder="Passionné par le développement web et les nouvelles technologies."
                 rows={6}
+                placeholder="Passionné par le développement web et les nouvelles technologies..."
                 value={profile.bio}
                 onChange={handleChange}
               />
