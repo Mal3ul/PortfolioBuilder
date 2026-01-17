@@ -34,7 +34,7 @@
 .public-content {
   flex: 1;
   /* padding: 3rem 2rem; */
-  /* background: #f9fafb; */
+  background: #f9fafb;
 }
 
 .public-footer {
@@ -140,4 +140,21 @@
   font-size: 1.25rem;
   color: #dbeafe;
   margin-bottom: 2rem;
+}
+
+/* === BOUTON RETOUR === */
+.btn-back {
+  margin-bottom: 1.5rem;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: #374151;
+  text-decoration: none;
+}
+
+.btn-back:hover {
+  color: #111827;
 }

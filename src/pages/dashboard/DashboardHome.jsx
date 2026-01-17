@@ -1,9 +1,15 @@
 import {
   Eye, Edit, Plus, TrendingUp, FolderOpen, ChevronRight
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import "../../styles/Dashboard.css";
 
 export default function DashboardHome({ onNavigateToEditeur }) {
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    navigate("/editor/profile");
+  };
 
   const recentActivities = [
     { action: 'Projet ajouté', name: 'Application E-commerce', time: 'Il y a 2 heures' },
@@ -71,7 +77,7 @@ export default function DashboardHome({ onNavigateToEditeur }) {
             </div>
             <button
               className="btn-complete-profile"
-              onClick={onNavigateToEditeur}
+              onClick={handleNavigate}
             >
               Compléter mon profil
             </button>

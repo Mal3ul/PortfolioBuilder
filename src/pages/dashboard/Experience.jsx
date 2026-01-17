@@ -3,22 +3,46 @@ import { Plus, Trash2 } from "lucide-react";
 
 export default function Experience() {
   const [experiences, setExperiences] = useState([
-    { id: 1, title: "", description: "", technologies: "" }, // 1 card par défaut
+    {
+      id: 1,
+      position: "",
+      company: "",
+      startDate: "",
+      endDate: "",
+      description: "",
+    },
   ]);
 
   const handleAddExperience = () => {
     setExperiences([
       ...experiences,
-      { id: experiences.length + 1, title: "", description: "", technologies: "" },
+      {
+        id: Date.now(),
+        position: "",
+        company: "",
+        startDate: "",
+        endDate: "",
+        description: "",
+      },
     ]);
   };
 
   const handleChange = (id, field, value) => {
-    setExperiences(experiences.map(p => p.id === id ? { ...p, [field]: value } : p));
+    setExperiences((prev) =>
+      prev.map((exp) =>
+        exp.id === id ? { ...exp, [field]: value } : exp
+      )
+    );
   };
 
   const handleDelete = (id) => {
-    setExperiences(experiences.filter(p => p.id !== id));
+    setExperiences((prev) => prev.filter((exp) => exp.id !== id));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Données soumises :", experiences);
+    // Ici tu peux appeler ton API ou mettre à jour un state global
   };
 
   return (
@@ -26,15 +50,21 @@ export default function Experience() {
       <button className="btn btn-add" onClick={handleAddExperience}>
         <Plus size={16} /> Ajouter une expérience
       </button>
-      <div className="tab-panel">
-        <div className="projects-container">
 
-          {experiences.map((experience) => (
+      <form className="tab-panel" onSubmit={handleSubmit}>
+        <div className="projects-container">
+          {experiences.map((experience, index) => (
             <div key={experience.id} className="card project-card">
               <div className="card-header">
-                <h2 className="card-title">Experience {experience.id}</h2>
+                <h2 className="card-title">
+                  Expérience {index + 1}
+                </h2>
+
                 {experiences.length > 1 && (
-                  <button className="btn btn-outline btn-sm" onClick={() => handleDelete(experience.id)}>
+                  <button
+                    className="btn btn-outline btn-sm"
+                    onClick={() => handleDelete(experience.id)}
+                  >
                     <Trash2 size={16} /> Supprimer
                   </button>
                 )}
@@ -44,30 +74,67 @@ export default function Experience() {
                 <div className="form-grid">
                   <div className="form-group">
                     <label className="label">Poste</label>
-                    <input className="input" placeholder="Développeur Full-Stack" />
+                    <input
+                      className="input"
+                      placeholder="Développeur Full-Stack"
+                      value={experience.position}
+                      onChange={(e) =>
+                        handleChange(
+                          experience.id,
+                          "position",
+                          e.target.value
+                        )
+                      }
+                    />
                   </div>
 
                   <div className="form-group">
                     <label className="label">Entreprise</label>
-                    <input className="input" placeholder="Google" />
+                    <input
+                      className="input"
+                      placeholder="Google"
+                      value={experience.company}
+                      onChange={(e) =>
+                        handleChange(
+                          experience.id,
+                          "company",
+                          e.target.value
+                        )
+                      }
+                    />
                   </div>
                 </div>
 
                 <div className="form-grid">
                   <div className="form-group">
-                    <label className="label">Période</label>
+                    <label className="label">Date de début</label>
                     <input
                       type="date"
                       className="input"
-                      placeholder="jj/mm/aaaa"
+                      value={experience.startDate}
+                      onChange={(e) =>
+                        handleChange(
+                          experience.id,
+                          "startDate",
+                          e.target.value
+                        )
+                      }
                     />
                   </div>
+
                   <div className="form-group">
-                    <br />
+                    <label className="label">Date de fin</label>
                     <input
                       type="date"
                       className="input"
-                      placeholder="jj/mm/aaaa"
+                      value={experience.endDate}
+                      onChange={(e) =>
+                        handleChange(
+                          experience.id,
+                          "endDate",
+                          e.target.value
+                        )
+                      }
                     />
                   </div>
                 </div>
@@ -79,14 +146,25 @@ export default function Experience() {
                     rows={4}
                     placeholder="Description de l'expérience..."
                     value={experience.description}
-                    onChange={(e) => handleChange(experience.id, "description", e.target.value)}
+                    onChange={(e) =>
+                      handleChange(
+                        experience.id,
+                        "description",
+                        e.target.value
+                      )
+                    }
                   />
                 </div>
+              </div>
+              <div className="btn-container mt-4">
+                <button type="submit" className="btn btn-add btn-primary">
+                  Sauvegarder
+                </button>
               </div>
             </div>
           ))}
         </div>
-      </div>
+      </form>
     </>
   );
 }

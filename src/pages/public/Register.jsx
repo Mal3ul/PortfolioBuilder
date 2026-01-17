@@ -45,7 +45,7 @@ export default function Register() {
                 <User className="input-icon" size={16} />
                 <input
                   type="text"
-                  className="input input-with-icon"
+                  className="input input-login input-with-icon"
                   placeholder="Jean Dupont"
                   required
                 />
@@ -58,7 +58,7 @@ export default function Register() {
                 <Mail className="input-icon" size={16} />
                 <input
                   type="email"
-                  className="input input-with-icon"
+                  className="input input-login input-with-icon"
                   placeholder="ton.email@exemple.com"
                   required
                 />
@@ -71,7 +71,7 @@ export default function Register() {
                 <Lock className="input-icon" size={16} />
                 <input
                   type="password"
-                  className="input input-with-icon"
+                  className="input input-login input-with-icon"
                   placeholder="••••••••"
                   required
                 />

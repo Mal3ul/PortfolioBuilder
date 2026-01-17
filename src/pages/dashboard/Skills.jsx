@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import "../../styles/Editor.css";
 
 export default function Skills() {
@@ -10,6 +10,16 @@ export default function Skills() {
   ]);
 
   const [newSkill, setNewSkill] = useState("");
+
+  const handleSubmit = useCallback((e) => {
+    if (e) e.preventDefault();
+    // Sauvegarder les compétences
+    console.log("Compétences sauvegardées:", skills);
+  }, [skills]);
+
+  // useEffect(() => {
+  //   handleSubmit();
+  // }, [skills, handleSubmit]);
 
   const handleAddSkill = () => {
     if (!newSkill.trim()) return;
@@ -23,8 +33,14 @@ export default function Skills() {
     setSkills(skills.filter((skill) => skill !== skillToRemove));
   };
 
+  // const handleSubmit = (e) => {
+  //   if (e) e.preventDefault();
+  //   // Sauvegarder les compétences
+  //   console.log("Compétences sauvegardées:", skills);
+  // };
+
   return (
-    <div className="tab-panel">
+    <form className="tab-panel" onSubmit={handleSubmit}>
       {/* Header */}
       {/* <div>
         <h2 className="panel-title">Compétences</h2>
@@ -69,9 +85,12 @@ export default function Skills() {
                 </span>
               ))}
             </div>
+            {/* <button type="submit" className="btn btn-add btn-primary mt-4">
+              Sauvegarder
+            </button> */}
           </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 }

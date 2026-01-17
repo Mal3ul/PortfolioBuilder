@@ -21,7 +21,7 @@ import Education from "../pages/dashboard/Education";
 import Skills from "../pages/dashboard/Skills";
 import Certifications from "../pages/dashboard/Certifications";
 import Media from "../pages/dashboard/Media";
-import Templates from "../pages/dashboard/Templates";
+import Templates from "../pages/dashboard/PortfolioTemplate";
 import Settings from "../pages/dashboard/Settings";
 import Editeur from "../pages/dashboard/PortfolioEditor";
 

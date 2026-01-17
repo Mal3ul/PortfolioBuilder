@@ -170,6 +170,30 @@
 }
 
 /* buttons */
+
+.btn-container {
+  display: flex;
+  justify-content: center;
+  min-width: 100%;
+}
+
+.card-content .btn-submit {
+  display: flex;
+  justify-content: center;
+  margin: 2rem;
+  background: #4338ca;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;  
+  /* min-width: 207px; */
+}
+
 .btn-add {
   background: #4338ca;
   color: white;
@@ -267,6 +291,10 @@
 
 .mt-2 {
   margin-top: 0.5rem;
+}
+
+.mt-4 {
+  margin-top: 2rem;
 }
 
 .header-divider {

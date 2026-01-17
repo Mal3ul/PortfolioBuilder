@@ -45,7 +45,7 @@ export default function Login() {
                 <Mail className="input-icon" size={16} />
                 <input
                   type="email"
-                  className="input input-with-icon"
+                  className="input input-login input-with-icon"
                   placeholder="ton.email@exemple.com"
                   required
                 />
@@ -60,7 +60,7 @@ export default function Login() {
                 <Lock className="input-icon" size={16} />
                 <input
                   type="password"
-                  className="input input-with-icon"
+                  className="input input-login input-with-icon"
                   placeholder="••••••••"
                   required
                 />

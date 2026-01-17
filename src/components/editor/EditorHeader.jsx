@@ -33,7 +33,7 @@ export default function EditorHeader() {
             </div>
 
             <div className="editor-topbar-right">
-                <button className="btn btn-primary" onClick={handleSave}>
+                <button className="btn btn-primary" type="submit" onClick={handleSave}>
                     <Save size={16} />
                     &nbsp; Publier
                 </button>
