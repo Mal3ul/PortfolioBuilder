@@ -8,7 +8,13 @@ export default function Projects() {
   const handleAddProject = () => {
     setProjects([
       ...projects,
-      { id: projects.length + 1, title: "", description: "", technologies: "" },
+      { 
+        id: projects.length + 1, 
+        title: "", 
+        description: "", 
+        technologies: "",
+        createdAt: Date.now()
+      },
     ]);
   };
 

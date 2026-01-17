@@ -14,6 +14,7 @@ export default function Experience() {
         startDate: "",
         endDate: "",
         description: "",
+        createdAt: Date.now()
       },
     ]);
   };

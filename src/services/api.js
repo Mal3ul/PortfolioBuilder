@@ -50,6 +50,30 @@ export const portfolioService = {
   },
 };
 
+export const activityService = {
+  getActivities: async () => {
+    const response = await fetch(`${baseURL}/activities`);
+    if (!response.ok) {
+      throw new Error("Erreur lors de la récupération des activités");
+    }
+    return response.json();
+  },
+
+  addActivity: async (action, name) => {
+    const response = await fetch(`${baseURL}/activities`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ action, name }),
+    });
+    if (!response.ok) {
+      throw new Error("Erreur lors de l'ajout de l'activité");
+    }
+    return response.json();
+  },
+};
+
 export const authService = {
   login: async (credentials) => {
     const response = await fetch("http://localhost:5000/api/auth/login", {
@@ -78,4 +102,33 @@ export const authService = {
     }
     return response.json();
   },
-};
+
+  changeEmail: async (newEmail, userId) => {
+    const response = await fetch(`${baseURL}/auth/change-email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ newEmail, userId }),
+    });
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.message || "Erreur lors du changement d'email");
+    }
+    return response.json();
+  },
+
+  changePassword: async (currentPassword, newPassword, userId) => {
+    const response = await fetch(`${baseURL}/auth/change-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ currentPassword, newPassword, userId }),
+    });
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.message || "Erreur lors du changement de mot de passe");
+    }
+    return response.json();
+  },};

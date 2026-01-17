@@ -1,14 +1,43 @@
-// /backend/controllers/activities.controller.js
 import fs from "fs-extra";
 const PORTFOLIO_FILE = "./data/portfolio.json";
 
-// Récupérer l'historique d'activité d'un utilisateur
+// Récupérer toutes les activités
 export const getActivities = async (req, res) => {
-  const { userId } = req.params;
-  const portfolios = await fs.readJSON(PORTFOLIO_FILE).catch(() => ({}));
+  try {
+    // console.log("GET /api/activities appelé");
+    const portfolio = await fs.readJSON(PORTFOLIO_FILE).catch(() => ({}));
+    // console.log("Portfolio chargé:", portfolio);
+    res.json(portfolio.activities || []);
+  } catch (err) {
+    console.error("Erreur dans getActivities:", err);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
 
-  if (!portfolios[userId]) return res.status(404).json({ message: "Portfolio introuvable" });
+// Ajouter une nouvelle activité
+export const addActivity = async (req, res) => {
+  try {
+    const { action, name } = req.body;
+    if (!action || !name) {
+      return res.status(400).json({ message: "Action et nom requis" });
+    }
 
-  // On retourne un tableau d'activités (ex: date + action)
-  res.json(portfolios[userId].activities || []);
+    const portfolio = await fs.readJSON(PORTFOLIO_FILE).catch(() => ({}));
+    const activities = portfolio.activities || [];
+
+    const newActivity = {
+      id: Date.now(),
+      action,
+      name,
+      timestamp: Date.now()
+    };
+
+    activities.unshift(newActivity); // Ajouter au début
+    portfolio.activities = activities.slice(0, 50); // Garder max 50 activités
+
+    await fs.writeJSON(PORTFOLIO_FILE, portfolio, { spaces: 2 });
+    res.status(201).json(newActivity);
+  } catch (err) {
+    res.status(500).json({ message: "Erreur serveur" });
+  }
 };

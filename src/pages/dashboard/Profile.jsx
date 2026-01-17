@@ -10,6 +10,17 @@ export default function Profile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Vérifier que prénom et nom sont remplis
+    if (!profile.firstName || !profile.firstName.trim()) {
+      alert("Le prénom est obligatoire");
+      return;
+    }
+    if (!profile.lastName || !profile.lastName.trim()) {
+      alert("Le nom est obligatoire");
+      return;
+    }
+    
     try {
       await saveProfile(profile); // sauvegarde sur l'API et met à jour le context
       alert("Profil sauvegardé !");
@@ -29,24 +40,26 @@ export default function Profile() {
           <div className="card-content">
             <div className="form-grid">
               <div className="form-group">
-                <label className="label">Prénom</label>
+                <label className="label">Prénom <span style={{ color: 'red' }}>*</span></label>
                 <input
                   name="firstName"
                   className="input"
                   placeholder="Jean"
                   value={profile.firstName}
                   onChange={handleChange}
+                  required
                 />
               </div>
 
               <div className="form-group">
-                <label className="label">Nom</label>
+                <label className="label">Nom <span style={{ color: 'red' }}>*</span></label>
                 <input
                   name="lastName"
                   className="input"
                   placeholder="Dupont"
                   value={profile.lastName}
                   onChange={handleChange}
+                  required
                 />
               </div>
             </div>
@@ -70,17 +83,6 @@ export default function Profile() {
                 rows={6}
                 placeholder="Passionné par le développement web et les nouvelles technologies..."
                 value={profile.bio}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="label">Email</label>
-              <input
-                name="email"
-                type="email"
-                className="input"
-                value={profile.email}
                 onChange={handleChange}
               />
             </div>

@@ -26,6 +26,7 @@ export default function Register() {
 
       // Connecter l'utilisateur après l'inscription
       login({
+        id: res.userId,
         userId: res.userId,
         name,
         email

@@ -23,7 +23,13 @@ export default function Login() {
         password
       });
 
-      login(res);
+      // Normaliser la réponse avec 'id' au lieu de 'userId'
+      const userData = {
+        ...res,
+        id: res.userId || res.id
+      };
+
+      login(userData);
       navigate("/dashboard");
     } catch (err) {
       alert("Identifiants incorrects");

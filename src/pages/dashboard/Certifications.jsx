@@ -14,6 +14,7 @@ export default function Certifications() {
         organization: "",
         date: "",
         description: "",
+        createdAt: Date.now()
       },
     ]);
   };

@@ -23,7 +23,8 @@ router.post("/login", (req, res) => {
   res.json({
     token: "fake-jwt-token",
     userId: user.id,
-    name: user.name
+    name: user.name,
+    email: user.email
   });
 });
 
@@ -101,6 +102,62 @@ router.post("/register", (req, res) => {
   fs.writeFileSync(portfolioPath, JSON.stringify(basePortfolio, null, 2));
 
   res.status(201).json({ userId: newUser.id });
+});
+
+// Changer l'email
+router.post("/change-email", (req, res) => {
+  const { newEmail } = req.body;
+  const userId = req.headers["x-user-id"] || req.body.userId;
+  
+  if (!newEmail) {
+    return res.status(400).json({ message: "Email requis" });
+  }
+
+  const db = readDB();
+  const user = db.users.find(u => u.id == userId);
+
+  if (!user) {
+    return res.status(404).json({ message: "Utilisateur non trouvé" });
+  }
+
+  if (db.users.find(u => u.email === newEmail && u.id != userId)) {
+    return res.status(400).json({ message: "Cet email est déjà utilisé" });
+  }
+
+  user.email = newEmail;
+  writeDB(db);
+
+  res.json({ message: "Email modifié avec succès" });
+});
+
+// Changer le mot de passe
+router.post("/change-password", (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const userId = req.headers["x-user-id"] || req.body.userId;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ message: "Mots de passe requis" });
+  }
+
+  const db = readDB();
+  const user = db.users.find(u => u.id == userId);
+
+  if (!user) {
+    return res.status(404).json({ message: "Utilisateur non trouvé" });
+  }
+
+  if (user.password !== currentPassword) {
+    return res.status(401).json({ message: "Mot de passe actuel incorrect" });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({ message: "Le mot de passe doit contenir au moins 6 caractères" });
+  }
+
+  user.password = newPassword;
+  writeDB(db);
+
+  res.json({ message: "Mot de passe modifié avec succès" });
 });
 
 export default router;

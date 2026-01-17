@@ -1,10 +1,21 @@
-import {
-  User, Briefcase, FolderOpen, Award, Settings, LogOut
-} from "lucide-react";
+import { User, Briefcase, FolderOpen, Award, Settings, LogOut } from "lucide-react";
 import "../styles/Dashboard.css";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Sidebar() {
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const displayName = user?.name || "Utilisateur";
+  const displayEmail = user?.email || "";
+  const avatarLetter = displayName.substring(0, 1).toUpperCase();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   return (
     <aside className="dashboard-sidebar">
       <div className="sidebar-logo">
@@ -13,10 +24,10 @@ export default function Sidebar() {
       </div>
 
       <div className="sidebar-user">
-        <div className="avatar">?</div>
+        <div className="avatar">{avatarLetter || "?"}</div>
         <div className="user-info">
-          <p className="user-name">jean dupont</p>
-          <p className="user-email">jean@example.com</p>
+          <p className="user-name">{displayName}</p>
+          {displayEmail && <p className="user-email">{displayEmail}</p>}
         </div>
       </div>
 
@@ -48,7 +59,7 @@ export default function Sidebar() {
       </nav>
 
       <div className="sidebar-logout">
-        <button className="logout-btn">
+        <button className="logout-btn" onClick={handleLogout}>
           <LogOut size={18} />
           Déconnexion
         </button>

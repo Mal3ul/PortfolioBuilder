@@ -1,10 +1,12 @@
-// /backend/routes/activities.js
 import express from "express";
-import { getActivities } from "../controllers/activities.controller.js";
+import { getActivities, addActivity } from "../controllers/activities.controller.js";
 
 const router = express.Router();
 
-// Récupérer l'historique d'activité
-router.get("/:userId", getActivities);
+// Récupérer toutes les activités
+router.get("/", getActivities);
+
+// Ajouter une nouvelle activité
+router.post("/", addActivity);
 
 export default router;

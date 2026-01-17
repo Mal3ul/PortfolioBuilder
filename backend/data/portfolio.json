@@ -1,3 +1,174 @@
 {
-  "updatedAt": "2026-01-17T19:05:37.495Z"
+  "updatedAt": "2026-01-17T21:44:45.656Z",
+  "profile": {
+    "firstName": "sdgv",
+    "lastName": "L",
+    "title": "vdfff",
+    "bio": "gfsnFF",
+    "email": "sdfg@g",
+    "phone": "gfssqdf",
+    "location": "sfdgfrf"
+  },
+  "projects": [
+    {
+      "id": 1,
+      "title": "sfg",
+      "description": "sdfg",
+      "technologies": ""
+    },
+    {
+      "id": 2,
+      "title": "hh",
+      "description": "",
+      "technologies": "",
+      "createdAt": 1768683654259
+    }
+  ],
+  "activities": [
+    {
+      "id": 1768686285668,
+      "action": "Profil mis à jour",
+      "name": "Informations personnelles",
+      "timestamp": 1768686285668
+    },
+    {
+      "id": 1768686048004,
+      "action": "Profil mis à jour",
+      "name": "Informations personnelles",
+      "timestamp": 1768686048004
+    },
+    {
+      "id": 1768685444290,
+      "action": "Profil mis à jour",
+      "name": "Informations personnelles",
+      "timestamp": 1768685444290
+    },
+    {
+      "id": 1768685323957,
+      "action": "Profil mis à jour",
+      "name": "Informations personnelles",
+      "timestamp": 1768685323957
+    },
+    {
+      "id": 1768685104973,
+      "action": "Profil mis à jour",
+      "name": "Informations personnelles",
+      "timestamp": 1768685104973
+    },
+    {
+      "id": 1768683658043,
+      "action": "Projets mis à jour",
+      "name": "2 projet(s)",
+      "timestamp": 1768683658043
+    },
+    {
+      "id": 1768683362584,
+      "action": "Profil mis à jour",
+      "name": "Informations personnelles",
+      "timestamp": 1768683362584
+    },
+    {
+      "id": 1768682695182,
+      "action": "Projets mis à jour",
+      "name": "1 projet(s)",
+      "timestamp": 1768682695182
+    },
+    {
+      "id": 1768682456697,
+      "action": "Formations mises à jour",
+      "name": "1 formation(s)",
+      "timestamp": 1768682456697
+    },
+    {
+      "id": 1768682452021,
+      "action": "Formations mises à jour",
+      "name": "1 formation(s)",
+      "timestamp": 1768682452021
+    },
+    {
+      "id": 1768682446692,
+      "action": "Formations mises à jour",
+      "name": "1 formation(s)",
+      "timestamp": 1768682446692
+    },
+    {
+      "id": 1768682440524,
+      "action": "Formations mises à jour",
+      "name": "1 formation(s)",
+      "timestamp": 1768682440524
+    },
+    {
+      "id": 1768682427786,
+      "action": "Profil mis à jour",
+      "name": "Informations personnelles",
+      "timestamp": 1768682427786
+    },
+    {
+      "id": 1768681148822,
+      "action": "Expériences mises à jour",
+      "name": "1 expérience(s)",
+      "timestamp": 1768681148822
+    },
+    {
+      "id": 1768681118480,
+      "action": "Médias mis à jour",
+      "name": "Réseaux sociaux et liens",
+      "timestamp": 1768681118480
+    },
+    {
+      "id": 1768680609767,
+      "action": "Projets mis à jour",
+      "name": "1 projet(s)",
+      "timestamp": 1768680609767
+    },
+    {
+      "id": 1768680499285,
+      "action": "Profil mis à jour",
+      "name": "Informations personnelles",
+      "timestamp": 1768680499285
+    },
+    {
+      "id": 1768680257311,
+      "action": "Projets mis à jour",
+      "name": "2 projet(s)",
+      "timestamp": 1768680257311
+    },
+    {
+      "id": 1768680234621,
+      "action": "Profil mis à jour",
+      "name": "Informations personnelles",
+      "timestamp": 1768680234621
+    }
+  ],
+  "media": {
+    "linkedin": "qdf",
+    "github": "vfds",
+    "twitter": "thj",
+    "websites": [
+      "ryhdgf"
+    ],
+    "links": []
+  },
+  "experiences": [
+    {
+      "id": 1,
+      "position": "sdg",
+      "company": "fs",
+      "startDate": "2026-01-07",
+      "endDate": "2026-01-07",
+      "description": "sdf",
+      "createdAt": 1768681135147
+    }
+  ],
+  "education": [
+    {
+      "id": 1,
+      "diploma": "eeeeeeeeeeeeeee",
+      "school": "",
+      "startDate": "",
+      "endDate": "",
+      "description": "",
+      "createdAt": 1768682433894
+    }
+  ]
 }
