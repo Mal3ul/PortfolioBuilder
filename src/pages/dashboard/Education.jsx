@@ -2,7 +2,7 @@ import { usePortfolio } from "../../context/PortfolioContext";
 import { Plus, Trash2 } from "lucide-react";
 
 export default function Education() {
-  const { education, setEducation } = usePortfolio(); // context global
+  const { education, setEducation, saveEducation } = usePortfolio(); // context global
 
   // Ajouter une nouvelle formation
   const handleAddEducation = () => {
@@ -34,10 +34,14 @@ export default function Education() {
   };
 
   // Soumission du formulaire
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Formations sauvegardées :", education);
-    // plus tard → appel API ou sauvegarde
+    try {
+      await saveEducation(education);
+      alert("Formations sauvegardées !");
+    } catch (err) {
+      alert("Erreur lors de la sauvegarde");
+    }
   };
 
   return (

@@ -2,7 +2,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { usePortfolio } from "../../context/PortfolioContext";
 
 export default function Projects() {
-  const { projects, setProjects } = usePortfolio();
+  const { projects, setProjects, saveProjects } = usePortfolio();
 
   // Ajouter un projet
   const handleAddProject = () => {
@@ -25,9 +25,14 @@ export default function Projects() {
   };
 
   // Soumettre (ex: API ou sauvegarde locale)
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Projets sauvegardés :", projects);
+    try {
+      await saveProjects(projects);
+      alert("Projets sauvegardés !");
+    } catch (err) {
+      alert("Erreur lors de la sauvegarde");
+    }
   };
 
   return (

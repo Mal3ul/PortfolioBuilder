@@ -3,7 +3,7 @@ import { usePortfolio } from "../../context/PortfolioContext";
 import "../../styles/Editor.css";
 
 export default function Skills() {
-  const { skills, setSkills } = usePortfolio(); // On récupère le state global
+  const { skills, setSkills, saveSkills } = usePortfolio(); // On récupère le state global
   const [newSkill, setNewSkill] = useState("");
 
   const handleAddSkill = () => {
@@ -19,10 +19,14 @@ export default function Skills() {
     setSkills(skills.filter((skill) => skill !== skillToRemove));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Compétences sauvegardées :", skills);
-    // Ici tu peux appeler ton API pour sauvegarder les compétences
+    try {
+      await saveSkills(skills);
+      alert("Compétences sauvegardées !");
+    } catch (err) {
+      alert("Erreur lors de la sauvegarde");
+    }
   };
 
   return (

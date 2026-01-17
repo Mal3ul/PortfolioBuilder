@@ -2,7 +2,7 @@ import { usePortfolio } from "../../context/PortfolioContext";
 import { Plus, X } from "lucide-react";
 
 export default function Media() {
-  const { media, setMedia } = usePortfolio();
+  const { media, setMedia, saveMedia } = usePortfolio();
   // media = { linkedin, github, twitter, websites: [] }
 
   // Mise à jour des réseaux sociaux
@@ -34,10 +34,14 @@ export default function Media() {
     setMedia((prev) => ({ ...prev, websites: updatedWebsites }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Media sauvegardé :", media);
-    // Ici tu peux appeler ton API ou sauvegarder globalement
+    try {
+      await saveMedia(media);
+      alert("Médias sauvegardés !");
+    } catch (err) {
+      alert("Erreur lors de la sauvegarde");
+    }
   };
 
   return (
@@ -54,7 +58,7 @@ export default function Media() {
             <input
               className="input"
               placeholder="https://linkedin.com/in/..."
-              value={media.linkedin}
+              value={media.linkedin || ""}
               onChange={(e) => updateSocial("linkedin", e.target.value)}
             />
           </div>
@@ -64,7 +68,7 @@ export default function Media() {
             <input
               className="input"
               placeholder="https://github.com/..."
-              value={media.github}
+              value={media.github || ""}
               onChange={(e) => updateSocial("github", e.target.value)}
             />
           </div>
@@ -74,7 +78,7 @@ export default function Media() {
             <input
               className="input"
               placeholder="https://twitter.com/..."
-              value={media.twitter}
+              value={media.twitter || ""}
               onChange={(e) => updateSocial("twitter", e.target.value)}
             />
           </div>

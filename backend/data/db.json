@@ -1,0 +1,192 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Admin",
+      "email": "admin@test.com",
+      "password": "admin123"
+    },
+    {
+      "id": 2,
+      "name": "Jean Dupont",
+      "email": "jean@test.com",
+      "password": "password123"
+    },
+    {
+      "id": 1768672901622,
+      "name": "Jean Dupond",
+      "email": "test@test.com",
+      "password": "12345"
+    },
+    {
+      "id": 1768675670845,
+      "name": "julie ette",
+      "email": "j@test.com",
+      "password": "12345"
+    },
+    {
+      "id": 1768676410163,
+      "name": "kiko lol",
+      "email": "g@h",
+      "password": "gg"
+    },
+    {
+      "id": 1768676631621,
+      "name": "test",
+      "email": "e@t",
+      "password": "test"
+    },
+    {
+      "id": 1768676706456,
+      "name": "Jen Ny",
+      "email": "j@n",
+      "password": "test"
+    }
+  ],
+  "portfolios": {
+    "1": {
+      "profile": {
+        "firstName": "Admin",
+        "lastName": "User",
+        "title": "Administrateur",
+        "bio": "",
+        "email": "admin@test.com",
+        "phone": "",
+        "location": ""
+      },
+      "skills": [],
+      "projects": [],
+      "experiences": [],
+      "education": [],
+      "certifications": [],
+      "media": {
+        "websites": [],
+        "links": []
+      }
+    },
+    "2": {
+      "profile": {
+        "firstName": "Jean",
+        "lastName": "Dupont",
+        "title": "Développeur",
+        "bio": "",
+        "email": "jean@test.com",
+        "phone": "",
+        "location": ""
+      },
+      "skills": [],
+      "projects": [],
+      "experiences": [],
+      "education": [],
+      "certifications": [],
+      "media": {
+        "websites": [],
+        "links": []
+      }
+    },
+    "1768672901622": {
+      "profile": {
+        "firstName": "",
+        "lastName": "",
+        "title": "",
+        "bio": "",
+        "email": "test@test.com"
+      },
+      "skills": [],
+      "projects": [],
+      "experiences": []
+    },
+    "1768675670845": {
+      "profile": {
+        "firstName": "julie",
+        "lastName": "ette",
+        "title": "",
+        "bio": "",
+        "email": "j@test.com",
+        "phone": "",
+        "location": ""
+      },
+      "skills": [],
+      "projects": [],
+      "experiences": [],
+      "education": [],
+      "certifications": [],
+      "media": {
+        "linkedin": "",
+        "github": "",
+        "twitter": "",
+        "websites": [],
+        "links": []
+      }
+    },
+    "1768676410163": {
+      "profile": {
+        "firstName": "kiko",
+        "lastName": "lol",
+        "title": "",
+        "bio": "",
+        "email": "g@h",
+        "phone": "",
+        "location": ""
+      },
+      "skills": [],
+      "projects": [],
+      "experiences": [],
+      "education": [],
+      "certifications": [],
+      "media": {
+        "linkedin": "",
+        "github": "",
+        "twitter": "",
+        "websites": [],
+        "links": []
+      }
+    },
+    "1768676631621": {
+      "profile": {
+        "firstName": "test",
+        "lastName": "",
+        "title": "",
+        "bio": "",
+        "email": "e@t",
+        "phone": "",
+        "location": ""
+      },
+      "skills": [],
+      "projects": [],
+      "experiences": [],
+      "education": [],
+      "certifications": [],
+      "media": {
+        "linkedin": "",
+        "github": "",
+        "twitter": "",
+        "websites": [],
+        "links": []
+      }
+    },
+    "1768676706456": {
+      "profile": {
+        "firstName": "Jen",
+        "lastName": "Ny",
+        "title": "",
+        "bio": "",
+        "email": "j@n",
+        "phone": "",
+        "location": ""
+      },
+      "skills": [],
+      "projects": [],
+      "experiences": [],
+      "education": [],
+      "certifications": [],
+      "media": {
+        "linkedin": "",
+        "github": "",
+        "twitter": "",
+        "websites": [],
+        "links": []
+      }
+    }
+  }
+}

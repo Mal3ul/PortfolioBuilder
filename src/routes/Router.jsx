@@ -6,6 +6,9 @@ import DashboardLayout from "../layouts/DashboardLayout";
 import AdminLayout from "../layouts/AdminLayout";
 import EditorLayout from "../layouts/EditorLayout";
 
+// Components
+import ProtectedRoute from "../components/ProtectedRoute";
+
 // Public
 import Home from "../pages/public/Home";
 import Login from "../pages/public/Login";
@@ -51,7 +54,11 @@ const router = createBrowserRouter([
 
   {
     path: "/editor",
-    element: <EditorLayout />,
+    element: (
+      <ProtectedRoute>
+        <EditorLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <Profile /> },
       { path: "profile", element: <Profile /> },
@@ -70,7 +77,11 @@ const router = createBrowserRouter([
 
   {
     path: "/dashboard",
-    element: <DashboardLayout />,
+    element: (
+      <ProtectedRoute>
+        <DashboardLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <DashboardHome /> },
 

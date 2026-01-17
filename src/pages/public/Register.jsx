@@ -2,19 +2,42 @@ import { useState } from "react";
 import { ArrowLeft, Mail, Lock, User, Sparkles } from "lucide-react";
 import "../../styles/AuthPage.css";
 import { Link, useNavigate } from "react-router-dom";
+import { authService } from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Register() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    setTimeout(() => {
+    try {
+      const res = await authService.register({
+        name,
+        email,
+        password
+      });
+
+      // Connecter l'utilisateur après l'inscription
+      login({
+        userId: res.userId,
+        name,
+        email
+      });
+
+      // Rediriger vers l'éditeur
+      navigate("/editor");
+    } catch (err) {
+      alert("Erreur lors de l'inscription : " + err.message);
+    } finally {
       setLoading(false);
-      navigate("/login");
-    }, 900);
+    }
   };
 
   return (
@@ -47,6 +70,8 @@ export default function Register() {
                   type="text"
                   className="input input-login input-with-icon"
                   placeholder="Jean Dupont"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   required
                 />
               </div>
@@ -60,6 +85,8 @@ export default function Register() {
                   type="email"
                   className="input input-login input-with-icon"
                   placeholder="ton.email@exemple.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
@@ -73,12 +100,14 @@ export default function Register() {
                   type="password"
                   className="input input-login input-with-icon"
                   placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
             </div>
 
-            <button className="btn btn-primary w-full" disabled={loading}>
+            <button type="submit" className="btn btn-primary w-full" disabled={loading}>
               {loading ? "Création du compte..." : "Créer mon compte"}
             </button>
 

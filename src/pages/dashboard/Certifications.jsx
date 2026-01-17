@@ -2,7 +2,7 @@ import { usePortfolio } from "../../context/PortfolioContext";
 import { Plus, Trash2 } from "lucide-react";
 
 export default function Certifications() {
-  const { certifications, setCertifications } = usePortfolio();
+  const { certifications, setCertifications, saveCertifications } = usePortfolio();
 
   // Ajouter une nouvelle certification
   const handleAddCertification = () => {
@@ -33,9 +33,14 @@ export default function Certifications() {
   };
 
   // Soumettre (pour debug ou API)
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Certifications sauvegardées :", certifications);
+    try {
+      await saveCertifications(certifications);
+      alert("Certifications sauvegardées !");
+    } catch (err) {
+      alert("Erreur lors de la sauvegarde");
+    }
   };
 
   return (

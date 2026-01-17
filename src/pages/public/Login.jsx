@@ -2,19 +2,34 @@ import { useState } from "react";
 import { ArrowLeft, Mail, Lock, Sparkles } from "lucide-react";
 import "../../styles/AuthPage.css";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { authService } from "../../services/api";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const res = await authService.login({
+        email,
+        password
+      });
+
+      login(res);
       navigate("/dashboard");
-    }, 900);
+    } catch (err) {
+      alert("Identifiants incorrects");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,7 +50,7 @@ export default function Login() {
         <div className="auth-card">
 
           <h1 className="auth-title">Connexion</h1>
-          <p className="card-description">Accède à ton espace.</p>
+          <p className="card-description">Connecte-toi pour accéder à ton tableau de bord.</p>
 
           <form onSubmit={handleLogin} className="auth-form">
 
@@ -46,34 +61,36 @@ export default function Login() {
                 <input
                   type="email"
                   className="input input-login input-with-icon"
-                  placeholder="ton.email@exemple.com"
+                  placeholder="ton@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
             </div>
 
             <div className="form-group">
-              <div className="form-label-row">
-                <label>Mot de passe</label>
-              </div>
+              <label>Mot de passe</label>
               <div className="input-wrapper">
                 <Lock className="input-icon" size={16} />
                 <input
                   type="password"
                   className="input input-login input-with-icon"
                   placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
-              <a href="#" className="forgot-password">Mot de passe oublié</a>
             </div>
 
-            <button className="btn btn-primary w-full" disabled={loading}>
+            <button type="submit" disabled={loading} className="btn btn-primary w-full">
               {loading ? "Connexion..." : "Se connecter"}
             </button>
           </form>
 
-          <p className="auth-footer-text"> Nouveau ? <Link to="/register">Créer un compte</Link>
+          <p className="auth-footer-text">
+            Tu n'as pas de compte ? <Link to="/register" style={{ color: '#6366f1', fontWeight: 'bold' }}>S'inscrire</Link>
           </p>
         </div>
       </div>

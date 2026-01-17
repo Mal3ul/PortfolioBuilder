@@ -1,19 +1,81 @@
-import axios from "axios";
+const baseURL = "/api";
 
-const api = axios.create({
-  baseURL: "/api",
-});
+const updatePortfolio = async (data) => {
+  const response = await fetch(`${baseURL}/portfolio`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    throw new Error("Erreur lors de la mise à jour du portfolio");
+  }
+  return response.json();
+};
 
 export const portfolioService = {
   getPortfolio: async () => {
-    const response = await api.get("/portfolio");
-    return response.data;
+    const response = await fetch(`${baseURL}/portfolio`);
+    if (!response.ok) {
+      throw new Error("Erreur lors de la récupération du portfolio");
+    }
+    return response.json();
   },
 
-  updatePortfolio: async (data) => {
-    const response = await api.put("/portfolio", data);
-    return response.data;
+  updatePortfolio,
+
+  updateSkills: async (skills) => {
+    return updatePortfolio({ skills });
+  },
+
+  updateProjects: async (projects) => {
+    return updatePortfolio({ projects });
+  },
+
+  updateExperiences: async (experiences) => {
+    return updatePortfolio({ experiences });
+  },
+
+  updateEducation: async (education) => {
+    return updatePortfolio({ education });
+  },
+
+  updateCertifications: async (certifications) => {
+    return updatePortfolio({ certifications });
+  },
+
+  updateMedia: async (media) => {
+    return updatePortfolio({ media });
   },
 };
 
-export default api;
+export const authService = {
+  login: async (credentials) => {
+    const response = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(credentials),
+    });
+    if (!response.ok) {
+      throw new Error("Identifiants invalides");
+    }
+    return response.json();
+  },
+
+  register: async (userData) => {
+    const response = await fetch("http://localhost:5000/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+    if (!response.ok) {
+      throw new Error("Erreur lors de l'inscription");
+    }
+    return response.json();
+  },
+};

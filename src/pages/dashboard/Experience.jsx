@@ -2,7 +2,7 @@ import { usePortfolio } from "../../context/PortfolioContext";
 import { Plus, Trash2 } from "lucide-react";
 
 export default function Experience() {
-  const { experiences, setExperiences } = usePortfolio();
+  const { experiences, setExperiences, saveExperiences } = usePortfolio();
 
   const handleAddExperience = () => {
     setExperiences([
@@ -26,10 +26,14 @@ export default function Experience() {
     setExperiences(experiences.filter(exp => exp.id !== id));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Expériences sauvegardées :", experiences);
-    // Ici tu peux appeler ton API
+    try {
+      await saveExperiences(experiences);
+      alert("Expériences sauvegardées !");
+    } catch (err) {
+      alert("Erreur lors de la sauvegarde");
+    }
   };
 
   return (
