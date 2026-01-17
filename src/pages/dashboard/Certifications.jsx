@@ -1,22 +1,15 @@
-import { useState } from "react";
+import { usePortfolio } from "../../context/PortfolioContext";
 import { Plus, Trash2 } from "lucide-react";
 
 export default function Certifications() {
-  const [formCertifications, setFormCertifications] = useState([
-    {
-      id: 1,
-      title: "",
-      organization: "",
-      date: "",
-      description: "",
-    },
-  ]);
+  const { certifications, setCertifications } = usePortfolio();
 
+  // Ajouter une nouvelle certification
   const handleAddCertification = () => {
-    setFormCertifications([
-      ...formCertifications,
+    setCertifications([
+      ...certifications,
       {
-        id: formCertifications.length + 1,
+        id: certifications.length + 1,
         title: "",
         organization: "",
         date: "",
@@ -25,41 +18,41 @@ export default function Certifications() {
     ]);
   };
 
+  // Mettre à jour une certification
   const handleChange = (id, field, value) => {
-    setFormCertifications((prev) =>
-      prev.map((cert) =>
+    setCertifications(
+      certifications.map((cert) =>
         cert.id === id ? { ...cert, [field]: value } : cert
       )
     );
   };
 
+  // Supprimer une certification
   const handleDelete = (id) => {
-    setFormCertifications((prev) => prev.filter((cert) => cert.id !== id));
+    setCertifications(certifications.filter((cert) => cert.id !== id));
   };
 
+  // Soumettre (pour debug ou API)
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Données soumises :", formCertifications);
-    // Ici tu peux appeler ton API ou mettre à jour un state global
+    console.log("Certifications sauvegardées :", certifications);
   };
 
   return (
     <>
-      <button className="btn btn-add" onClick={handleAddCertification}>
+      <button className="btn btn-add mb-4" onClick={handleAddCertification}>
         <Plus size={16} /> Ajouter une certification
       </button>
 
       <form className="tab-panel" onSubmit={handleSubmit}>
         <div className="projects-container">
-          {formCertifications.map((certification, index) => (
-            <div key={certification.id} className="card project-card">
-              <div className="card-header">
-                <h2 className="card-title">
-                  Certification {index + 1}
-                </h2>
-
-                {formCertifications.length > 1 && (
+          {certifications.map((certification, index) => (
+            <div key={certification.id} className="card project-card mb-4">
+              <div className="card-header d-flex justify-content-between align-items-center">
+                <h2 className="card-title">Certification {index + 1}</h2>
+                {certifications.length > 1 && (
                   <button
+                    type="button"
                     className="btn btn-outline btn-sm"
                     onClick={() => handleDelete(certification.id)}
                   >
@@ -72,15 +65,12 @@ export default function Certifications() {
                 <div className="form-group">
                   <label className="label">Titre</label>
                   <input
+                    name="title"
                     className="input"
                     placeholder="AWS Cloud Practitioner"
-                    value={formCertifications.title}
+                    value={certification.title}
                     onChange={(e) =>
-                      handleChange(
-                        certification.id,
-                        "title",
-                        e.target.value
-                      )
+                      handleChange(certification.id, "title", e.target.value)
                     }
                   />
                 </div>
@@ -88,15 +78,12 @@ export default function Certifications() {
                 <div className="form-group">
                   <label className="label">Organisme</label>
                   <input
+                    name="organization"
                     className="input"
                     placeholder="Amazon"
-                    value={formCertifications.organization}
+                    value={certification.organization}
                     onChange={(e) =>
-                      handleChange(
-                        certification.id,
-                        "organization",
-                        e.target.value
-                      )
+                      handleChange(certification.id, "organization", e.target.value)
                     }
                   />
                 </div>
@@ -105,14 +92,11 @@ export default function Certifications() {
                   <label className="label">Date d’obtention</label>
                   <input
                     type="date"
+                    name="date"
                     className="input"
-                    value={formCertifications.date}
+                    value={certification.date}
                     onChange={(e) =>
-                      handleChange(
-                        certification.id,
-                        "date",
-                        e.target.value
-                      )
+                      handleChange(certification.id, "date", e.target.value)
                     }
                   />
                 </div>
@@ -120,30 +104,26 @@ export default function Certifications() {
                 <div className="form-group">
                   <label className="label">Description</label>
                   <textarea
+                    name="description"
                     className="textarea"
                     rows={4}
                     placeholder="Description de la certification..."
-                    value={formCertifications.description}
+                    value={certification.description}
                     onChange={(e) =>
-                      handleChange(
-                        certification.id,
-                        "description",
-                        e.target.value
-                      )
+                      handleChange(certification.id, "description", e.target.value)
                     }
                   />
                 </div>
-
-
-              </div>
-              <div className="btn-container mt-4">
-                <button type="submit" className="btn btn-add btn-primary">
-                  Sauvegarder
-                </button>
+        <div className="btn-container mt-4">
+          <button type="submit" className="btn btn-primary">
+            Sauvegarder
+          </button>
+        </div>
               </div>
             </div>
           ))}
         </div>
+
       </form>
     </>
   );

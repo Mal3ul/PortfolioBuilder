@@ -1,31 +1,17 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
+import { usePortfolio } from "../../context/PortfolioContext";
 import "../../styles/Editor.css";
 
 export default function Skills() {
-  const [skills, setSkills] = useState([
-    "React.js",
-    "JavaScript",
-    "HTML",
-    "CSS",
-  ]);
-
+  const { skills, setSkills } = usePortfolio(); // On récupère le state global
   const [newSkill, setNewSkill] = useState("");
 
-  const handleSubmit = useCallback((e) => {
-    if (e) e.preventDefault();
-    // Sauvegarder les compétences
-    console.log("Compétences sauvegardées:", skills);
-  }, [skills]);
-
-  // useEffect(() => {
-  //   handleSubmit();
-  // }, [skills, handleSubmit]);
-
   const handleAddSkill = () => {
-    if (!newSkill.trim()) return;
-    if (skills.includes(newSkill)) return;
+    const trimmed = newSkill.trim();
+    if (!trimmed) return;
+    if (skills.includes(trimmed)) return;
 
-    setSkills([...skills, newSkill.trim()]);
+    setSkills([...skills, trimmed]);
     setNewSkill("");
   };
 
@@ -33,26 +19,17 @@ export default function Skills() {
     setSkills(skills.filter((skill) => skill !== skillToRemove));
   };
 
-  // const handleSubmit = (e) => {
-  //   if (e) e.preventDefault();
-  //   // Sauvegarder les compétences
-  //   console.log("Compétences sauvegardées:", skills);
-  // };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Compétences sauvegardées :", skills);
+    // Ici tu peux appeler ton API pour sauvegarder les compétences
+  };
 
   return (
     <form className="tab-panel" onSubmit={handleSubmit}>
-      {/* Header */}
-      {/* <div>
-        <h2 className="panel-title">Compétences</h2>
-        <p className="panel-subtitle">
-          Liste tes compétences techniques et soft skills
-        </p>
-      </div> */}
-
-      {/* Card */}
       <div className="card">
         <div className="card-content">
-          {/* Add skill */}
+          {/* Ajouter une compétence */}
           <div className="form-group">
             <label className="label">Ajouter une compétence</label>
             <div className="skill-input-group">
@@ -63,13 +40,17 @@ export default function Skills() {
                 onChange={(e) => setNewSkill(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAddSkill()}
               />
-              <button className="btn btn-primary" onClick={handleAddSkill}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleAddSkill}
+              >
                 Ajouter
               </button>
             </div>
           </div>
 
-          {/* Skills list */}
+          {/* Liste des compétences */}
           <div className="form-group">
             <label className="label">Compétences actuelles</label>
             <div className="skills-list">
@@ -77,6 +58,7 @@ export default function Skills() {
                 <span key={index} className="badge badge-secondary skill-badge">
                   {skill}
                   <button
+                    type="button"
                     className="skill-remove"
                     onClick={() => handleRemoveSkill(skill)}
                   >
@@ -85,9 +67,13 @@ export default function Skills() {
                 </span>
               ))}
             </div>
-            {/* <button type="submit" className="btn btn-add btn-primary mt-4">
+          </div>
+
+          {/* Bouton sauvegarder */}
+          <div className="btn-container mt-4">
+            <button type="submit" className="btn btn-add btn-primary">
               Sauvegarder
-            </button> */}
+            </button>
           </div>
         </div>
       </div>

@@ -1,31 +1,21 @@
-import { useState } from "react";
+import { usePortfolio } from "../../context/PortfolioContext";
 
 export default function Profile() {
-  // On crée un state pour stocker toutes les informations
-  const [formProfile, setFormProfile] = useState({
-    firstName: "",
-    lastName: "",
-    title: "",
-    bio: "",
-    email: "",
-    phone: "",
-    location: "",
-  });
+  const { profile, setProfile } = usePortfolio();
 
-  // Fonction pour mettre à jour le state quand l'utilisateur écrit
+  // Mise à jour du context
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormProfile((prev) => ({
+    setProfile((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  // Fonction pour gérer la soumission
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Données soumises :", formProfile);
-    // Ici tu peux appeler ton API ou mettre à jour un state global
+    console.log("Profil sauvegardé :", profile);
+    // plus tard → appel API
   };
 
   return (
@@ -44,7 +34,7 @@ export default function Profile() {
                   name="firstName"
                   className="input"
                   placeholder="Jean"
-                  value={formProfile.firstName}
+                  value={profile.firstName}
                   onChange={handleChange}
                 />
               </div>
@@ -53,9 +43,9 @@ export default function Profile() {
                 <label className="label">Nom</label>
                 <input
                   name="lastName"
-                  className="input"
                   placeholder="Dupont"
-                  value={formProfile.lastName}
+                  className="input"
+                  value={profile.lastName}
                   onChange={handleChange}
                 />
               </div>
@@ -65,9 +55,9 @@ export default function Profile() {
               <label className="label">Titre professionnel</label>
               <input
                 name="title"
+                placeholder="Technicien"
                 className="input"
-                placeholder="Développeur Full-Stack"
-                value={formProfile.title}
+                value={profile.title}
                 onChange={handleChange}
               />
             </div>
@@ -77,13 +67,12 @@ export default function Profile() {
               <textarea
                 name="bio"
                 className="textarea"
+                placeholder="Passionné par le développement web et les nouvelles technologies."
                 rows={6}
-                placeholder="Passionné par le développement web et les nouvelles technologies..."
-                value={formProfile.bio}
+                value={profile.bio}
                 onChange={handleChange}
               />
             </div>
-
 
             <div className="form-group">
               <label className="label">Email</label>
@@ -91,8 +80,7 @@ export default function Profile() {
                 name="email"
                 type="email"
                 className="input"
-                placeholder="jean@exemple.com"
-                value={formProfile.email}
+                value={profile.email}
                 onChange={handleChange}
               />
             </div>
@@ -103,24 +91,22 @@ export default function Profile() {
                 name="phone"
                 type="tel"
                 className="input"
-                placeholder="+33 6 12 34 56 78"
-                value={formProfile.phone}
+                value={profile.phone}
                 onChange={handleChange}
               />
             </div>
-
 
             <div className="form-group">
               <label className="label">Localisation</label>
               <input
                 name="location"
                 className="input"
-                placeholder="Paris, France"
-                value={formProfile.location}
+                value={profile.location}
                 onChange={handleChange}
               />
             </div>
           </div>
+
           <div className="btn-container mt-4">
             <button type="submit" className="btn btn-add btn-primary">
               Sauvegarder

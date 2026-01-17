@@ -1,33 +1,43 @@
-import { useState } from "react";
+import { usePortfolio } from "../../context/PortfolioContext";
 import { Plus, X } from "lucide-react";
 
 export default function Media() {
-  const [websites, setWebsites] = useState([""]);
-  const [social, setSocial] = useState({ linkedin: "", github: "", twitter: "" });
+  const { media, setMedia } = usePortfolio();
+  // media = { linkedin, github, twitter, websites: [] }
 
+  // Mise à jour des réseaux sociaux
   const updateSocial = (field, value) => {
-    setSocial((prev) => ({ ...prev, [field]: value }));
+    setMedia((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
+  // Ajouter un site web
   const addWebsite = () => {
-    
-    setWebsites([...websites, ""]);
+    setMedia((prev) => ({
+      ...prev,
+      websites: [...prev.websites, ""],
+    }));
   };
 
+  // Mettre à jour un site web existant
   const updateWebsite = (index, value) => {
-    const updated = [...websites];
-    updated[index] = value;
-    setWebsites(updated);
+    const updatedWebsites = [...media.websites];
+    updatedWebsites[index] = value;
+    setMedia((prev) => ({ ...prev, websites: updatedWebsites }));
   };
 
+  // Supprimer un site web
   const removeWebsite = (index) => {
-    setWebsites(websites.filter((_, i) => i !== index));
+    const updatedWebsites = media.websites.filter((_, i) => i !== index);
+    setMedia((prev) => ({ ...prev, websites: updatedWebsites }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Données soumises :", { social, websites });
-    // Ici tu peux appeler ton API ou mettre à jour un state global
+    console.log("Media sauvegardé :", media);
+    // Ici tu peux appeler ton API ou sauvegarder globalement
   };
 
   return (
@@ -38,13 +48,13 @@ export default function Media() {
         </div>
 
         <div className="card-content">
-
+          {/* Réseaux sociaux */}
           <div className="form-group">
             <label className="label">LinkedIn</label>
             <input
               className="input"
               placeholder="https://linkedin.com/in/..."
-              value={social.linkedin}
+              value={media.linkedin}
               onChange={(e) => updateSocial("linkedin", e.target.value)}
             />
           </div>
@@ -54,7 +64,7 @@ export default function Media() {
             <input
               className="input"
               placeholder="https://github.com/..."
-              value={social.github}
+              value={media.github}
               onChange={(e) => updateSocial("github", e.target.value)}
             />
           </div>
@@ -64,16 +74,15 @@ export default function Media() {
             <input
               className="input"
               placeholder="https://twitter.com/..."
-              value={social.twitter}
+              value={media.twitter}
               onChange={(e) => updateSocial("twitter", e.target.value)}
             />
           </div>
 
-          {/* Sites web */}
+          {/* Sites web personnels */}
           <div className="form-group">
             <label className="label">Sites web personnels</label>
-
-            {websites.map((site, index) => (
+            {media.websites.map((site, index) => (
               <div key={index} className="input-inline">
                 <input
                   className="input"
@@ -81,8 +90,7 @@ export default function Media() {
                   value={site}
                   onChange={(e) => updateWebsite(index, e.target.value)}
                 />
-
-                {websites.length > 1 && (
+                {media.websites.length > 1 && (
                   <button
                     type="button"
                     className="btn btn-outline btn-sm"
@@ -102,6 +110,7 @@ export default function Media() {
               <Plus size={14} /> Ajouter un lien
             </button>
           </div>
+
           <div className="btn-container mt-4">
             <button type="submit" className="btn btn-add btn-primary">
               Sauvegarder

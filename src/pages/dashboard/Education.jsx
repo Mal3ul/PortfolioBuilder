@@ -1,23 +1,15 @@
-import { useState } from "react";
+import { usePortfolio } from "../../context/PortfolioContext";
 import { Plus, Trash2 } from "lucide-react";
 
 export default function Education() {
-  const [educations, setEducations] = useState([
-    {
-      id: 1,
-      diploma: "",
-      school: "",
-      startDate: "",
-      endDate: "",
-      description: "",
-    },
-  ]);
+  const { education, setEducation } = usePortfolio(); // context global
 
+  // Ajouter une nouvelle formation
   const handleAddEducation = () => {
-    setEducations([
-      ...educations,
+    setEducation([
+      ...education,
       {
-        id: Date.now(),
+        id: education.length + 1,
         diploma: "",
         school: "",
         startDate: "",
@@ -27,22 +19,25 @@ export default function Education() {
     ]);
   };
 
+  // Mettre à jour un champ d'une formation
   const handleChange = (id, field, value) => {
-    setEducations((prev) =>
+    setEducation((prev) =>
       prev.map((edu) =>
         edu.id === id ? { ...edu, [field]: value } : edu
       )
     );
   };
 
+  // Supprimer une formation
   const handleDelete = (id) => {
-    setEducations((prev) => prev.filter((edu) => edu.id !== id));
+    setEducation((prev) => prev.filter((edu) => edu.id !== id));
   };
 
+  // Soumission du formulaire
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Données soumises :", educations);
-    // Ici tu peux appeler ton API ou mettre à jour un state global
+    console.log("Formations sauvegardées :", education);
+    // plus tard → appel API ou sauvegarde
   };
 
   return (
@@ -53,17 +48,15 @@ export default function Education() {
 
       <form className="tab-panel" onSubmit={handleSubmit}>
         <div className="projects-container">
-          {educations.map((education, index) => (
-            <div key={education.id} className="card project-card">
+          {education.map((edu, index) => (
+            <div key={edu.id} className="card project-card">
               <div className="card-header">
-                <h2 className="card-title">
-                  Formation {index + 1}
-                </h2>
-
-                {educations.length > 1 && (
+                <h2 className="card-title">Formation {index + 1}</h2>
+                {education.length > 1 && (
                   <button
+                    type="button"
                     className="btn btn-outline btn-sm"
-                    onClick={() => handleDelete(education.id)}
+                    onClick={() => handleDelete(edu.id)}
                   >
                     <Trash2 size={16} /> Supprimer
                   </button>
@@ -75,14 +68,10 @@ export default function Education() {
                   <label className="label">Diplôme</label>
                   <input
                     className="input"
-                    placeholder="BTS SIO / Licence / Bachelor..."
-                    value={education.diploma}
+                    placeholder="Licence / Bachelor..."
+                    value={edu.diploma}
                     onChange={(e) =>
-                      handleChange(
-                        education.id,
-                        "diploma",
-                        e.target.value
-                      )
+                      handleChange(edu.id, "diploma", e.target.value)
                     }
                   />
                 </div>
@@ -91,14 +80,10 @@ export default function Education() {
                   <label className="label">Établissement</label>
                   <input
                     className="input"
-                    placeholder="IRIS Strasbourg"
-                    value={education.school}
+                    placeholder="Université de Strasbourg"
+                    value={edu.school}
                     onChange={(e) =>
-                      handleChange(
-                        education.id,
-                        "school",
-                        e.target.value
-                      )
+                      handleChange(edu.id, "school", e.target.value)
                     }
                   />
                 </div>
@@ -109,13 +94,9 @@ export default function Education() {
                     <input
                       type="date"
                       className="input"
-                      value={education.startDate}
+                      value={edu.startDate}
                       onChange={(e) =>
-                        handleChange(
-                          education.id,
-                          "startDate",
-                          e.target.value
-                        )
+                        handleChange(edu.id, "startDate", e.target.value)
                       }
                     />
                   </div>
@@ -125,13 +106,9 @@ export default function Education() {
                     <input
                       type="date"
                       className="input"
-                      value={education.endDate}
+                      value={edu.endDate}
                       onChange={(e) =>
-                        handleChange(
-                          education.id,
-                          "endDate",
-                          e.target.value
-                        )
+                        handleChange(edu.id, "endDate", e.target.value)
                       }
                     />
                   </div>
@@ -143,17 +120,14 @@ export default function Education() {
                     className="textarea"
                     rows={4}
                     placeholder="Spécialisation, options, mention, projets réalisés..."
-                    value={education.description}
+                    value={edu.description}
                     onChange={(e) =>
-                      handleChange(
-                        education.id,
-                        "description",
-                        e.target.value
-                      )
+                      handleChange(edu.id, "description", e.target.value)
                     }
                   />
                 </div>
               </div>
+
               <div className="btn-container mt-4">
                 <button type="submit" className="btn btn-add btn-primary">
                   Sauvegarder

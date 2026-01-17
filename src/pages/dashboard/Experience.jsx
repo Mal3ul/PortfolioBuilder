@@ -1,23 +1,14 @@
-import { useState } from "react";
+import { usePortfolio } from "../../context/PortfolioContext";
 import { Plus, Trash2 } from "lucide-react";
 
 export default function Experience() {
-  const [experiences, setExperiences] = useState([
-    {
-      id: 1,
-      position: "",
-      company: "",
-      startDate: "",
-      endDate: "",
-      description: "",
-    },
-  ]);
+  const { experiences, setExperiences } = usePortfolio();
 
   const handleAddExperience = () => {
     setExperiences([
       ...experiences,
       {
-        id: Date.now(),
+        id: experiences.length + 1,
         position: "",
         company: "",
         startDate: "",
@@ -28,21 +19,17 @@ export default function Experience() {
   };
 
   const handleChange = (id, field, value) => {
-    setExperiences((prev) =>
-      prev.map((exp) =>
-        exp.id === id ? { ...exp, [field]: value } : exp
-      )
-    );
+    setExperiences(experiences.map(exp => exp.id === id ? { ...exp, [field]: value } : exp));
   };
 
   const handleDelete = (id) => {
-    setExperiences((prev) => prev.filter((exp) => exp.id !== id));
+    setExperiences(experiences.filter(exp => exp.id !== id));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Données soumises :", experiences);
-    // Ici tu peux appeler ton API ou mettre à jour un state global
+    console.log("Expériences sauvegardées :", experiences);
+    // Ici tu peux appeler ton API
   };
 
   return (
@@ -56,12 +43,10 @@ export default function Experience() {
           {experiences.map((experience, index) => (
             <div key={experience.id} className="card project-card">
               <div className="card-header">
-                <h2 className="card-title">
-                  Expérience {index + 1}
-                </h2>
-
+                <h2 className="card-title">Expérience {index + 1}</h2>
                 {experiences.length > 1 && (
                   <button
+                    type="button"
                     className="btn btn-outline btn-sm"
                     onClick={() => handleDelete(experience.id)}
                   >
@@ -78,13 +63,7 @@ export default function Experience() {
                       className="input"
                       placeholder="Développeur Full-Stack"
                       value={experience.position}
-                      onChange={(e) =>
-                        handleChange(
-                          experience.id,
-                          "position",
-                          e.target.value
-                        )
-                      }
+                      onChange={(e) => handleChange(experience.id, "position", e.target.value)}
                     />
                   </div>
 
@@ -94,13 +73,7 @@ export default function Experience() {
                       className="input"
                       placeholder="Google"
                       value={experience.company}
-                      onChange={(e) =>
-                        handleChange(
-                          experience.id,
-                          "company",
-                          e.target.value
-                        )
-                      }
+                      onChange={(e) => handleChange(experience.id, "company", e.target.value)}
                     />
                   </div>
                 </div>
@@ -112,13 +85,7 @@ export default function Experience() {
                       type="date"
                       className="input"
                       value={experience.startDate}
-                      onChange={(e) =>
-                        handleChange(
-                          experience.id,
-                          "startDate",
-                          e.target.value
-                        )
-                      }
+                      onChange={(e) => handleChange(experience.id, "startDate", e.target.value)}
                     />
                   </div>
 
@@ -128,13 +95,7 @@ export default function Experience() {
                       type="date"
                       className="input"
                       value={experience.endDate}
-                      onChange={(e) =>
-                        handleChange(
-                          experience.id,
-                          "endDate",
-                          e.target.value
-                        )
-                      }
+                      onChange={(e) => handleChange(experience.id, "endDate", e.target.value)}
                     />
                   </div>
                 </div>
@@ -146,16 +107,11 @@ export default function Experience() {
                     rows={4}
                     placeholder="Description de l'expérience..."
                     value={experience.description}
-                    onChange={(e) =>
-                      handleChange(
-                        experience.id,
-                        "description",
-                        e.target.value
-                      )
-                    }
+                    onChange={(e) => handleChange(experience.id, "description", e.target.value)}
                   />
                 </div>
               </div>
+
               <div className="btn-container mt-4">
                 <button type="submit" className="btn btn-add btn-primary">
                   Sauvegarder

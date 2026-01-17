@@ -1,44 +1,33 @@
-import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
+import { usePortfolio } from "../../context/PortfolioContext";
 
 export default function Projects() {
-  const [formProjects, setFormProjects] = useState([
-    { id: 1, title: "", description: "", technologies: "" },
-  ]);
+  const { projects, setProjects } = usePortfolio();
 
+  // Ajouter un projet
   const handleAddProject = () => {
-    setFormProjects([
-      ...formProjects,
-      {
-        id: formProjects.length + 1 ,
-        title: "",
-        description: "",
-        technologies: "",
-      },
+    setProjects([
+      ...projects,
+      { id: projects.length + 1, title: "", description: "", technologies: "" },
     ]);
   };
 
+  // Mettre à jour un projet
   const handleChange = (id, field, value) => {
-    setFormProjects((prev) =>
-      prev.map((p) =>
-        p.id === id ? { ...p, [field]: value } : p
-      )
+    setProjects(
+      projects.map((p) => (p.id === id ? { ...p, [field]: value } : p))
     );
   };
 
+  // Supprimer un projet
   const handleDelete = (id) => {
-    setFormProjects((prev) => prev.filter((p) => p.id !== id));
+    setProjects(projects.filter((p) => p.id !== id));
   };
 
+  // Soumettre (ex: API ou sauvegarde locale)
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    console.log("Projets sauvegardés :", formProjects);
-
-    // 🔜 plus tard :
-    // - envoyer vers une API
-    // - stocker dans un context
-    // - mettre à jour l’aperçu live
+    console.log("Projets sauvegardés :", projects);
   };
 
   return (
@@ -49,16 +38,16 @@ export default function Projects() {
 
       <form className="tab-panel" onSubmit={handleSubmit}>
         <div className="projects-container">
-          {formProjects.map((formProject, index) => (
-            <div key={formProject.id} className="card project-card">
+          {projects.map((project, index) => (
+            <div key={project.id} className="card project-card">
               <div className="card-header">
                 <h2 className="card-title">Projet {index + 1}</h2>
 
-                {formProjects.length > 1 && (
+                {projects.length > 1 && (
                   <button
                     type="button"
                     className="btn btn-outline btn-sm"
-                    onClick={() => handleDelete(formProject.id)}
+                    onClick={() => handleDelete(project.id)}
                   >
                     <Trash2 size={16} /> Supprimer
                   </button>
@@ -71,9 +60,9 @@ export default function Projects() {
                   <input
                     className="input"
                     placeholder="Mon projet"
-                    value={formProject.title}
+                    value={project.title}
                     onChange={(e) =>
-                      handleChange(formProject.id, "title", e.target.value)
+                      handleChange(project.id, "title", e.target.value)
                     }
                   />
                 </div>
@@ -83,9 +72,9 @@ export default function Projects() {
                   <input
                     className="input"
                     placeholder="React, Node.js"
-                    value={formProject.technologies}
+                    value={project.technologies}
                     onChange={(e) =>
-                      handleChange(formProject.id, "technologies", e.target.value)
+                      handleChange(project.id, "technologies", e.target.value)
                     }
                   />
                 </div>
@@ -96,18 +85,19 @@ export default function Projects() {
                     className="textarea"
                     rows={4}
                     placeholder="Description du projet..."
-                    value={formProject.description}
+                    value={project.description}
                     onChange={(e) =>
-                      handleChange(formProject.id, "description", e.target.value)
+                      handleChange(project.id, "description", e.target.value)
                     }
                   />
                 </div>
               </div>
-        <div className="btn-container mt-4">
-          <button type="submit" className="btn btn-add btn-primary">
-            Sauvegarder
-          </button>
-        </div>
+
+              <div className="btn-container mt-4">
+                <button type="submit" className="btn btn-add btn-primary">
+                  Sauvegarder
+                </button>
+              </div>
             </div>
           ))}
         </div>
