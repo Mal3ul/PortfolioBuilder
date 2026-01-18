@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ArrowLeft, Mail, Lock, User, Sparkles } from "lucide-react";
 import "../../styles/AuthPage.css";
+import "../../styles/FormValidation.css";
+import "../../styles/AuthAlerts.css";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
@@ -12,9 +14,42 @@ export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState("");
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!name.trim()) {
+      newErrors.name = "Le nom complet est obligatoire";
+    }
+    if (!email.trim()) {
+      newErrors.email = "L'email est obligatoire";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = "Veuillez entrer un email valide";
+    }
+    if (!password) {
+      newErrors.password = "Le mot de passe est obligatoire";
+    } else if (password.length < 6) {
+      newErrors.password = "Le mot de passe doit contenir au moins 6 caractères";
+    }
+    if (!confirmPassword) {
+      newErrors.confirmPassword = "La confirmation du mot de passe est obligatoire";
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = "Les mots de passe ne correspondent pas";
+    }
+    return newErrors;
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    const newErrors = validateForm();
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
+    setSubmitError("");
     setLoading(true);
 
     try {
@@ -35,7 +70,7 @@ export default function Register() {
       // Rediriger vers l'éditeur
       navigate("/editor");
     } catch (err) {
-      alert("Erreur lors de l'inscription : " + err.message);
+      setSubmitError(err?.message ? `Erreur lors de l'inscription : ${err.message}` : "Erreur lors de l'inscription");
     } finally {
       setLoading(false);
     }
@@ -61,10 +96,16 @@ export default function Register() {
           <h1 className="auth-title">Créer un compte</h1>
           <p className="card-description">Commence à construire ton portfolio.</p>
 
+          {submitError && (
+            <div className="alert alert-error" style={{ marginBottom: '1rem' }}>
+              {submitError}
+            </div>
+          )}
+
           <form onSubmit={handleRegister} className="auth-form">
 
             <div className="form-group">
-              <label>Nom complet</label>
+              <label>Nom complet <span className="required-star">*</span></label>
               <div className="input-wrapper">
                 <User className="input-icon" size={16} />
                 <input
@@ -76,10 +117,11 @@ export default function Register() {
                   required
                 />
               </div>
+                {errors.name && <span className="error-message">{errors.name}</span>}
             </div>
 
             <div className="form-group">
-              <label>Email</label>
+              <label>Email <span className="required-star">*</span></label>
               <div className="input-wrapper">
                 <Mail className="input-icon" size={16} />
                 <input
@@ -91,10 +133,11 @@ export default function Register() {
                   required
                 />
               </div>
+                {errors.email && <span className="error-message">{errors.email}</span>}
             </div>
 
             <div className="form-group">
-              <label>Mot de passe</label>
+              <label>Mot de passe <span className="required-star">*</span></label>
               <div className="input-wrapper">
                 <Lock className="input-icon" size={16} />
                 <input
@@ -106,6 +149,23 @@ export default function Register() {
                   required
                 />
               </div>
+                {errors.password && <span className="error-message">{errors.password}</span>}
+              </div>
+
+              <div className="form-group">
+                <label>Confirmer le mot de passe <span className="required-star">*</span></label>
+                <div className="input-wrapper">
+                  <Lock className="input-icon" size={16} />
+                  <input
+                    type="password"
+                    className="input input-login input-with-icon"
+                    placeholder="••••••••"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
             </div>
 
             <button type="submit" className="btn btn-primary w-full" disabled={loading}>

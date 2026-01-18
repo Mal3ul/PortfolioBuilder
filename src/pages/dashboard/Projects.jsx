@@ -1,8 +1,12 @@
 import { Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { usePortfolio } from "../../context/PortfolioContext";
+import AlertBanner from "../../components/AlertBanner";
 
 export default function Projects() {
   const { projects, setProjects, saveProjects } = usePortfolio();
+  const [saveMessage, setSaveMessage] = useState("");
+  const [saveError, setSaveError] = useState("");
 
   // Ajouter un projet
   const handleAddProject = () => {
@@ -35,9 +39,20 @@ export default function Projects() {
     e.preventDefault();
     try {
       await saveProjects(projects);
-      alert("Projets sauvegardés !");
+      setSaveError("");
+      setSaveMessage("Projets sauvegardés !");
+      // Remonter en haut de la page pour voir le message
+      if (typeof window !== "undefined" && window.scrollTo) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      // Effacer le message après 3s
+      setTimeout(() => setSaveMessage(""), 3000);
     } catch (err) {
-      alert("Erreur lors de la sauvegarde");
+      setSaveMessage("");
+      setSaveError("Erreur lors de la sauvegarde");
+      if (typeof window !== "undefined" && window.scrollTo) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     }
   };
 
@@ -48,6 +63,7 @@ export default function Projects() {
       </button>
 
       <form className="tab-panel" onSubmit={handleSubmit}>
+        <AlertBanner message={saveMessage} error={saveError} />
         <div className="projects-container">
           {projects.map((project, index) => (
             <div key={project.id} className="card project-card">

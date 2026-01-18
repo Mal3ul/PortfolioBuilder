@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { ArrowLeft, Mail, Lock, Sparkles } from "lucide-react";
 import "../../styles/AuthPage.css";
+import "../../styles/FormValidation.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { authService } from "../../services/api";
+import AlertBanner from "../../components/AlertBanner";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -12,9 +14,31 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState("");
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!email.trim()) {
+      newErrors.email = "L'email est obligatoire";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = "Veuillez entrer un email valide";
+    }
+    if (!password) {
+      newErrors.password = "Le mot de passe est obligatoire";
+    }
+    return newErrors;
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    const newErrors = validateForm();
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
+    setSubmitError("");
     setLoading(true);
 
     try {
@@ -33,7 +57,7 @@ export default function Login() {
       login(userData);
       navigate(userData.role === "admin" ? "/admin" : "/dashboard");
     } catch (err) {
-      alert("Identifiants incorrects");
+      setSubmitError("Identifiants incorrects");
     } finally {
       setLoading(false);
     }
@@ -54,6 +78,8 @@ export default function Login() {
           <span className="auth-logo-text">Portfolio Builder</span>
         </div>
 
+          <AlertBanner message="" error={submitError} />
+        
         <div className="auth-card">
 
           <h1 className="auth-title">Connexion</h1>
@@ -62,39 +88,47 @@ export default function Login() {
           <form onSubmit={handleLogin} className="auth-form">
 
             <div className="form-group">
-              <label>Email</label>
+              <label>Email <span className="required-star">*</span></label>
               <div className="input-wrapper">
                 <Mail className="input-icon" size={16} />
                 <input
                   type="email"
-                  className="input input-login input-with-icon"
+                  className={`input input-login input-with-icon ${errors.email ? "input-error" : ""}`}
                   placeholder="ton@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
+              {errors.email && <span className="error-message">{errors.email}</span>}
             </div>
 
             <div className="form-group">
-              <label>Mot de passe</label>
+              <label>Mot de passe <span className="required-star">*</span></label>
               <div className="input-wrapper">
                 <Lock className="input-icon" size={16} />
                 <input
                   type="password"
-                  className="input input-login input-with-icon"
+                  className={`input input-login input-with-icon ${errors.password ? "input-error" : ""}`}
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
+              {errors.password && <span className="error-message">{errors.password}</span>}
             </div>
 
             <button type="submit" disabled={loading} className="btn btn-primary w-full">
               {loading ? "Connexion..." : "Se connecter"}
             </button>
           </form>
+
+          <p className="auth-footer-text" style={{ marginTop: '1rem', textAlign: 'center' }}>
+            <Link to="/forgot-password" style={{ color: '#6366f1', fontSize: '0.9rem' }}>
+              Mot de passe oublié ?
+            </Link>
+          </p>
 
           <p className="auth-footer-text">
             Tu n'as pas de compte ? <Link to="/register" style={{ color: '#6366f1', fontWeight: 'bold' }}>S'inscrire</Link>

@@ -1,8 +1,12 @@
 import { usePortfolio } from "../../context/PortfolioContext";
 import { Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
+import AlertBanner from "../../components/AlertBanner";
 
 export default function Education() {
   const { education, setEducation, saveEducation } = usePortfolio(); // context global
+  const [saveMessage, setSaveMessage] = useState("");
+  const [saveError, setSaveError] = useState("");
 
   // Ajouter une nouvelle formation
   const handleAddEducation = () => {
@@ -39,9 +43,18 @@ export default function Education() {
     e.preventDefault();
     try {
       await saveEducation(education);
-      alert("Formations sauvegardées !");
+      setSaveError("");
+      setSaveMessage("Formations sauvegardées !");
+      if (typeof window !== "undefined" && window.scrollTo) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      setTimeout(() => setSaveMessage(""), 3000);
     } catch (err) {
-      alert("Erreur lors de la sauvegarde");
+      setSaveMessage("");
+      setSaveError("Erreur lors de la sauvegarde");
+      if (typeof window !== "undefined" && window.scrollTo) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     }
   };
 
@@ -52,6 +65,7 @@ export default function Education() {
       </button>
 
       <form className="tab-panel" onSubmit={handleSubmit}>
+        <AlertBanner message={saveMessage} error={saveError} />
         <div className="projects-container">
           {education.map((edu, index) => (
             <div key={edu.id} className="card project-card">

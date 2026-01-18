@@ -1,8 +1,12 @@
 import { usePortfolio } from "../../context/PortfolioContext";
 import { Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
+import AlertBanner from "../../components/AlertBanner";
 
 export default function Certifications() {
   const { certifications, setCertifications, saveCertifications } = usePortfolio();
+  const [saveMessage, setSaveMessage] = useState("");
+  const [saveError, setSaveError] = useState("");
 
   // Ajouter une nouvelle certification
   const handleAddCertification = () => {
@@ -38,9 +42,18 @@ export default function Certifications() {
     e.preventDefault();
     try {
       await saveCertifications(certifications);
-      alert("Certifications sauvegardées !");
+      setSaveError("");
+      setSaveMessage("Certifications sauvegardées !");
+      if (typeof window !== "undefined" && window.scrollTo) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      setTimeout(() => setSaveMessage(""), 3000);
     } catch (err) {
-      alert("Erreur lors de la sauvegarde");
+      setSaveMessage("");
+      setSaveError("Erreur lors de la sauvegarde");
+      if (typeof window !== "undefined" && window.scrollTo) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     }
   };
 
@@ -51,6 +64,7 @@ export default function Certifications() {
       </button>
 
       <form className="tab-panel" onSubmit={handleSubmit}>
+        <AlertBanner message={saveMessage} error={saveError} />
         <div className="projects-container">
           {certifications.map((certification, index) => (
             <div key={certification.id} className="card project-card mb-4">

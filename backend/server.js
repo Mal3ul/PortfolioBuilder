@@ -27,5 +27,29 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Erreur serveur" });
 });
 
+// Gestionnaire d'erreurs non capturées
+process.on('uncaughtException', (err) => {
+  console.error('❌ Uncaught Exception:', err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
+
 const PORT = 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const server = app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`📍 Test URL: http://localhost:${PORT}/api/portfolio/user/1768672901622`);
+});
+
+server.on('error', (err) => {
+  console.error('❌ Server error:', err);
+  process.exit(1);
+});
+
+// Garder le process actif
+setInterval(() => {
+  // Rien, juste garder le serveur actif
+}, 1000);

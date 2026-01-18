@@ -22,10 +22,14 @@ const handleUnauthorized = (error) => {
 };
 
 const updatePortfolio = async (data) => {
+  // Récupérer le userId depuis localStorage
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const userId = user.id || user.userId;
+  
   const response = await fetch(`${baseURL}/portfolio`, {
     method: "PUT",
     headers: getAuthHeaders(),
-    body: JSON.stringify(data),
+    body: JSON.stringify({ ...data, userId }), // Toujours inclure userId pour RBAC
   });
   if (!response.ok) {
     handleUnauthorized(response);

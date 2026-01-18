@@ -15,6 +15,8 @@ import Home from "../pages/public/Home";
 import Login from "../pages/public/Login";
 import Register from "../pages/public/Register";
 import PublicPortfolio from "../pages/public/PublicPortfolio";
+import ForgotPassword from "../pages/public/ForgotPassword";
+import ResetPassword from "../pages/public/ResetPassword";
 
 // Dashboard
 import DashboardHome from "../pages/dashboard/DashboardHome";
@@ -49,7 +51,9 @@ const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "/login", element: <Login /> },
       { path: "/register", element: <Register /> },
-      { path: "/portfolio/:username", element: <PublicPortfolio /> },
+      { path: "/forgot-password", element: <ForgotPassword /> },
+      { path: "/reset-password/:token", element: <ResetPassword /> },
+      { path: "/portfolio/:userId", element: <PublicPortfolio /> },
     ],
   },
 

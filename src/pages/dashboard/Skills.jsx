@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { usePortfolio } from "../../context/PortfolioContext";
 import "../../styles/Editor.css";
+import AlertBanner from "../../components/AlertBanner";
 
 export default function Skills() {
   const { skills, setSkills, saveSkills } = usePortfolio(); // On récupère le state global
   const [newSkill, setNewSkill] = useState("");
+  const [saveMessage, setSaveMessage] = useState("");
+  const [saveError, setSaveError] = useState("");
 
   const handleAddSkill = () => {
     const trimmed = newSkill.trim();
@@ -23,14 +26,24 @@ export default function Skills() {
     e.preventDefault();
     try {
       await saveSkills(skills);
-      alert("Compétences sauvegardées !");
+      setSaveError("");
+      setSaveMessage("Compétences sauvegardées !");
+      if (typeof window !== "undefined" && window.scrollTo) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      setTimeout(() => setSaveMessage(""), 3000);
     } catch (err) {
-      alert("Erreur lors de la sauvegarde");
+      setSaveMessage("");
+      setSaveError("Erreur lors de la sauvegarde");
+      if (typeof window !== "undefined" && window.scrollTo) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     }
   };
 
   return (
     <form className="tab-panel" onSubmit={handleSubmit}>
+      <AlertBanner message={saveMessage} error={saveError} />
       <div className="card">
         <div className="card-content">
           {/* Ajouter une compétence */}

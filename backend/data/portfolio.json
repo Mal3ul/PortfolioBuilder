@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-01-17T22:31:57.720Z",
+  "updatedAt": "2026-01-18T07:05:38.880Z",
   "profile": {
-    "firstName": "sdg",
+    "firstName": "Test",
     "lastName": "L",
     "title": "vdfff",
     "bio": "gfsnFF",
@@ -14,7 +14,7 @@
       "id": 1,
       "title": "sfg",
       "description": "sdfg",
-      "technologies": ""
+      "technologies": "sfg"
     },
     {
       "id": 2,
@@ -22,9 +22,280 @@
       "description": "",
       "technologies": "",
       "createdAt": 1768683654259
+    },
+    {
+      "id": 3,
+      "title": "33333333",
+      "description": "3dfzvgfrebifgjhnedfrgaq",
+      "technologies": "33",
+      "createdAt": 1768719915843
     }
   ],
   "activities": [
+    {
+      "id": 1768725280561,
+      "action": "Projets mis à jour",
+      "name": "3 projet(s)",
+      "timestamp": 1768725280561
+    },
+    {
+      "id": 1768725230730,
+      "action": "Projets mis à jour",
+      "name": "3 projet(s)",
+      "timestamp": 1768725230730
+    },
+    {
+      "id": 1768725022314,
+      "action": "Profil mis à jour",
+      "name": "Informations personnelles",
+      "timestamp": 1768725022314
+    },
+    {
+      "id": 1768725002227,
+      "action": "Médias mis à jour",
+      "name": "Réseaux sociaux et liens",
+      "timestamp": 1768725002227
+    },
+    {
+      "id": 1768724990928,
+      "action": "Médias mis à jour",
+      "name": "Réseaux sociaux et liens",
+      "timestamp": 1768724990928
+    },
+    {
+      "id": 1768724983587,
+      "action": "Compétences mises à jour",
+      "name": "2 compétence(s)",
+      "timestamp": 1768724983587
+    },
+    {
+      "id": 1768724979990,
+      "action": "Expériences mises à jour",
+      "name": "2 expérience(s)",
+      "timestamp": 1768724979990
+    },
+    {
+      "id": 1768724977346,
+      "action": "Certifications mises à jour",
+      "name": "2 certification(s)",
+      "timestamp": 1768724977346
+    },
+    {
+      "id": 1768724973893,
+      "action": "Formations mises à jour",
+      "name": "2 formation(s)",
+      "timestamp": 1768724973893
+    },
+    {
+      "id": 1768724970861,
+      "action": "Projets mis à jour",
+      "name": "3 projet(s)",
+      "timestamp": 1768724970861
+    },
+    {
+      "id": 1768724934332,
+      "action": "Profil mis à jour",
+      "name": "Informations personnelles",
+      "timestamp": 1768724934332
+    },
+    {
+      "id": 1768724547397,
+      "action": "Formations mises à jour",
+      "name": "2 formation(s)",
+      "timestamp": 1768724547397
+    },
+    {
+      "id": 1768724365886,
+      "action": "Projets mis à jour",
+      "name": "3 projet(s)",
+      "timestamp": 1768724365886
+    },
+    {
+      "id": 1768724037866,
+      "action": "Projets mis à jour",
+      "name": "3 projet(s)",
+      "timestamp": 1768724037866
+    },
+    {
+      "id": 1768723869434,
+      "action": "Projets mis à jour",
+      "name": "3 projet(s)",
+      "timestamp": 1768723869434
+    },
+    {
+      "id": 1768723865702,
+      "action": "Projets mis à jour",
+      "name": "3 projet(s)",
+      "timestamp": 1768723865702
+    },
+    {
+      "id": 1768723536357,
+      "action": "Formations mises à jour",
+      "name": "2 formation(s)",
+      "timestamp": 1768723536357
+    },
+    {
+      "id": 1768720432954,
+      "action": "Certifications mises à jour",
+      "name": "3 certification(s)",
+      "timestamp": 1768720432954
+    },
+    {
+      "id": 1768719938892,
+      "action": "Formations mises à jour",
+      "name": "2 formation(s)",
+      "timestamp": 1768719938892
+    },
+    {
+      "id": 1768719930515,
+      "action": "Projets mis à jour",
+      "name": "3 projet(s)",
+      "timestamp": 1768719930515
+    },
+    {
+      "id": 1768719928130,
+      "action": "Projets mis à jour",
+      "name": "3 projet(s)",
+      "timestamp": 1768719928130
+    },
+    {
+      "id": 1768719508471,
+      "action": "Expériences mises à jour",
+      "name": "2 expérience(s)",
+      "timestamp": 1768719508471
+    },
+    {
+      "id": 1768719419967,
+      "action": "Expériences mises à jour",
+      "name": "2 expérience(s)",
+      "timestamp": 1768719419967
+    },
+    {
+      "id": 1768719409723,
+      "action": "Expériences mises à jour",
+      "name": "1 expérience(s)",
+      "timestamp": 1768719409723
+    },
+    {
+      "id": 1768719127604,
+      "action": "Profil mis à jour",
+      "name": "Informations personnelles",
+      "timestamp": 1768719127604
+    },
+    {
+      "id": 1768719083339,
+      "action": "Certifications mises à jour",
+      "name": "2 certification(s)",
+      "timestamp": 1768719083339
+    },
+    {
+      "id": 1768719072952,
+      "action": "Certifications mises à jour",
+      "name": "2 certification(s)",
+      "timestamp": 1768719072952
+    },
+    {
+      "id": 1768718957733,
+      "action": "Certifications mises à jour",
+      "name": "2 certification(s)",
+      "timestamp": 1768718957733
+    },
+    {
+      "id": 1768718945332,
+      "action": "Certifications mises à jour",
+      "name": "2 certification(s)",
+      "timestamp": 1768718945332
+    },
+    {
+      "id": 1768718899845,
+      "action": "Formations mises à jour",
+      "name": "2 formation(s)",
+      "timestamp": 1768718899845
+    },
+    {
+      "id": 1768718562181,
+      "action": "Certifications mises à jour",
+      "name": "2 certification(s)",
+      "timestamp": 1768718562181
+    },
+    {
+      "id": 1768718351863,
+      "action": "Certifications mises à jour",
+      "name": "2 certification(s)",
+      "timestamp": 1768718351863
+    },
+    {
+      "id": 1768718252743,
+      "action": "Formations mises à jour",
+      "name": "2 formation(s)",
+      "timestamp": 1768718252743
+    },
+    {
+      "id": 1768708973663,
+      "action": "Profil mis à jour",
+      "name": "Informations personnelles",
+      "timestamp": 1768708973663
+    },
+    {
+      "id": 1768708650266,
+      "action": "Expériences mises à jour",
+      "name": "1 expérience(s)",
+      "timestamp": 1768708650266
+    },
+    {
+      "id": 1768708281964,
+      "action": "Expériences mises à jour",
+      "name": "1 expérience(s)",
+      "timestamp": 1768708281964
+    },
+    {
+      "id": 1768708233910,
+      "action": "Profil mis à jour",
+      "name": "Informations personnelles",
+      "timestamp": 1768708233910
+    },
+    {
+      "id": 1768708216085,
+      "action": "Profil mis à jour",
+      "name": "Informations personnelles",
+      "timestamp": 1768708216085
+    },
+    {
+      "id": 1768708158647,
+      "action": "Profil mis à jour",
+      "name": "Informations personnelles",
+      "timestamp": 1768708158647
+    },
+    {
+      "id": 1768703541526,
+      "action": "Médias mis à jour",
+      "name": "Réseaux sociaux et liens",
+      "timestamp": 1768703541526
+    },
+    {
+      "id": 1768703537731,
+      "action": "Compétences mises à jour",
+      "name": "2 compétence(s)",
+      "timestamp": 1768703537731
+    },
+    {
+      "id": 1768703525972,
+      "action": "Certifications mises à jour",
+      "name": "1 certification(s)",
+      "timestamp": 1768703525972
+    },
+    {
+      "id": 1768703506097,
+      "action": "Formations mises à jour",
+      "name": "1 formation(s)",
+      "timestamp": 1768703506097
+    },
+    {
+      "id": 1768703488892,
+      "action": "Projets mis à jour",
+      "name": "2 projet(s)",
+      "timestamp": 1768703488892
+    },
     {
       "id": 1768689117735,
       "action": "Profil mis à jour",
@@ -60,90 +331,6 @@
       "action": "Profil mis à jour",
       "name": "Informations personnelles",
       "timestamp": 1768685104973
-    },
-    {
-      "id": 1768683658043,
-      "action": "Projets mis à jour",
-      "name": "2 projet(s)",
-      "timestamp": 1768683658043
-    },
-    {
-      "id": 1768683362584,
-      "action": "Profil mis à jour",
-      "name": "Informations personnelles",
-      "timestamp": 1768683362584
-    },
-    {
-      "id": 1768682695182,
-      "action": "Projets mis à jour",
-      "name": "1 projet(s)",
-      "timestamp": 1768682695182
-    },
-    {
-      "id": 1768682456697,
-      "action": "Formations mises à jour",
-      "name": "1 formation(s)",
-      "timestamp": 1768682456697
-    },
-    {
-      "id": 1768682452021,
-      "action": "Formations mises à jour",
-      "name": "1 formation(s)",
-      "timestamp": 1768682452021
-    },
-    {
-      "id": 1768682446692,
-      "action": "Formations mises à jour",
-      "name": "1 formation(s)",
-      "timestamp": 1768682446692
-    },
-    {
-      "id": 1768682440524,
-      "action": "Formations mises à jour",
-      "name": "1 formation(s)",
-      "timestamp": 1768682440524
-    },
-    {
-      "id": 1768682427786,
-      "action": "Profil mis à jour",
-      "name": "Informations personnelles",
-      "timestamp": 1768682427786
-    },
-    {
-      "id": 1768681148822,
-      "action": "Expériences mises à jour",
-      "name": "1 expérience(s)",
-      "timestamp": 1768681148822
-    },
-    {
-      "id": 1768681118480,
-      "action": "Médias mis à jour",
-      "name": "Réseaux sociaux et liens",
-      "timestamp": 1768681118480
-    },
-    {
-      "id": 1768680609767,
-      "action": "Projets mis à jour",
-      "name": "1 projet(s)",
-      "timestamp": 1768680609767
-    },
-    {
-      "id": 1768680499285,
-      "action": "Profil mis à jour",
-      "name": "Informations personnelles",
-      "timestamp": 1768680499285
-    },
-    {
-      "id": 1768680257311,
-      "action": "Projets mis à jour",
-      "name": "2 projet(s)",
-      "timestamp": 1768680257311
-    },
-    {
-      "id": 1768680234621,
-      "action": "Profil mis à jour",
-      "name": "Informations personnelles",
-      "timestamp": 1768680234621
     }
   ],
   "media": {
@@ -164,17 +351,57 @@
       "endDate": "2026-01-07",
       "description": "sdf",
       "createdAt": 1768681135147
+    },
+    {
+      "id": 2,
+      "position": "zeegv",
+      "company": "qsdf",
+      "startDate": "",
+      "endDate": "",
+      "description": "faqes",
+      "createdAt": 1768719412599
     }
   ],
   "education": [
     {
       "id": 1,
       "diploma": "eeeeeeeeeeeeeee",
-      "school": "",
-      "startDate": "",
-      "endDate": "",
-      "description": "",
+      "school": "sdfsqsd",
+      "startDate": "2026-01-23",
+      "endDate": "2026-01-22",
+      "description": "aEZSDFQD",
       "createdAt": 1768682433894
+    },
+    {
+      "id": 2,
+      "diploma": "uuuuuuuu",
+      "school": "iiiiiiiiii",
+      "startDate": "2026-01-31",
+      "endDate": "2026-01-19",
+      "description": "fghjkl",
+      "createdAt": 1768718233678
     }
+  ],
+  "certifications": [
+    {
+      "id": 1,
+      "title": "QDFAEDF",
+      "organization": "ZRGZ",
+      "date": "2026-01-07",
+      "description": "SDFGZEDn",
+      "createdAt": 1768703510837
+    },
+    {
+      "id": 2,
+      "title": "gdsdvwq",
+      "organization": "swvfswdv",
+      "date": "2026-01-17",
+      "description": "",
+      "createdAt": 1768718344341
+    }
+  ],
+  "skills": [
+    "QFAE",
+    "QSDFZ"
   ]
 }

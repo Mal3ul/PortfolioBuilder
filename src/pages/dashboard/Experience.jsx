@@ -1,8 +1,12 @@
 import { usePortfolio } from "../../context/PortfolioContext";
 import { Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
+import AlertBanner from "../../components/AlertBanner";
 
 export default function Experience() {
   const { experiences, setExperiences, saveExperiences } = usePortfolio();
+  const [saveMessage, setSaveMessage] = useState("");
+  const [saveError, setSaveError] = useState("");
 
   const handleAddExperience = () => {
     setExperiences([
@@ -31,9 +35,18 @@ export default function Experience() {
     e.preventDefault();
     try {
       await saveExperiences(experiences);
-      alert("Expériences sauvegardées !");
+      setSaveError("");
+      setSaveMessage("Expériences sauvegardées !");
+      if (typeof window !== "undefined" && window.scrollTo) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      setTimeout(() => setSaveMessage(""), 3000);
     } catch (err) {
-      alert("Erreur lors de la sauvegarde");
+      setSaveMessage("");
+      setSaveError("Erreur lors de la sauvegarde");
+      if (typeof window !== "undefined" && window.scrollTo) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     }
   };
 
@@ -44,6 +57,7 @@ export default function Experience() {
       </button>
 
       <form className="tab-panel" onSubmit={handleSubmit}>
+        <AlertBanner message={saveMessage} error={saveError} />
         <div className="projects-container">
           {experiences.map((experience, index) => (
             <div key={experience.id} className="card project-card">

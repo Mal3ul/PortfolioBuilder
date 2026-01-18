@@ -1,127 +1,298 @@
-import React, { useState } from "react";
-import { usePortfolio } from "../../context/PortfolioContext";
-import "../../styles/PortfolioTemplate.css";
+import { useState } from "react";
+import { ArrowUp, ArrowDown } from "lucide-react";
 
-export default function PortfolioTemplate() {
-  // Récupère toutes les données depuis le contexte
-  const {
-    profile,
-    skills,
-    setSkills,
-    projects,
-    experiences,
-    media
-  } = usePortfolio();
+export default function PortfolioTemplate({ userData }) {
+  const { profile, projects = [], skills = [], experiences = [], education = [], certifications = [], media = [] } = userData || {};
+  const [skillsSortOrder, setSkillsSortOrder] = useState("none"); // "asc" | "desc" | "none"
+  const [experiencesSortOrder, setExperiencesSortOrder] = useState("none");
+  const [educationSortOrder, setEducationSortOrder] = useState("none");
+  const [certificationsSortOrder, setCertificationsSortOrder] = useState("none");
 
-  const [newSkill, setNewSkill] = useState("");
-
-  // Construire une liste uniforme de liens à partir de l'objet media
-  const mediaList = React.useMemo(() => {
-    if (Array.isArray(media)) return media;
-    if (!media) return [];
-    const list = [];
-    if (media.linkedin) list.push({ platform: "LinkedIn", url: media.linkedin });
-    if (media.github) list.push({ platform: "GitHub", url: media.github });
-    if (media.twitter) list.push({ platform: "Twitter", url: media.twitter });
-    if (Array.isArray(media.websites)) {
-      media.websites.filter(Boolean).forEach((url, idx) => {
-        list.push({ platform: `Site ${idx + 1}`, url });
-      });
+  // Fonction pour trier les compétences
+  const getSortedSkills = () => {
+    const skillsCopy = [...skills];
+    if (skillsSortOrder === "asc") {
+      return skillsCopy.sort((a, b) => a.localeCompare(b));
+    } else if (skillsSortOrder === "desc") {
+      return skillsCopy.sort((a, b) => b.localeCompare(a));
     }
-    return list;
-  }, [media]);
+    return skillsCopy;
+  };
 
-  const addSkill = () => {
-    if (!newSkill.trim()) return;
-    if (!skills.includes(newSkill.trim())) {
-      setSkills([...skills, newSkill.trim()]);
-      setNewSkill("");
+  // Fonction pour trier les expériences par date
+  const getSortedExperiences = () => {
+    const expCopy = [...experiences];
+    if (experiencesSortOrder === "asc") {
+      return expCopy.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+    } else if (experiencesSortOrder === "desc") {
+      return expCopy.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
     }
+    return expCopy;
+  };
+
+  // Fonction pour trier les formations par date
+  const getSortedEducation = () => {
+    const eduCopy = [...education];
+    if (educationSortOrder === "asc") {
+      return eduCopy.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+    } else if (educationSortOrder === "desc") {
+      return eduCopy.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+    }
+    return eduCopy;
+  };
+
+  // Fonction pour trier les certifications par date
+  const getSortedCertifications = () => {
+    const certCopy = [...certifications];
+    if (certificationsSortOrder === "asc") {
+      return certCopy.sort((a, b) => new Date(a.date) - new Date(b.date));
+    } else if (certificationsSortOrder === "desc") {
+      return certCopy.sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+    return certCopy;
   };
 
   return (
     <div className="portfolio-template">
-
-      {/* === Accueil === */}
-      <section className="accueil">
-        <div className="accueil-container">
-          <div className="accueil-left">
-            <h1>{profile.firstName} {profile.lastName}</h1>
-            <p className="role">{profile.title}</p>
-            <p className="bio">{profile.bio}</p>
-            <a href="#" className="btn-cv" target="_blank">Voir mon CV</a>
+      {/* Header / Navbar */}
+      <header className="portfolio-header">
+        <nav className="portfolio-navbar">
+          <div className="container-portfolio">
+            <a href="#accueil" className="portfolio-logo">{profile?.name || "Portfolio"}</a>
+            <button className="menu-toggle" aria-label="Menu">
+              <span className="menu-bar"></span>
+              <span className="menu-bar"></span>
+              <span className="menu-bar"></span>
+            </button>
+            {/* <ul className="nav-links">
+              <li><a href="#accueil">Accueil</a></li>
+              <li><a href="#parcours">Parcours</a></li>
+              <li><a href="#projets">Projets</a></li>
+              <li><a href="#competences">Compétences</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul> */}
           </div>
-          <div className="accueil-right">
-            <div className="avatar">{profile.avatar || "👨‍💻"}</div>
+        </nav>
+      </header>
+
+      {/* Section Accueil / Hero */}
+      <section id="accueil" className="hero-section">
+        <div className="container-portfolio">
+          <div className="hero-flex">
+            <div className="hero-content">
+              <h1>{profile?.name || "Votre Nom"}</h1>
+              <h2 className="hero-title">{profile?.title || "Votre Titre"}</h2>
+              <p className="hero-bio">{profile?.bio || "Votre biographie professionnelle."}</p>
+              <a href="#contact" className="btn-primary">Me Contacter</a>
+            </div>
+            <div className="hero-image">
+              <div className="avatar-large">{profile?.avatar || "👤"}</div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* === Compétences === */}
-      <section className="skills">
-        <h2>Compétences</h2>
-        <p>Liste tes compétences techniques et soft skills</p>
-
-        <div className="skills-add">
-          <input
-            className="input"
-            placeholder="Ex: React.js"
-            value={newSkill}
-            onChange={(e) => setNewSkill(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && addSkill()}
-          />
-          <button className="btn-primary" onClick={addSkill}>Ajouter</button>
-        </div>
-
-        <div className="skills-list">
-          {skills.map((skill, index) => (
-            <span key={index} className="badge">{skill}</span>
-          ))}
-        </div>
-      </section>
-
-      {/* === Projets === */}
-      <section className="projects">
-        <h2>Projets</h2>
-        <div className="projects-container">
-          {projects?.map((project) => (
-            <div key={project.id} className="project-card">
-              <h3>{project.title}</h3>
-              <p>{project.description}</p>
-              <div className="tech-list">
-                {project.technologies.map((tech, i) => (
-                  <span key={i} className="badge">{tech}</span>
-                ))}
+      {/* Section Compétences */}
+      {skills.length > 0 && (
+        <section id="competences" className="skills-section">
+          <div className="container-portfolio">
+            <div className="skills-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 className="section-title" style={{ margin: 0 }}>Mes Compétences</h2>
+              <div className="sort-buttons" style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setSkillsSortOrder(skillsSortOrder === "asc" ? "none" : "asc")}
+                  className={`btn btn-sm ${skillsSortOrder === "asc" ? "btn-primary" : "btn-outline"}`}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+                  title="Trier A-Z"
+                >
+                  <ArrowUp size={14} /> A-Z
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSkillsSortOrder(skillsSortOrder === "desc" ? "none" : "desc")}
+                  className={`btn btn-sm ${skillsSortOrder === "desc" ? "btn-primary" : "btn-outline"}`}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+                  title="Trier Z-A"
+                >
+                  <ArrowDown size={14} /> Z-A
+                </button>
               </div>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* === Parcours / Expériences === */}
-      <section className="parcours">
-        <h2>Parcours Professionnel et Scolaire</h2>
-        <div className="parcours-container">
-          {experiences?.map((exp, i) => (
-            <div key={i} className="parcours-item">
-              <h3>{exp.title}</h3>
-              <p>{exp.company}</p>
-              <p>{exp.startDate} - {exp.endDate}</p>
-              <p>{exp.description}</p>
+            <div className="tech-tags">
+              {getSortedSkills().map((skill, index) => (
+                <span key={index} className="tech-tag">{skill}</span>
+              ))}
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
-      {/* === Contacts / Réseaux === */}
-      <section className="media">
-        <h2>Réseaux & Liens</h2>
-        <ul className="media-list">
-          {mediaList.map((item, i) => (
-            <li key={i}><a href={item.url} target="_blank">{item.platform}</a></li>
-          ))}
-        </ul>
-      </section>
+      {/* Section Parcours / Expériences */}
+      {experiences.length > 0 && (
+        <section id="parcours" className="parcours-section">
+          <div className="container-portfolio">
+            <div className="skills-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 className="section-title" style={{ margin: 0 }}>Mes Expériences</h2>
+              <div className="sort-buttons" style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setExperiencesSortOrder(experiencesSortOrder === "desc" ? "none" : "desc")}
+                  className={`btn btn-sm ${experiencesSortOrder === "desc" ? "btn-primary" : "btn-outline"}`}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+                  title="Plus récent d'abord"
+                >
+                  <ArrowDown size={14} /> Récent
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setExperiencesSortOrder(experiencesSortOrder === "asc" ? "none" : "asc")}
+                  className={`btn btn-sm ${experiencesSortOrder === "asc" ? "btn-primary" : "btn-outline"}`}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+                  title="Plus ancien d'abord"
+                >
+                  <ArrowUp size={14} /> Ancien
+                </button>
+              </div>
+            </div>
+            <div className="parcours-container">
+              {getSortedExperiences().map((exp, index) => (
+                <div key={index} className="parcours-item">
+                  <h3>{exp.title}</h3>
+                  <p className="parcours-company">{exp.company}</p>
+                  <p className="parcours-date">{exp.startDate} - {exp.endDate || "Présent"}</p>
+                  <p className="parcours-description">{exp.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Section Projets */}
+      {projects.length > 0 && (
+        <section id="projets" className="projects-section">
+          <div className="container-portfolio">
+            <h2 className="section-title">Mes Réalisations</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              {projects.map((project) => (
+                <div key={project.id} className="project-card">
+                  <h3>{project.title}</h3>
+                  <p>{project.description}</p>
+                  {project.technologies && project.technologies.length > 0 && (
+                    <div className="tech-tags">
+                      {project.technologies.map((tech, i) => (
+                        <span key={i} className="tech-tag">{tech}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Section Formations */}
+      {education.length > 0 && (
+        <section id="formations" className="parcours-section">
+          <div className="container-portfolio">
+            <div className="skills-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 className="section-title" style={{ margin: 0 }}>Mes Formations</h2>
+              <div className="sort-buttons" style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setEducationSortOrder(educationSortOrder === "desc" ? "none" : "desc")}
+                  className={`btn btn-sm ${educationSortOrder === "desc" ? "btn-primary" : "btn-outline"}`}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+                  title="Plus récent d'abord"
+                >
+                  <ArrowDown size={14} /> Récent
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEducationSortOrder(educationSortOrder === "asc" ? "none" : "asc")}
+                  className={`btn btn-sm ${educationSortOrder === "asc" ? "btn-primary" : "btn-outline"}`}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+                  title="Plus ancien d'abord"
+                >
+                  <ArrowUp size={14} /> Ancien
+                </button>
+              </div>
+            </div>
+            <div className="parcours-container">
+              {getSortedEducation().map((edu, index) => (
+                <div key={edu.id || index} className="parcours-item">
+                  <h3>{edu.diploma}</h3>
+                  <p className="parcours-company">{edu.school}</p>
+                  <p className="parcours-date">{edu.startDate} - {edu.endDate || "Présent"}</p>
+                  <p className="parcours-description">{edu.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Section Certifications */}
+      {certifications.length > 0 && (
+        <section id="certifications" className="projects-section">
+          <div className="container-portfolio">
+            <div className="skills-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 className="section-title" style={{ margin: 0 }}>Mes Certifications</h2>
+              <div className="sort-buttons" style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setCertificationsSortOrder(certificationsSortOrder === "desc" ? "none" : "desc")}
+                  className={`btn btn-sm ${certificationsSortOrder === "desc" ? "btn-primary" : "btn-outline"}`}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+                  title="Plus récent d'abord"
+                >
+                  <ArrowDown size={14} /> Récent
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCertificationsSortOrder(certificationsSortOrder === "asc" ? "none" : "asc")}
+                  className={`btn btn-sm ${certificationsSortOrder === "asc" ? "btn-primary" : "btn-outline"}`}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.4rem 0.8rem', fontSize: '0.85rem' }}
+                  title="Plus ancien d'abord"
+                >
+                  <ArrowUp size={14} /> Ancien
+                </button>
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              {getSortedCertifications().map((cert) => (
+                <div key={cert.id || cert.title} className="project-card">
+                  <h3>{cert.title}</h3>
+                  <p className="parcours-company">{cert.organization || cert.issuer || "Organisme non renseigné"}</p>
+                  <p className="parcours-date">{cert.date || "Date non renseignée"}</p>
+                  {cert.description && <p>{cert.description}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Footer / Contact */}
+      <footer id="contact" className="portfolio-footer">
+        <div className="container-portfolio">
+          <h3>Restons en contact</h3>
+          {media && media.length > 0 && (
+            <ul className="social-links">
+              {media.map((link, index) => (
+                <li key={index}>
+                  <a href={link.url} target="_blank" rel="noopener noreferrer">
+                    {link.platform}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+          <p>&copy; {new Date().getFullYear()} {profile?.name || "Portfolio"}. Tous droits réservés.</p>
+        </div>
+      </footer>
     </div>
   );
 }

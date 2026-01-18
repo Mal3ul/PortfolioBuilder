@@ -1,6 +1,8 @@
 import express from "express";
 import fs from "fs";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import { sendPasswordResetEmail } from "../utils/email.js";
 
 const router = express.Router();
 const DB_PATH = "./data/db.json";
@@ -198,7 +200,9 @@ router.post("/change-password", (req, res) => {
 });
 
 // Récupérer tous les utilisateurs (protégé par JWT)
-router.get("/users", verifyToken, (req, res) => {
+import { requireRole } from "../middleware/roles.js";
+
+router.get("/users", verifyToken, requireRole('admin'), (req, res) => {
   const db = readDB();
   const users = db.users.map((u) => ({
     id: u.id,
@@ -207,6 +211,88 @@ router.get("/users", verifyToken, (req, res) => {
     role: u.role || "user"
   }));
   res.json(users);
+});
+
+// Demander la réinitialisation du mot de passe
+router.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+  
+  if (!email) {
+    return res.status(400).json({ message: "Email requis" });
+  }
+
+  const db = readDB();
+  const user = db.users.find((u) => u.email === email);
+
+  if (!user) {
+    // Pour des raisons de sécurité, ne pas révéler si l'email existe
+    return res.json({ 
+      message: "Si cet email existe, un lien de réinitialisation a été envoyé" 
+    });
+  }
+
+  // Générer un token sécurisé
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  const resetTokenExpiry = Date.now() + 3600000; // 1 heure
+
+  // Stocker le token dans l'utilisateur
+  user.resetPasswordToken = resetToken;
+  user.resetPasswordExpiry = resetTokenExpiry;
+  writeDB(db);
+
+  // Envoyer l'email
+  const emailResult = await sendPasswordResetEmail(email, resetToken, user.name);
+
+  res.json({ 
+    message: "Un email de réinitialisation a été envoyé",
+    // En développement, retourner le token et l'URL pour tester
+    ...(process.env.NODE_ENV !== 'production' && emailResult.resetUrl && { 
+      devToken: resetToken,
+      devResetUrl: emailResult.resetUrl
+    })
+  });
+});
+
+// Réinitialiser le mot de passe avec le token
+router.post("/reset-password", (req, res) => {
+  const { token, newPassword } = req.body;
+
+  if (!token || !newPassword) {
+    return res.status(400).json({ 
+      message: "Token et nouveau mot de passe requis" 
+    });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({ 
+      message: "Le mot de passe doit contenir au moins 6 caractères" 
+    });
+  }
+
+  const db = readDB();
+  const user = db.users.find(
+    (u) => u.resetPasswordToken === token && 
+           u.resetPasswordExpiry > Date.now()
+  );
+
+  if (!user) {
+    return res.status(400).json({ 
+      message: "Token invalide ou expiré" 
+    });
+  }
+
+  // Mettre à jour le mot de passe
+  user.password = newPassword;
+  
+  // Supprimer le token de réinitialisation
+  delete user.resetPasswordToken;
+  delete user.resetPasswordExpiry;
+  
+  writeDB(db);
+
+  res.json({ 
+    message: "Mot de passe réinitialisé avec succès" 
+  });
 });
 
 export default router;

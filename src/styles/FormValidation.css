@@ -1,0 +1,26 @@
+/* === MESSAGES D'ERREUR === */
+.error-message {
+  font-size: 0.85rem;
+  color: #dc2626;
+  margin-top: 0.25rem;
+  display: block;
+  font-weight: 500;
+}
+
+
+/* Classe optionnelle pour marquer un champ comme erreur */
+.input-error {
+  border-color: #dc2626 !important;
+}
+
+.input-error:focus {
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+}
+
+/* Astérisque indicateur pour champs obligatoires */
+.required-star {
+  color: #dc2626;
+  margin-left: 0.25rem;
+  font-weight: 600;
+}
