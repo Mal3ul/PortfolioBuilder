@@ -9,12 +9,21 @@ export function AuthProvider({ children }) {
   const [loading] = useState(false);
 
   const login = (data) => {
-    localStorage.setItem("user", JSON.stringify(data));
-    setUser(data);
+    const userData = {
+      id: data.userId,
+      name: data.name,
+      email: data.email,
+      role: data.role,
+      token: data.token
+    };
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", data.token);
+    setUser(userData);
   };
 
   const logout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setUser(null);
   };
 

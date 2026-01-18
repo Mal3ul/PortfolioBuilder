@@ -27,8 +27,24 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // ✅ Récupérer le token du localStorage
+        const token = localStorage.getItem("token");
+        
+        if (!token) {
+          console.error("Token manquant");
+          navigate("/login");
+          return;
+        }
+
+        const headers = {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        };
+
         // Fetch users from backend
-        const usersRes = await fetch("http://localhost:5000/api/auth/users");
+        const usersRes = await fetch("http://localhost:5000/api/auth/users", {
+          headers
+        });
         if (!usersRes.ok) {
           throw new Error(`Users API error: ${usersRes.status}`);
         }
@@ -47,7 +63,9 @@ export default function AdminDashboard() {
         setUsers(transformedUsers);
 
         // Fetch portfolio data from backend
-        const portfolioRes = await fetch("http://localhost:5000/api/portfolio");
+        const portfolioRes = await fetch("http://localhost:5000/api/portfolio", {
+          headers
+        });
         if (!portfolioRes.ok) {
           throw new Error(`Portfolio API error: ${portfolioRes.status}`);
         }
@@ -75,7 +93,7 @@ export default function AdminDashboard() {
     };
 
     fetchData();
-  }, []);
+  }, [navigate]);
 
   const handleDeleteUser = (id) => {
     setUsers((prev) => prev.filter((u) => u.id !== id));

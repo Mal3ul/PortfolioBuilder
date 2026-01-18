@@ -1,14 +1,34 @@
 const baseURL = "/api";
 
+// ✅ Fonction utilitaire pour ajouter JWT aux requêtes
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  return headers;
+};
+
+// ✅ Gestion d'erreur JWT (401)
+const handleUnauthorized = (error) => {
+  if (error.status === 401) {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  }
+};
+
 const updatePortfolio = async (data) => {
   const response = await fetch(`${baseURL}/portfolio`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: getAuthHeaders(),
     body: JSON.stringify(data),
   });
   if (!response.ok) {
+    handleUnauthorized(response);
     throw new Error("Erreur lors de la mise à jour du portfolio");
   }
   return response.json();
@@ -16,8 +36,11 @@ const updatePortfolio = async (data) => {
 
 export const portfolioService = {
   getPortfolio: async () => {
-    const response = await fetch(`${baseURL}/portfolio`);
+    const response = await fetch(`${baseURL}/portfolio`, {
+      headers: getAuthHeaders(),
+    });
     if (!response.ok) {
+      handleUnauthorized(response);
       throw new Error("Erreur lors de la récupération du portfolio");
     }
     return response.json();

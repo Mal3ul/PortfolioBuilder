@@ -1,12 +1,31 @@
 import express from "express";
 import fs from "fs";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 const DB_PATH = "./data/db.json";
+const JWT_SECRET = "portfolio-builder-hopital-singe-2026";
 
 const readDB = () => JSON.parse(fs.readFileSync(DB_PATH));
 const writeDB = (data) =>
   fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+
+// Middleware pour vérifier JWT
+export const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "Token manquant" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: "Token invalide ou expiré" });
+  }
+};
 
 router.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -29,8 +48,15 @@ router.post("/login", (req, res) => {
     writeDB(db);
   }
 
+  // ✅ Générer JWT
+  const token = jwt.sign(
+    { id: user.id, email: user.email, role },
+    JWT_SECRET,
+    { expiresIn: "30m" }
+  );
+
   res.json({
-    token: "fake-jwt-token",
+    token,
     userId: user.id,
     name: user.name,
     email: user.email,
@@ -171,8 +197,8 @@ router.post("/change-password", (req, res) => {
   res.json({ message: "Mot de passe modifié avec succès" });
 });
 
-// Récupérer tous les utilisateurs
-router.get("/users", (req, res) => {
+// Récupérer tous les utilisateurs (protégé par JWT)
+router.get("/users", verifyToken, (req, res) => {
   const db = readDB();
   const users = db.users.map((u) => ({
     id: u.id,
