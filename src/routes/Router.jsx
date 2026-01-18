@@ -4,6 +4,7 @@ import { createBrowserRouter } from "react-router-dom";
 import PublicLayout from "../layouts/PublicLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
 import AdminLayout from "../layouts/AdminLayout";
+import AdminRoute from "../components/AdminRoute";
 import EditorLayout from "../layouts/EditorLayout";
 
 // Components
@@ -33,7 +34,7 @@ import Editeur from "../pages/dashboard/PortfolioEditor";
 
 
 // Admin
-import AdminHome from "../pages/admin/AdminHome";
+import AdminDashboard from "../pages/admin/AdminDashboard";
 import AdminUsers from "../pages/admin/AdminUsers";
 import AdminTemplates from "../pages/admin/AdminTemplates";
 
@@ -89,11 +90,14 @@ const router = createBrowserRouter([
   },
 
   {
-    element: <AdminLayout />,
+    element: (
+      <AdminRoute>
+        <AdminLayout />
+      </AdminRoute>
+    ),
     children: [
-      { path: "/admin", element: <AdminHome /> },
-      { path: "/admin/users", element: <AdminUsers /> },
-      { path: "/admin/templates", element: <AdminTemplates /> },
+      { path: "/admin", element: <AdminDashboard /> },
+      { path: "/admin/users", element: <AdminDashboard /> },
     ],
   },
 ]);

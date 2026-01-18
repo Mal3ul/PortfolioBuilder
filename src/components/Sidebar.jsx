@@ -1,15 +1,18 @@
-import { User, Briefcase, FolderOpen, Award, Settings, LogOut } from "lucide-react";
+import { User, Briefcase, FolderOpen, Award, Settings, LogOut, LayoutDashboard } from "lucide-react";
 import "../styles/Dashboard.css";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Sidebar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuth();
 
   const displayName = user?.name || "Utilisateur";
   const displayEmail = user?.email || "";
   const avatarLetter = displayName.substring(0, 1).toUpperCase();
+  
+  const isOnSettings = location.pathname === "/dashboard/settings";
 
   const handleLogout = () => {
     logout();
@@ -52,10 +55,24 @@ export default function Sidebar() {
           <span className="menu-label">Compétences</span>
         </NavLink>
 
-        <NavLink className="menu-item" to="/dashboard/settings">
-          <Settings size={20} />
-          <span className="menu-label">Paramètres</span>
-        </NavLink>
+        {isOnSettings ? (
+          <NavLink className="menu-item" to="/dashboard">
+            <LayoutDashboard size={20} />
+            <span className="menu-label">Dashboard</span>
+          </NavLink>
+        ) : (
+          <NavLink className="menu-item" to="/dashboard/settings">
+            <Settings size={20} />
+            <span className="menu-label">Paramètres</span>
+          </NavLink>
+        )}
+
+        {user?.role === "admin" && (
+          <NavLink className="menu-item" to="/admin">
+            <LayoutDashboard size={20} />
+            <span className="menu-label">Admin</span>
+          </NavLink>
+        )}
       </nav>
 
       <div className="sidebar-logout">

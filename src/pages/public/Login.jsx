@@ -23,14 +23,15 @@ export default function Login() {
         password
       });
 
-      // Normaliser la réponse avec 'id' au lieu de 'userId'
+      // Normaliser la réponse: id, role
       const userData = {
         ...res,
-        id: res.userId || res.id
+        id: res.userId || res.id,
+        role: res.role || "user"
       };
 
       login(userData);
-      navigate("/dashboard");
+      navigate(userData.role === "admin" ? "/admin" : "/dashboard");
     } catch (err) {
       alert("Identifiants incorrects");
     } finally {

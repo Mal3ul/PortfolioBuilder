@@ -20,11 +20,21 @@ router.post("/login", (req, res) => {
     return res.status(401).json({ message: "Identifiants invalides" });
   }
 
+  // Déterminer le rôle (fallback si manquant)
+  const role = user.role ? user.role : (user.email === "admin@test.com" ? "admin" : "user");
+
+  // Persister le rôle si manquant ou différent
+  if (!user.role || user.role !== role) {
+    user.role = role;
+    writeDB(db);
+  }
+
   res.json({
     token: "fake-jwt-token",
     userId: user.id,
     name: user.name,
-    email: user.email
+    email: user.email,
+    role
   });
 });
 
@@ -43,7 +53,8 @@ router.post("/register", (req, res) => {
     id: Date.now(),
     name,
     email,
-    password
+    password,
+    role: "user"
   };
 
   db.users.push(newUser);
@@ -158,6 +169,18 @@ router.post("/change-password", (req, res) => {
   writeDB(db);
 
   res.json({ message: "Mot de passe modifié avec succès" });
+});
+
+// Récupérer tous les utilisateurs
+router.get("/users", (req, res) => {
+  const db = readDB();
+  const users = db.users.map((u) => ({
+    id: u.id,
+    name: u.name,
+    email: u.email,
+    role: u.role || "user"
+  }));
+  res.json(users);
 });
 
 export default router;
