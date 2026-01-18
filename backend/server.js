@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
+import path from "path";
+import { fileURLToPath } from "url";
 
 // Routes
 import authRoutes from "./routes/auth.routes.js";
@@ -9,6 +11,9 @@ import projectsRoutes from "./routes/projects.routes.js";
 import skillsRoutes from "./routes/skills.routes.js";
 import activitiesRoutes from "./routes/activities.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -22,6 +27,19 @@ app.use("/api/projects", projectsRoutes);
 app.use("/api/skills", skillsRoutes);
 app.use("/api/activities", activitiesRoutes);
 app.use("/api/admin", adminRoutes);
+
+// Servir les fichiers statiques du frontend en production
+if (process.env.NODE_ENV === 'production') {
+  const frontendPath = path.join(__dirname, '../dist');
+  app.use(express.static(frontendPath));
+  
+  // SPA fallback: rediriger les routes non-API vers index.html
+  app.get('*', (req, res) => {
+    if (!req.path.startsWith('/api')) {
+      res.sendFile(path.join(frontendPath, 'index.html'));
+    }
+  });
+}
 
 // Error handler
 app.use((err, req, res, next) => {
@@ -40,10 +58,12 @@ process.on('unhandledRejection', (reason, promise) => {
   process.exit(1);
 });
 
-const PORT = 10000;
+const PORT = process.env.PORT || 10000;
 const server = app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
-  console.log(`📍 Test URL: http://localhost:${PORT}/api/portfolio/user/1768672901622`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`📍 Test URL: http://localhost:${PORT}/api/portfolio/user/1768672901622`);
+  }
 });
 
 server.on('error', (err) => {

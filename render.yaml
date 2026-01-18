@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: portfolio-builder
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        scope: project
+      - key: JWT_EXPIRES_IN
+        scope: project
+      - key: SMTP_HOST
+        scope: project
+      - key: SMTP_PORT
+        scope: project
+      - key: SMTP_USER
+        scope: project
+      - key: SMTP_PASS
+        scope: project
+      - key: BREVO_API_KEY
+        scope: project
+      - key: BREVO_SENDER_EMAIL
+        scope: project
