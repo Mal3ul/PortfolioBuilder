@@ -3,10 +3,10 @@ import fs from "fs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { sendPasswordResetEmail } from "../utils/email.js";
+import { JWT_SECRET, JWT_EXPIRES_IN } from "../config.js";
 
 const router = express.Router();
 const DB_PATH = "./data/db.json";
-const JWT_SECRET = "portfolio-builder-hopital-singe-2026";
 
 const readDB = () => JSON.parse(fs.readFileSync(DB_PATH));
 const writeDB = (data) =>
@@ -51,11 +51,7 @@ router.post("/login", (req, res) => {
   }
 
   // ✅ Générer JWT
-  const token = jwt.sign(
-    { id: user.id, email: user.email, role },
-    JWT_SECRET,
-    { expiresIn: "30m" }
-  );
+  const token = jwt.sign({ id: user.id, email: user.email, role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 
   res.json({
     token,

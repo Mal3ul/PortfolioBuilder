@@ -10,5 +10,5 @@ app.use(bodyParser.json());
 
 app.use("/api/portfolio", portfolioRoutes);
 
-const PORT = 5000;
+const PORT = 10000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

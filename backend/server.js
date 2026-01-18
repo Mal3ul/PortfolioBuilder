@@ -8,6 +8,7 @@ import portfolioRoutes from "./routes/portfolio.routes.js";
 import projectsRoutes from "./routes/projects.routes.js";
 import skillsRoutes from "./routes/skills.routes.js";
 import activitiesRoutes from "./routes/activities.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use("/api/portfolio", portfolioRoutes);
 app.use("/api/projects", projectsRoutes);
 app.use("/api/skills", skillsRoutes);
 app.use("/api/activities", activitiesRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {
@@ -38,7 +40,7 @@ process.on('unhandledRejection', (reason, promise) => {
   process.exit(1);
 });
 
-const PORT = 5000;
+const PORT = 10000;
 const server = app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
   console.log(`📍 Test URL: http://localhost:${PORT}/api/portfolio/user/1768672901622`);
