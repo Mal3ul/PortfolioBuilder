@@ -99,3 +99,9 @@ http://localhost:3000
 | `/api/skills/:skillId`    | PUT     | Mettre à jour une compétence                     | `{ "skill": "React avancé", "description": "..."} `                               | 200, 400, 404 |
 | `/api/skills/:skillId`    | DELETE  | Supprimer une compétence                         | -                                                                                 | 204, 404      |
 | `/api/activities/:userId` | GET     | Récupérer l’historique d’activité                | -                                                                                 | 200, 404      |
+
+# Portfolio Builder
+## Configuration de l’environnement
+- Copiez le fichier d’exemple du backend: [backend/.env.example](backend/.env.example) vers [backend/.env](backend/.env) et remplissez les variables (JWT, port serveur, clés Brevo).
+- Ne commitez jamais vos fichiers `.env`. Les secrets sont ignorés via [ .gitignore ](./.gitignore).
+- Pour l’envoi d’emails en production, utilisez une adresse vérifiée chez Brevo et configurez les enregistrements DNS (SPF/DKIM/DMARC) sur votre domaine.
