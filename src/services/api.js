@@ -103,7 +103,7 @@ export const activityService = {
 
 export const authService = {
   login: async (credentials) => {
-    const response = await fetch("http://localhost:5000/api/auth/login", {
+    const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -117,7 +117,7 @@ export const authService = {
   },
 
   register: async (userData) => {
-    const response = await fetch("http://localhost:5000/api/auth/register", {
+    const response = await fetch("/api/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

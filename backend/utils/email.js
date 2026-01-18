@@ -1,7 +1,15 @@
 import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 // En développement, on simule l'envoi d'email
-const isDevelopment = process.env.NODE_ENV !== 'production';
+const isDevelopment = (process.env.NODE_ENV || '').trim().toLowerCase() !== 'production';
+console.log('[email] NODE_ENV =', process.env.NODE_ENV, 'isDevelopment =', isDevelopment);
 
 // Configuration du transporteur email
 let transporter;
@@ -16,10 +24,15 @@ if (isDevelopment) {
   transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT || 587,
-    secure: false,
+    secure: process.env.SMTP_SECURE === 'true',
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS
+    },
+    logger: true,
+    debug: true,
+    tls: {
+      rejectUnauthorized: false
     }
   });
 }
@@ -27,11 +40,8 @@ if (isDevelopment) {
 export const sendPasswordResetEmail = async (email, resetToken, userName) => {
   const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
   
-  const mailOptions = {
-    from: '"Portfolio Builder" <noreply@portfoliobuilder.com>',
-    to: email,
-    subject: 'Réinitialisation de votre mot de passe',
-    html: `
+  const subject = 'Réinitialisation de votre mot de passe';
+  const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #0077ff;">Réinitialisation de mot de passe</h2>
         <p>Bonjour ${userName},</p>
@@ -53,11 +63,47 @@ export const sendPasswordResetEmail = async (email, resetToken, userName) => {
           Portfolio Builder - Plateforme de création de portfolios professionnels
         </p>
       </div>
-    `
-  };
+    `;
 
   try {
-    const info = await transporter.sendMail(mailOptions);
+    // Préférence: utiliser API Brevo via HTTPS si disponible (évite blocages SMTP)
+    if (process.env.BREVO_API_KEY) {
+      const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.SMTP_USER || 'noreply@portfoliobuilder.com';
+      const senderName = 'Portfolio Builder';
+      const fetchFn = globalThis.fetch ? globalThis.fetch : (await import('node-fetch')).default;
+      const res = await fetchFn('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'api-key': process.env.BREVO_API_KEY,
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          sender: { email: senderEmail, name: senderName },
+          to: [{ email, name: userName || email }],
+          subject,
+          htmlContent: html,
+          replyTo: { email: senderEmail, name: senderName }
+        })
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        console.error('❌ Brevo API error:', res.status, errText);
+        return { success: false, error: `brevo_api_${res.status}` };
+      }
+
+      const data = await res.json();
+      console.log('📧 [BREVO] Email envoyé:', data.messageId || data);
+      return { success: true, messageId: data.messageId || 'brevo' };
+    }
+
+    // Fallback: SMTP via Nodemailer
+    const info = await transporter.sendMail({
+      from: process.env.SMTP_USER || '"Portfolio Builder" <noreply@portfoliobuilder.com>',
+      to: email,
+      subject,
+      html
+    });
     
     if (isDevelopment) {
       console.log('📧 [DEV] Email simulé - Token de réinitialisation:', resetToken);

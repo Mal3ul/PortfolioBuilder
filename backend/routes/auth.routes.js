@@ -212,6 +212,7 @@ router.get("/users", verifyToken, requireRole('admin'), (req, res) => {
 // Demander la réinitialisation du mot de passe
 router.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
+  console.log('[auth] forgot-password request for', email);
   
   if (!email) {
     return res.status(400).json({ message: "Email requis" });
@@ -238,8 +239,15 @@ router.post("/forgot-password", async (req, res) => {
 
   // Envoyer l'email
   const emailResult = await sendPasswordResetEmail(email, resetToken, user.name);
+  console.log('[auth] email result', emailResult);
+  if (!emailResult?.success) {
+    return res.status(502).json({
+      message: "Échec de l'envoi de l'email de réinitialisation",
+      error: emailResult?.error || 'unknown'
+    });
+  }
 
-  res.json({ 
+  res.status(200).json({ 
     message: "Un email de réinitialisation a été envoyé",
     // En développement, retourner le token et l'URL pour tester
     ...(process.env.NODE_ENV !== 'production' && emailResult.resetUrl && { 

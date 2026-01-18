@@ -57,7 +57,7 @@ export default function PublicPortfolio() {
       setError(null);
       try {
         // Ajouter un timestamp pour éviter le cache
-        const response = await fetch(`http://localhost:5000/api/portfolio/user/${userId}?t=${Date.now()}`);
+        const response = await fetch(`/api/portfolio/user/${userId}?t=${Date.now()}`);
         if (!response.ok) {
           throw new Error("Portfolio introuvable");
         }

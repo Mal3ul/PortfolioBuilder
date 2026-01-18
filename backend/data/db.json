@@ -24,7 +24,9 @@
       "id": 1768675670845,
       "name": "julie ette",
       "email": "kidana9934@elafans.com",
-      "password": "12345"
+      "password": "12345",
+      "resetPasswordToken": "149d7a18f0db9440130d6fe2eb2ef1c46cdc2f93e4567653649659c9d3326d5c",
+      "resetPasswordExpiry": 1768771760860
     },
     {
       "id": 1768676410163,
@@ -43,6 +45,33 @@
       "name": "Jen Ny",
       "email": "j@n",
       "password": "test"
+    },
+    {
+      "id": 1768763550986,
+      "name": "Nessia",
+      "email": "nessia.mimi@gmail.com",
+      "password": "nessia",
+      "role": "user",
+      "resetPasswordToken": "6118e05549fb33f4b93bfea46aaed9236d5157960c096c76117a24051f186763",
+      "resetPasswordExpiry": 1768774667672
+    },
+    {
+      "id": 1768768564071,
+      "name": "testmail",
+      "email": "ymru5td9rh@osxofulk.com",
+      "password": "nessia&é\"",
+      "role": "user",
+      "resetPasswordToken": "c8732e781c6b533776bacf279fbeae2b782f19054d880ac5dffe9b5333db1b78",
+      "resetPasswordExpiry": 1768772486079
+    },
+    {
+      "id": 1768768995917,
+      "name": "testttt",
+      "email": "3qs539xw8w@illubd.com",
+      "password": "Test1234!",
+      "role": "user",
+      "resetPasswordToken": "6294e101b83024c3b3aabf1442cf0b638b91357c03d8c60808375b0eed50bf1b",
+      "resetPasswordExpiry": 1768774122994
     }
   ],
   "portfolios": {
@@ -569,6 +598,75 @@
         "title": "",
         "bio": "",
         "email": "j@n",
+        "phone": "",
+        "location": ""
+      },
+      "skills": [],
+      "projects": [],
+      "experiences": [],
+      "education": [],
+      "certifications": [],
+      "media": {
+        "linkedin": "",
+        "github": "",
+        "twitter": "",
+        "websites": [],
+        "links": []
+      }
+    },
+    "1768763550986": {
+      "profile": {
+        "firstName": "Nessia",
+        "lastName": "",
+        "title": "",
+        "bio": "",
+        "email": "nessia200@hotmail.fr",
+        "phone": "",
+        "location": ""
+      },
+      "skills": [],
+      "projects": [],
+      "experiences": [],
+      "education": [],
+      "certifications": [],
+      "media": {
+        "linkedin": "",
+        "github": "",
+        "twitter": "",
+        "websites": [],
+        "links": []
+      }
+    },
+    "1768768564071": {
+      "profile": {
+        "firstName": "testmail",
+        "lastName": "",
+        "title": "",
+        "bio": "",
+        "email": "ymru5td9rh@osxofulk.com",
+        "phone": "",
+        "location": ""
+      },
+      "skills": [],
+      "projects": [],
+      "experiences": [],
+      "education": [],
+      "certifications": [],
+      "media": {
+        "linkedin": "",
+        "github": "",
+        "twitter": "",
+        "websites": [],
+        "links": []
+      }
+    },
+    "1768768995917": {
+      "profile": {
+        "firstName": "testttt",
+        "lastName": "",
+        "title": "",
+        "bio": "",
+        "email": "3qs539xw8w@illubd.com",
         "phone": "",
         "location": ""
       },

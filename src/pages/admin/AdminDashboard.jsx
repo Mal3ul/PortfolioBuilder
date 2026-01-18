@@ -42,7 +42,7 @@ export default function AdminDashboard() {
         };
 
         // Fetch users from backend
-        const usersRes = await fetch("http://localhost:5000/api/auth/users", {
+        const usersRes = await fetch("/api/auth/users", {
           headers
         });
         if (!usersRes.ok) {
@@ -63,7 +63,7 @@ export default function AdminDashboard() {
         setUsers(transformedUsers);
 
         // Fetch portfolio data from backend
-        const portfolioRes = await fetch("http://localhost:5000/api/portfolio", {
+        const portfolioRes = await fetch("/api/portfolio", {
           headers
         });
         if (!portfolioRes.ok) {
