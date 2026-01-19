@@ -9,6 +9,7 @@ export const getPortfolio = async (req, res) => {
   }
   
   try {
+    // Récupérer le portfolio
     const portfolioResult = await pool.query(
       'SELECT * FROM portfolios WHERE user_id = $1',
       [userId]
@@ -20,7 +21,40 @@ export const getPortfolio = async (req, res) => {
       return res.status(404).json({ message: "Portfolio introuvable" });
     }
     
-    res.json(portfolio);
+    // Récupérer tous les éléments associés en parallèle
+    const [skills, projects, experiences, education, certifications, websites, links, media] = await Promise.all([
+      pool.query('SELECT * FROM skills WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id]),
+      pool.query('SELECT * FROM projects WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id]),
+      pool.query('SELECT * FROM experiences WHERE portfolio_id = $1 ORDER BY start_date DESC', [portfolio.id]),
+      pool.query('SELECT * FROM education WHERE portfolio_id = $1 ORDER BY start_date DESC', [portfolio.id]),
+      pool.query('SELECT * FROM certifications WHERE portfolio_id = $1 ORDER BY date DESC', [portfolio.id]),
+      pool.query('SELECT * FROM websites WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id]),
+      pool.query('SELECT * FROM links WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id]),
+      pool.query('SELECT * FROM media WHERE portfolio_id = $1', [portfolio.id])
+    ]);
+    
+    res.json({
+      profile: {
+        firstName: portfolio.first_name || '',
+        lastName: portfolio.last_name || '',
+        title: portfolio.title || '',
+        bio: portfolio.bio || '',
+        email: portfolio.email || '',
+        phone: portfolio.phone || '',
+        location: portfolio.location || ''
+      },
+      skills: skills.rows.map(s => s.skill_name),
+      projects: projects.rows.map(p => ({
+        ...p,
+        technologies: typeof p.technologies === 'string' ? JSON.parse(p.technologies) : p.technologies
+      })),
+      experiences: experiences.rows,
+      education: education.rows,
+      certifications: certifications.rows,
+      websites: websites.rows,
+      links: links.rows,
+      media: media.rows[0] || { linkedin: '', github: '', twitter: '', websites: [], links: [] }
+    });
   } catch (error) {
     console.error('[portfolio] getPortfolio error:', error);
     res.status(500).json({ message: "Erreur serveur" });
