@@ -3,8 +3,8 @@ services:
     name: portfolio-builder
     env: node
     plan: free
-    buildCommand: npm ci && npm run build
-    startCommand: npm ci --prefix backend && NODE_ENV=production node backend/server.js
+    buildCommand: npm ci && npm --prefix backend ci && npm run build
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
