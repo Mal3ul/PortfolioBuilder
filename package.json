@@ -9,6 +9,7 @@
     "backend:dev": "npm --prefix backend run dev",
     "build": "vite build",
     "start": "NODE_ENV=production node backend/server.js",
+    "migrate": "node backend/migrate.js",
     "install-all": "npm ci --prefix backend",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -24,6 +25,7 @@
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.555.0",
     "nodemailer": "^6.10.1",
+    "pg": "^8.13.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.9.6"

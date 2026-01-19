@@ -8,6 +8,10 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: portfolio-db
+          property: connectionString
       - key: JWT_SECRET
         scope: project
       - key: JWT_EXPIRES_IN
@@ -24,3 +28,9 @@ services:
         scope: project
       - key: BREVO_SENDER_EMAIL
         scope: project
+
+databases:
+  - name: portfolio-db
+    plan: free
+    databaseName: portfolio
+    user: portfolio_user
