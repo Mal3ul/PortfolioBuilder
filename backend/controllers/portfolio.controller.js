@@ -141,24 +141,6 @@ export const savePortfolio = async (req, res) => {
         new Date().toISOString()
       ]
     );
-      `INSERT INTO portfolios (user_id, title, description, tagline, avatar_url, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
-       ON CONFLICT (user_id) DO UPDATE SET
-         title = EXCLUDED.title,
-         description = EXCLUDED.description,
-         tagline = EXCLUDED.tagline,
-         avatar_url = EXCLUDED.avatar_url,
-         updated_at = EXCLUDED.updated_at`,
-      [
-        userId,
-        profile?.title || '',
-        profile?.bio || '',
-        profile?.tagline || '',
-        profile?.avatarUrl || null,
-        new Date().toISOString(),
-        new Date().toISOString()
-      ]
-    );
     
     res.json({ message: "Portfolio sauvegardé" });
   } catch (error) {
