@@ -9,9 +9,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
-        fromDatabase:
-          name: portfolio-db
-          property: connectionString
+        value: postgresql://portfolio_builder_bdd_user:2ttYsFLs3KHY3WApN20ZOVPF7AdSH7LT@dpg-d5mfmin5r7bs73d4dl2g-a/portfolio_builder_bdd
       - key: JWT_SECRET
         scope: project
       - key: JWT_EXPIRES_IN
@@ -28,9 +26,3 @@ services:
         scope: project
       - key: BREVO_SENDER_EMAIL
         scope: project
-
-databases:
-  - name: portfolio-db
-    plan: free
-    databaseName: portfolio
-    user: portfolio_user
