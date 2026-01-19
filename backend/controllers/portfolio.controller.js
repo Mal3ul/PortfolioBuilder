@@ -94,14 +94,14 @@ export const getUserPortfolio = async (req, res) => {
 // Update portfolio profile
 export const updatePortfolio = async (req, res) => {
   const { userId } = req.params;
-  const { title, description, tagline, avatarUrl } = req.body;
+  const { firstName, lastName, title, bio, email, phone, location } = req.body;
   
   try {
     await pool.query(
       `UPDATE portfolios
-       SET title = $1, description = $2, tagline = $3, avatar_url = $4, updated_at = $5
-       WHERE user_id = $6`,
-      [title, description, tagline, avatarUrl, new Date().toISOString(), userId]
+       SET first_name = $1, last_name = $2, title = $3, bio = $4, email = $5, phone = $6, location = $7, updated_at = $8
+       WHERE user_id = $9`,
+      [firstName, lastName, title, bio, email, phone, location, new Date().toISOString(), userId]
     );
     
     res.json({ message: "Portfolio mis à jour" });
@@ -113,11 +113,34 @@ export const updatePortfolio = async (req, res) => {
 
 // Save/Create portfolio (alias for updatePortfolio)
 export const savePortfolio = async (req, res) => {
-  const { userId, profile, skills, projects } = req.body;
+  const { userId, profile } = req.body;
   
   try {
     // Upsert portfolio
     await pool.query(
+      `INSERT INTO portfolios (user_id, first_name, last_name, title, bio, email, phone, location, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       ON CONFLICT (user_id) DO UPDATE
+       SET first_name = EXCLUDED.first_name,
+           last_name = EXCLUDED.last_name,
+           title = EXCLUDED.title,
+           bio = EXCLUDED.bio,
+           email = EXCLUDED.email,
+           phone = EXCLUDED.phone,
+           location = EXCLUDED.location,
+           updated_at = EXCLUDED.updated_at`,
+      [
+        userId,
+        profile?.firstName || '',
+        profile?.lastName || '',
+        profile?.title || '',
+        profile?.bio || '',
+        profile?.email || '',
+        profile?.phone || '',
+        profile?.location || '',
+        new Date().toISOString()
+      ]
+    );
       `INSERT INTO portfolios (user_id, title, description, tagline, avatar_url, created_at, updated_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7)
        ON CONFLICT (user_id) DO UPDATE SET
