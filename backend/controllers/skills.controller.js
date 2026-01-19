@@ -46,10 +46,10 @@ export const addSkill = async (req, res) => {
     const portfolioId = portfolioResult.rows[0].id;
     
     const result = await pool.query(
-      `INSERT INTO skills (portfolio_id, name, level, category, created_at)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO skills (portfolio_id, skill_name, created_at)
+       VALUES ($1, $2, $3)
        RETURNING *`,
-      [portfolioId, name, level || 50, category || 'Autre', new Date().toISOString()]
+      [portfolioId, name, new Date().toISOString()]
     );
     
     res.status(201).json(result.rows[0]);
@@ -67,10 +67,10 @@ export const updateSkill = async (req, res) => {
   try {
     const result = await pool.query(
       `UPDATE skills
-       SET name = $1, level = $2, category = $3
-       WHERE id = $4
+       SET skill_name = $1
+       WHERE id = $2
        RETURNING *`,
-      [name, level, category, id]
+      [name, id]
     );
     
     if (result.rows.length === 0) {

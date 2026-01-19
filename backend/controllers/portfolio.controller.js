@@ -69,7 +69,7 @@ export const getUserPortfolio = async (req, res) => {
         firstName: user.name.split(' ')[0] || '',
         lastName: user.name.split(' ').slice(1).join(' ') || '',
         title: portfolio.title || '',
-        bio: portfolio.description || '',
+        bio: portfolio.bio || '',
         email: user.email,
         avatarUrl: portfolio.avatar_url
       },
