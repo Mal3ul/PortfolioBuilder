@@ -9,6 +9,7 @@
     "backend:dev": "npm --prefix backend run dev",
     "build": "vite build",
     "start": "NODE_ENV=production node backend/server.js",
+    "postinstall": "npm --prefix backend install",
     "lint": "eslint .",
     "preview": "vite preview"
   },
