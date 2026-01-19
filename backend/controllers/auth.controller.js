@@ -1,9 +1,14 @@
 import fs from "fs-extra";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import path from "path";
+import { fileURLToPath } from "url";
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config.js";
 
-const USERS_FILE = "./data/users.json";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const USERS_FILE = path.join(__dirname, "../data/users.json");
 
 export const register = async (req, res) => {
   const { name, email, password } = req.body;

@@ -1,6 +1,12 @@
 import fs from "fs-extra";
-const PORTFOLIO_FILE = "./data/portfolio.json";
-const DB_FILE = "./data/db.json";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const PORTFOLIO_FILE = path.join(__dirname, "../data/portfolio.json");
+const DB_FILE = path.join(__dirname, "../data/db.json");
 
 export const getPortfolio = async (req, res) => {
   const portfolio = await fs.readJSON(PORTFOLIO_FILE).catch(() => null);

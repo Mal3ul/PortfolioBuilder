@@ -2,11 +2,16 @@ import express from "express";
 import fs from "fs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
+import path from "path";
+import { fileURLToPath } from "url";
 import { sendPasswordResetEmail } from "../utils/email.js";
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const router = express.Router();
-const DB_PATH = "./data/db.json";
+const DB_PATH = path.join(__dirname, "../data/db.json");
 
 const readDB = () => JSON.parse(fs.readFileSync(DB_PATH));
 const writeDB = (data) =>
@@ -109,7 +114,7 @@ router.post("/register", (req, res) => {
   writeDB(db);
 
   // Met à jour le portfolio global (unicité actuelle du projet)
-  const portfolioPath = "./data/portfolio.json";
+  const portfolioPath = path.join(__dirname, "../data/portfolio.json");
   const basePortfolio = {
     updatedAt: new Date(),
     profile: {

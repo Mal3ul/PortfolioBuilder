@@ -1,10 +1,15 @@
 import express from "express";
 import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import { verifyToken } from "./auth.routes.js";
 import { requireRole } from "../middleware/roles.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const router = express.Router();
-const DB_PATH = "./data/db.json";
+const DB_PATH = path.join(__dirname, "../data/db.json");
 
 const readDB = () => JSON.parse(fs.readFileSync(DB_PATH));
 const writeDB = (data) => fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));

@@ -1,6 +1,12 @@
 // /backend/controllers/skills.controller.js
 import fs from "fs-extra";
-const PORTFOLIO_FILE = "./data/portfolio.json";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const PORTFOLIO_FILE = path.join(__dirname, "../data/portfolio.json");
 
 // Récupérer toutes les compétences d'un utilisateur
 export const getSkills = async (req, res) => {
