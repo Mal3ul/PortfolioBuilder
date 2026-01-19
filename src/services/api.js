@@ -79,8 +79,11 @@ export const portfolioService = {
 
 export const activityService = {
   getActivities: async () => {
-    const response = await fetch(`${baseURL}/activities`);
+    const response = await fetch(`${baseURL}/activities`, {
+      headers: getAuthHeaders(),
+    });
     if (!response.ok) {
+      handleUnauthorized(response);
       throw new Error("Erreur lors de la récupération des activités");
     }
     return response.json();
@@ -89,12 +92,11 @@ export const activityService = {
   addActivity: async (action, name) => {
     const response = await fetch(`${baseURL}/activities`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ action, name }),
     });
     if (!response.ok) {
+      handleUnauthorized(response);
       throw new Error("Erreur lors de l'ajout de l'activité");
     }
     return response.json();
