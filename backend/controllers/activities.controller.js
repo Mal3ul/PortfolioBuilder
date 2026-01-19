@@ -9,9 +9,21 @@ export const getActivities = async (req, res) => {
   }
   
   try {
-    const result = await pool.query(
-      'SELECT * FROM activities WHERE user_id = $1 ORDER BY created_at DESC LIMIT 50',
+    // Récupérer le portfolio_id depuis user_id
+    const portfolioResult = await pool.query(
+      'SELECT id FROM portfolios WHERE user_id = $1',
       [userId]
+    );
+    
+    if (portfolioResult.rows.length === 0) {
+      return res.json([]);
+    }
+    
+    const portfolioId = portfolioResult.rows[0].id;
+    
+    const result = await pool.query(
+      'SELECT * FROM activities WHERE portfolio_id = $1 ORDER BY created_at DESC LIMIT 50',
+      [portfolioId]
     );
     
     res.json(result.rows.map(a => ({
@@ -34,11 +46,23 @@ export const addActivity = async (req, res) => {
   }
   
   try {
+    // Récupérer le portfolio_id depuis user_id
+    const portfolioResult = await pool.query(
+      'SELECT id FROM portfolios WHERE user_id = $1',
+      [userId]
+    );
+    
+    if (portfolioResult.rows.length === 0) {
+      return res.status(404).json({ message: "Portfolio introuvable" });
+    }
+    
+    const portfolioId = portfolioResult.rows[0].id;
+    
     const result = await pool.query(
-      `INSERT INTO activities (user_id, action, details, created_at)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO activities (id, portfolio_id, action, details, created_at)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [userId, action, JSON.stringify(details || {}), new Date().toISOString()]
+      [Date.now(), portfolioId, action, JSON.stringify(details || {}), new Date().toISOString()]
     );
     
     const activity = result.rows[0];
