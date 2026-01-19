@@ -2,7 +2,11 @@ import pool from "../config/database.js";
 
 // Get current user's portfolio
 export const getPortfolio = async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user?.id;
+  
+  if (!userId) {
+    return res.status(401).json({ message: "Non authentifié" });
+  }
   
   try {
     const portfolioResult = await pool.query(
