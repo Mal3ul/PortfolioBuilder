@@ -1,162 +1,91 @@
-import fs from "fs-extra";
-import path from "path";
-import { fileURLToPath } from "url";
+import pool from "../config/database.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const PORTFOLIO_FILE = path.join(__dirname, "../data/portfolio.json");
-const DB_FILE = path.join(__dirname, "../data/db.json");
-
-export const getPortfolio = async (req, res) => {
-  const portfolio = await fs.readJSON(PORTFOLIO_FILE).catch(() => null);
-  if (!portfolio) return res.status(404).json({ message: "Portfolio introuvable" });
-  res.json(portfolio);
-};
-
+// Get user portfolio with all relations
 export const getUserPortfolio = async (req, res) => {
   const { userId } = req.params;
   
   try {
-    const db = await fs.readJSON(DB_FILE).catch(() => ({ users: [], portfolios: {} }));
+    // Récupérer l'utilisateur
+    const userResult = await pool.query(
+      'SELECT id, name, email, created_at FROM users WHERE id = $1',
+      [userId]
+    );
     
-    console.log("📋 getUserPortfolio - Recherche userId:", userId);
-    console.log("📋 Utilisateurs disponibles:", db.users.map(u => ({ id: u.id, type: typeof u.id })));
-    console.log("📋 Portfolios disponibles:", Object.keys(db.portfolios));
-    
-    // Vérifier si l'utilisateur existe (conversion en nombre pour comparaison)
-    const userIdNum = parseInt(userId);
-    const user = db.users.find(u => u.id === userIdNum || u.id == userId);
-    
-    console.log("👤 Utilisateur trouvé:", user ? user.name : "NON");
-    
-    if (!user) {
+    if (userResult.rows.length === 0) {
       return res.status(404).json({ message: "Utilisateur introuvable" });
     }
     
-    // Récupérer le portfolio de l'utilisateur depuis db.json
-    // Essayer avec userId en tant que chaîne ET en tant que nombre
-    const userPortfolio = db.portfolios[userId] || db.portfolios[userIdNum] || {
+    const user = userResult.rows[0];
+    
+    // Récupérer le portfolio
+    const portfolioResult = await pool.query(
+      'SELECT * FROM portfolios WHERE user_id = $1',
+      [userId]
+    );
+    
+    const portfolio = portfolioResult.rows[0];
+    
+    if (!portfolio) {
+      return res.status(404).json({ message: "Portfolio introuvable" });
+    }
+    
+    // Récupérer tous les éléments associés en parallèle
+    const [skills, projects, experiences, education, certifications, websites, links, media] = await Promise.all([
+      pool.query('SELECT * FROM skills WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id]),
+      pool.query('SELECT * FROM projects WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id]),
+      pool.query('SELECT * FROM experiences WHERE portfolio_id = $1 ORDER BY start_date DESC', [portfolio.id]),
+      pool.query('SELECT * FROM education WHERE portfolio_id = $1 ORDER BY start_date DESC', [portfolio.id]),
+      pool.query('SELECT * FROM certifications WHERE portfolio_id = $1 ORDER BY date DESC', [portfolio.id]),
+      pool.query('SELECT * FROM websites WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id]),
+      pool.query('SELECT * FROM links WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id]),
+      pool.query('SELECT * FROM media WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id])
+    ]);
+    
+    res.json({
       profile: {
         firstName: user.name.split(' ')[0] || '',
         lastName: user.name.split(' ').slice(1).join(' ') || '',
-        title: '',
-        bio: '',
+        title: portfolio.title || '',
+        bio: portfolio.description || '',
         email: user.email,
-        phone: '',
-        location: ''
+        avatarUrl: portfolio.avatar_url
       },
-      skills: [],
-      projects: [],
-      experiences: [],
-      education: [],
-      certifications: [],
-      media: {
-        linkedin: '',
-        github: '',
-        twitter: '',
-        websites: [],
-        links: []
-      }
-    };
-    
-    console.log("✅ Portfolio retourné:", !!userPortfolio);
-    res.json(userPortfolio);
+      skills: skills.rows,
+      projects: projects.rows.map(p => ({
+        ...p,
+        technologies: typeof p.technologies === 'string' ? JSON.parse(p.technologies) : p.technologies
+      })),
+      experiences: experiences.rows,
+      education: education.rows,
+      certifications: certifications.rows,
+      websites: websites.rows,
+      links: links.rows,
+      media: media.rows
+    });
   } catch (error) {
-    console.error("Erreur lors de la récupération du portfolio:", error);
+    console.error('[portfolio] getUserPortfolio error:', error);
     res.status(500).json({ message: "Erreur serveur" });
   }
 };
 
-export const savePortfolio = async (req, res) => {
-  const { userId, ...data } = req.body || {};
-  const next = { ...data, updatedAt: new Date() };
-
-  // Si un userId est fourni, persister dans db.json dans la clé portfolios[userId]
-  if (userId) {
-    try {
-      const db = await fs.readJSON(DB_FILE).catch(() => ({ users: [], portfolios: {} }));
-      db.portfolios = db.portfolios || {};
-      db.portfolios[userId] = {
-        ...db.portfolios[userId],
-        ...next,
-      };
-      await fs.writeJSON(DB_FILE, db, { spaces: 2 });
-      return res.json(db.portfolios[userId]);
-    } catch (error) {
-      console.error("Erreur lors de l'enregistrement du portfolio utilisateur:", error);
-      return res.status(500).json({ message: "Erreur serveur" });
-    }
-  }
-
-  // Fallback legacy: sans userId, on conserve l'ancien fichier portfolio.json
-  await fs.writeJSON(PORTFOLIO_FILE, next, { spaces: 2 });
-  res.json(next);
-};
-
+// Update portfolio profile
 export const updatePortfolio = async (req, res) => {
-  const { profile, userId, ...otherData } = req.body || {};
-  const portfolio = await fs.readJSON(PORTFOLIO_FILE).catch(() => ({}));
+  const { userId } = req.params;
+  const { title, description, tagline, avatarUrl } = req.body;
   
-  // Debug logs
-  console.log("📝 UpdatePortfolio - Données reçues:", { 
-    hasProfile: !!profile, 
-    userId, 
-    firstName: profile?.firstName, 
-    lastName: profile?.lastName 
-  });
-  
-  // Si profile contient firstName et lastName, mettre à jour aussi l'utilisateur dans db.json
-  if (profile && (profile.firstName || profile.lastName) && userId) {
-    try {
-      const db = await fs.readJSON(DB_FILE).catch(() => ({ users: [] }));
-      console.log("👤 Recherche utilisateur avec ID:", userId);
-      console.log("📊 Utilisateurs dans la base:", db.users.map(u => ({ id: u.id, name: u.name })));
-      
-      const userIndex = db.users.findIndex(u => u.id == userId);
-      console.log("🔍 Index trouvé:", userIndex);
-      
-      if (userIndex !== -1) {
-        const fullName = `${profile.firstName || ''} ${profile.lastName || ''}`.trim();
-        console.log("✅ Mise à jour du nom:", db.users[userIndex].name, "→", fullName);
-        db.users[userIndex].name = fullName;
-        await fs.writeJSON(DB_FILE, db, { spaces: 2 });
-        console.log("💾 Nom sauvegardé dans db.json");
-      } else {
-        console.log("❌ Utilisateur non trouvé avec l'ID:", userId);
-      }
-    } catch (err) {
-      console.error("Erreur lors de la mise à jour de l'utilisateur:", err);
-    }
-  } else {
-    console.log("⚠️ Conditions non remplies - profile:", !!profile, "userId:", userId);
+  try {
+    await pool.query(
+      `UPDATE portfolios
+       SET title = $1, description = $2, tagline = $3, avatar_url = $4, updated_at = $5
+       WHERE user_id = $6`,
+      [title, description, tagline, avatarUrl, new Date().toISOString(), userId]
+    );
+    
+    res.json({ message: "Portfolio mis à jour" });
+  } catch (error) {
+    console.error('[portfolio] updatePortfolio error:', error);
+    res.status(500).json({ message: "Erreur serveur" });
   }
-  
-  const next = {
-    ...portfolio,
-    ...otherData,
-    ...(profile && { profile: { ...portfolio.profile, ...profile } }),
-    updatedAt: new Date()
-  };
-
-  // Si userId est fourni, mettre à jour db.json dans portfolios[userId]
-  if (userId) {
-    try {
-      const db = await fs.readJSON(DB_FILE).catch(() => ({ users: [], portfolios: {} }));
-      db.portfolios = db.portfolios || {};
-      db.portfolios[userId] = {
-        ...db.portfolios[userId],
-        ...next,
-      };
-      await fs.writeJSON(DB_FILE, db, { spaces: 2 });
-      return res.json(db.portfolios[userId]);
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour du portfolio utilisateur:", error);
-      return res.status(500).json({ message: "Erreur serveur" });
-    }
-  }
-
-  // Fallback legacy
-  await fs.writeJSON(PORTFOLIO_FILE, next, { spaces: 2 });
-  res.json(next);
 };
+
+export default { getUserPortfolio, updatePortfolio };

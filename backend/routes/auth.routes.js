@@ -1,21 +1,11 @@
 import express from "express";
-import fs from "fs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import path from "path";
-import { fileURLToPath } from "url";
+import pool from "../config/database.js";
 import { sendPasswordResetEmail } from "../utils/email.js";
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const router = express.Router();
-const DB_PATH = path.join(__dirname, "../data/db.json");
-
-const readDB = () => JSON.parse(fs.readFileSync(DB_PATH));
-const writeDB = (data) =>
-  fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
 
 // Middleware pour vérifier JWT
 export const verifyToken = (req, res, next) => {
@@ -34,274 +24,206 @@ export const verifyToken = (req, res, next) => {
   }
 };
 
-router.post("/login", (req, res) => {
+// Login
+router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  const db = readDB();
 
-  const user = db.users.find(
-    (u) => u.email === email && u.password === password
-  );
+  try {
+    const result = await pool.query(
+      'SELECT * FROM users WHERE email = $1 AND password = $2',
+      [email, password]
+    );
 
-  if (!user) {
-    return res.status(401).json({ message: "Identifiants invalides" });
+    const user = result.rows[0];
+
+    if (!user) {
+      return res.status(401).json({ message: "Identifiants invalides" });
+    }
+
+    const role = user.role || 'user';
+
+    // Mettre à jour le rôle si manquant
+    if (!user.role) {
+      await pool.query('UPDATE users SET role = $1 WHERE id = $2', [role, user.id]);
+    }
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
+
+    res.json({
+      token,
+      userId: user.id,
+      name: user.name,
+      email: user.email,
+      role
+    });
+  } catch (error) {
+    console.error('[auth] login error:', error);
+    res.status(500).json({ message: "Erreur serveur" });
   }
-
-  // Déterminer le rôle (fallback si manquant)
-  const role = user.role ? user.role : (user.email === "admin@test.com" ? "admin" : "user");
-
-  // Persister le rôle si manquant ou différent
-  if (!user.role || user.role !== role) {
-    user.role = role;
-    writeDB(db);
-  }
-
-  // ✅ Générer JWT
-  const token = jwt.sign({ id: user.id, email: user.email, role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-
-  res.json({
-    token,
-    userId: user.id,
-    name: user.name,
-    email: user.email,
-    role
-  });
 });
 
-router.post("/register", (req, res) => {
+// Register
+router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
-  const db = readDB();
 
-  if (db.users.find((u) => u.email === email)) {
-    return res.status(400).json({ message: "Email déjà utilisé" });
-  }
-
-  const [firstName = "", ...rest] = (name || "").trim().split(" ");
-  const lastName = rest.join(" ").trim();
-
-  const newUser = {
-    id: Date.now(),
-    name,
-    email,
-    password,
-    role: "user"
-  };
-
-  db.users.push(newUser);
-  db.portfolios[newUser.id] = {
-    profile: {
-      firstName,
-      lastName,
-      title: "",
-      bio: "",
-      email,
-      phone: "",
-      location: ""
-    },
-    skills: [],
-    projects: [],
-    experiences: [],
-    education: [],
-    certifications: [],
-    media: {
-      linkedin: "",
-      github: "",
-      twitter: "",
-      websites: [],
-      links: []
+  try {
+    // Vérifier si l'email existe déjà
+    const existingUser = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+    
+    if (existingUser.rows.length > 0) {
+      return res.status(400).json({ message: "Email déjà utilisé" });
     }
-  };
 
-  writeDB(db);
+    const [firstName = "", ...rest] = (name || "").trim().split(" ");
+    const lastName = rest.join(" ").trim();
+    const userId = Date.now().toString();
 
-  // Met à jour le portfolio global (unicité actuelle du projet)
-  const portfolioPath = path.join(__dirname, "../data/portfolio.json");
-  const basePortfolio = {
-    updatedAt: new Date(),
-    profile: {
-      firstName,
-      lastName,
-      title: "",
-      bio: "",
+    // Créer l'utilisateur
+    await pool.query(
+      `INSERT INTO users (id, name, email, password, role, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [userId, name, email, password, 'user', new Date().toISOString()]
+    );
+
+    // Créer le portfolio associé
+    await pool.query(
+      `INSERT INTO portfolios (user_id, title, description, tagline, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [
+        userId,
+        `${firstName}'s Portfolio`,
+        '',
+        '',
+        new Date().toISOString(),
+        new Date().toISOString()
+      ]
+    );
+
+    const token = jwt.sign(
+      { id: userId, email, role: 'user' },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
+
+    res.status(201).json({
+      token,
+      userId,
+      name,
       email,
-      phone: "",
-      location: ""
-    },
-    skills: [],
-    projects: [],
-    experiences: [],
-    education: [],
-    certifications: [],
-    media: {
-      linkedin: "",
-      github: "",
-      twitter: "",
-      websites: [],
-      links: []
-    }
-  };
-  fs.writeFileSync(portfolioPath, JSON.stringify(basePortfolio, null, 2));
-
-  res.status(201).json({ userId: newUser.id });
+      role: 'user'
+    });
+  } catch (error) {
+    console.error('[auth] register error:', error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
 });
 
-// Changer l'email
-router.post("/change-email", (req, res) => {
-  const { newEmail } = req.body;
-  const userId = req.headers["x-user-id"] || req.body.userId;
-  
-  if (!newEmail) {
-    return res.status(400).json({ message: "Email requis" });
-  }
-
-  const db = readDB();
-  const user = db.users.find(u => u.id == userId);
-
-  if (!user) {
-    return res.status(404).json({ message: "Utilisateur non trouvé" });
-  }
-
-  if (db.users.find(u => u.email === newEmail && u.id != userId)) {
-    return res.status(400).json({ message: "Cet email est déjà utilisé" });
-  }
-
-  user.email = newEmail;
-  writeDB(db);
-
-  res.json({ message: "Email modifié avec succès" });
-});
-
-// Changer le mot de passe
-router.post("/change-password", (req, res) => {
-  const { currentPassword, newPassword } = req.body;
-  const userId = req.headers["x-user-id"] || req.body.userId;
-
-  if (!currentPassword || !newPassword) {
-    return res.status(400).json({ message: "Mots de passe requis" });
-  }
-
-  const db = readDB();
-  const user = db.users.find(u => u.id == userId);
-
-  if (!user) {
-    return res.status(404).json({ message: "Utilisateur non trouvé" });
-  }
-
-  if (user.password !== currentPassword) {
-    return res.status(401).json({ message: "Mot de passe actuel incorrect" });
-  }
-
-  if (newPassword.length < 6) {
-    return res.status(400).json({ message: "Le mot de passe doit contenir au moins 6 caractères" });
-  }
-
-  user.password = newPassword;
-  writeDB(db);
-
-  res.json({ message: "Mot de passe modifié avec succès" });
-});
-
-// Récupérer tous les utilisateurs (protégé par JWT)
-import { requireRole } from "../middleware/roles.js";
-
-router.get("/users", verifyToken, requireRole('admin'), (req, res) => {
-  const db = readDB();
-  const users = db.users.map((u) => ({
-    id: u.id,
-    name: u.name,
-    email: u.email,
-    role: u.role || "user"
-  }));
-  res.json(users);
-});
-
-// Demander la réinitialisation du mot de passe
+// Forgot password
 router.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
-  console.log('[auth] forgot-password request for', email);
-  
+  console.log('[auth] forgot-password request for:', email);
+
   if (!email) {
     return res.status(400).json({ message: "Email requis" });
   }
 
-  const db = readDB();
-  const user = db.users.find((u) => u.email === email);
+  try {
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const user = result.rows[0];
 
-  if (!user) {
-    // Pour des raisons de sécurité, ne pas révéler si l'email existe
-    return res.json({ 
-      message: "Si cet email existe, un lien de réinitialisation a été envoyé" 
-    });
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur introuvable" });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenExpires = new Date(Date.now() + 3600000).toISOString(); // 1h
+
+    await pool.query(
+      'UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE id = $3',
+      [resetToken, resetTokenExpires, user.id]
+    );
+
+    const emailResult = await sendPasswordResetEmail(email, resetToken, user.name);
+    console.log('[auth] email result', emailResult);
+
+    if (!emailResult.success) {
+      return res.status(502).json({
+        message: "Erreur lors de l'envoi de l'email",
+        error: emailResult.error
+      });
+    }
+
+    const responseData = { message: "Email de réinitialisation envoyé" };
+    
+    if (process.env.NODE_ENV !== 'production') {
+      responseData.devInfo = {
+        resetToken,
+        resetUrl: `http://localhost:5173/reset-password?token=${resetToken}`
+      };
+    }
+
+    res.json(responseData);
+  } catch (error) {
+    console.error('[auth] forgot-password error:', error);
+    res.status(500).json({ message: "Erreur serveur" });
   }
-
-  // Générer un token sécurisé
-  const resetToken = crypto.randomBytes(32).toString('hex');
-  const resetTokenExpiry = Date.now() + 3600000; // 1 heure
-
-  // Stocker le token dans l'utilisateur
-  user.resetPasswordToken = resetToken;
-  user.resetPasswordExpiry = resetTokenExpiry;
-  writeDB(db);
-
-  // Envoyer l'email
-  const emailResult = await sendPasswordResetEmail(email, resetToken, user.name);
-  console.log('[auth] email result', emailResult);
-  if (!emailResult?.success) {
-    return res.status(502).json({
-      message: "Échec de l'envoi de l'email de réinitialisation",
-      error: emailResult?.error || 'unknown'
-    });
-  }
-
-  res.status(200).json({ 
-    message: "Un email de réinitialisation a été envoyé",
-    // En développement, retourner le token et l'URL pour tester
-    ...(process.env.NODE_ENV !== 'production' && emailResult.resetUrl && { 
-      devToken: resetToken,
-      devResetUrl: emailResult.resetUrl
-    })
-  });
 });
 
-// Réinitialiser le mot de passe avec le token
-router.post("/reset-password", (req, res) => {
+// Reset password
+router.post("/reset-password", async (req, res) => {
   const { token, newPassword } = req.body;
 
   if (!token || !newPassword) {
-    return res.status(400).json({ 
-      message: "Token et nouveau mot de passe requis" 
-    });
+    return res.status(400).json({ message: "Token et mot de passe requis" });
   }
 
-  if (newPassword.length < 6) {
-    return res.status(400).json({ 
-      message: "Le mot de passe doit contenir au moins 6 caractères" 
-    });
+  try {
+    const result = await pool.query(
+      'SELECT * FROM users WHERE reset_token = $1 AND reset_token_expires > $2',
+      [token, new Date().toISOString()]
+    );
+
+    const user = result.rows[0];
+
+    if (!user) {
+      return res.status(400).json({ message: "Token invalide ou expiré" });
+    }
+
+    await pool.query(
+      'UPDATE users SET password = $1, reset_token = NULL, reset_token_expires = NULL WHERE id = $2',
+      [newPassword, user.id]
+    );
+
+    res.json({ message: "Mot de passe réinitialisé avec succès" });
+  } catch (error) {
+    console.error('[auth] reset-password error:', error);
+    res.status(500).json({ message: "Erreur serveur" });
   }
+});
 
-  const db = readDB();
-  const user = db.users.find(
-    (u) => u.resetPasswordToken === token && 
-           u.resetPasswordExpiry > Date.now()
-  );
+// Get current user
+router.get("/me", verifyToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, name, email, role, created_at FROM users WHERE id = $1',
+      [req.user.id]
+    );
 
-  if (!user) {
-    return res.status(400).json({ 
-      message: "Token invalide ou expiré" 
-    });
+    const user = result.rows[0];
+
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur introuvable" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error('[auth] me error:', error);
+    res.status(500).json({ message: "Erreur serveur" });
   }
-
-  // Mettre à jour le mot de passe
-  user.password = newPassword;
-  
-  // Supprimer le token de réinitialisation
-  delete user.resetPasswordToken;
-  delete user.resetPasswordExpiry;
-  
-  writeDB(db);
-
-  res.json({ 
-    message: "Mot de passe réinitialisé avec succès" 
-  });
 });
 
 export default router;

@@ -1,77 +1,105 @@
-// /backend/controllers/skills.controller.js
-import fs from "fs-extra";
-import path from "path";
-import { fileURLToPath } from "url";
+import pool from "../config/database.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const PORTFOLIO_FILE = path.join(__dirname, "../data/portfolio.json");
-
-// Récupérer toutes les compétences d'un utilisateur
+// Get skills
 export const getSkills = async (req, res) => {
   const { userId } = req.params;
-  const portfolios = await fs.readJSON(PORTFOLIO_FILE).catch(() => ({}));
-  if (!portfolios[userId]) return res.status(404).json({ message: "Portfolio introuvable" });
-  res.json(portfolios[userId].skills || []);
-};
-
-// Ajouter une compétence
-export const addSkill = async (req, res) => {
-  const { userId, skill, description } = req.body;
-  if (!userId || !skill) return res.status(400).json({ message: "Champs manquants" });
-
-  const portfolios = await fs.readJSON(PORTFOLIO_FILE).catch(() => ({}));
-  portfolios[userId].skills = portfolios[userId].skills || [];
-
-  const newSkill = { id: Date.now(), skill, description };
-  portfolios[userId].skills.push(newSkill);
-
-  await fs.writeJSON(PORTFOLIO_FILE, portfolios);
-  res.status(201).json(newSkill);
-};
-
-// Mettre à jour une compétence
-export const updateSkill = async (req, res) => {
-  const { skillId } = req.params;
-  const data = req.body;
-
-  const portfolios = await fs.readJSON(PORTFOLIO_FILE).catch(() => ({}));
-  let updated = null;
-
-  for (const userId in portfolios) {
-    portfolios[userId].skills = portfolios[userId].skills.map(s => {
-      if (s.id == skillId) {
-        updated = { ...s, ...data };
-        return updated;
-      }
-      return s;
-    });
-  }
-
-  if (!updated) return res.status(404).json({ message: "Compétence introuvable" });
-
-  await fs.writeJSON(PORTFOLIO_FILE, portfolios);
-  res.json(updated);
-};
-
-// Supprimer une compétence
-export const deleteSkill = async (req, res) => {
-  const { skillId } = req.params;
-  const portfolios = await fs.readJSON(PORTFOLIO_FILE).catch(() => ({}));
-  let found = false;
-
-  for (const userId in portfolios) {
-    const skills = portfolios[userId].skills || [];
-    const newSkills = skills.filter(s => s.id != skillId);
-    if (newSkills.length !== skills.length) {
-      portfolios[userId].skills = newSkills;
-      found = true;
+  
+  try {
+    const portfolioResult = await pool.query(
+      'SELECT id FROM portfolios WHERE user_id = $1',
+      [userId]
+    );
+    
+    if (portfolioResult.rows.length === 0) {
+      return res.status(404).json({ message: "Portfolio introuvable" });
     }
+    
+    const portfolioId = portfolioResult.rows[0].id;
+    
+    const result = await pool.query(
+      'SELECT * FROM skills WHERE portfolio_id = $1 ORDER BY created_at DESC',
+      [portfolioId]
+    );
+    
+    res.json(result.rows);
+  } catch (error) {
+    console.error('[skills] getSkills error:', error);
+    res.status(500).json({ message: "Erreur serveur" });
   }
-
-  if (!found) return res.status(404).json({ message: "Compétence introuvable" });
-
-  await fs.writeJSON(PORTFOLIO_FILE, portfolios);
-  res.status(204).send();
 };
+
+// Add skill
+export const addSkill = async (req, res) => {
+  const { userId } = req.params;
+  const { name, level, category } = req.body;
+  
+  try {
+    const portfolioResult = await pool.query(
+      'SELECT id FROM portfolios WHERE user_id = $1',
+      [userId]
+    );
+    
+    if (portfolioResult.rows.length === 0) {
+      return res.status(404).json({ message: "Portfolio introuvable" });
+    }
+    
+    const portfolioId = portfolioResult.rows[0].id;
+    
+    const result = await pool.query(
+      `INSERT INTO skills (portfolio_id, name, level, category, created_at)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING *`,
+      [portfolioId, name, level || 50, category || 'Autre', new Date().toISOString()]
+    );
+    
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('[skills] addSkill error:', error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+// Update skill
+export const updateSkill = async (req, res) => {
+  const { id } = req.params;
+  const { name, level, category } = req.body;
+  
+  try {
+    const result = await pool.query(
+      `UPDATE skills
+       SET name = $1, level = $2, category = $3
+       WHERE id = $4
+       RETURNING *`,
+      [name, level, category, id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Compétence introuvable" });
+    }
+    
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('[skills] updateSkill error:', error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+// Delete skill
+export const deleteSkill = async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    const result = await pool.query('DELETE FROM skills WHERE id = $1 RETURNING id', [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Compétence introuvable" });
+    }
+    
+    res.json({ message: "Compétence supprimée" });
+  } catch (error) {
+    console.error('[skills] deleteSkill error:', error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+export default { getSkills, addSkill, updateSkill, deleteSkill };
