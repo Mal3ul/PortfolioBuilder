@@ -91,14 +91,14 @@ router.post("/register", async (req, res) => {
 
     // Créer le portfolio associé
     await pool.query(
-      `INSERT INTO portfolios (user_id, title, description, tagline, created_at, updated_at)
+      `INSERT INTO portfolios (user_id, first_name, last_name, title, bio, updated_at)
        VALUES ($1, $2, $3, $4, $5, $6)`,
       [
         userId,
-        `${firstName}'s Portfolio`,
+        firstName || 'User',
+        lastName || '',
+        `${firstName || 'User'}'s Portfolio`,
         '',
-        '',
-        new Date().toISOString(),
         new Date().toISOString()
       ]
     );
