@@ -34,10 +34,13 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(frontendPath));
   
   // SPA fallback: rediriger les routes non-API vers index.html
-  app.get('*', (req, res) => {
-    if (!req.path.startsWith('/api')) {
-      res.sendFile(path.join(frontendPath, 'index.html'));
-    }
+  app.use((req, res, next) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+  });
+} else {
+  // En développement, afficher 404 pour les routes non trouvées
+  app.use((req, res) => {
+    res.status(404).json({ message: 'Route non trouvée' });
   });
 }
 
