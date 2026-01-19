@@ -63,12 +63,13 @@ export default function Register() {
       login({
         id: res.userId,
         userId: res.userId,
-        name,
-        email
+        name: res.name,
+        email: res.email,
+        token: res.token
       });
 
-      // Rediriger vers l'éditeur
-      navigate("/editor");
+      // Rediriger vers le dashboard
+      navigate("/dashboard");
     } catch (err) {
       setSubmitError(err?.message ? `Erreur lors de l'inscription : ${err.message}` : "Erreur lors de l'inscription");
     } finally {

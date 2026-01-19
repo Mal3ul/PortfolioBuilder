@@ -35,6 +35,28 @@ export const PortfolioProvider = ({ userId, children }) => {
   useEffect(() => {
     if (!user) {
       setLoading(false);
+      // Réinitialiser les données quand utilisateur se déconnecte
+      setProfile({
+        firstName: "",
+        lastName: "",
+        title: "",
+        bio: "",
+        email: "",
+        phone: "",
+        location: "",
+      });
+      setSkills([]);
+      setProjects([]);
+      setExperiences([]);
+      setEducation([]);
+      setCertifications([]);
+      setMedia({ 
+        linkedin: "",
+        github: "",
+        twitter: "",
+        websites: [], 
+        links: [] 
+      });
       return;
     }
 
