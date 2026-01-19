@@ -97,9 +97,10 @@ router.post("/register", async (req, res) => {
 
     // Créer le portfolio associé
     await pool.query(
-      `INSERT INTO portfolios (user_id, first_name, last_name, title, bio, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6)`,
+      `INSERT INTO portfolios (id, user_id, first_name, last_name, title, bio, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [
+        userId, // L'id du portfolio = l'id de l'utilisateur
         userId,
         firstName || 'User',
         lastName || '',

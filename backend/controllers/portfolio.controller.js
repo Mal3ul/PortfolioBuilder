@@ -22,16 +22,25 @@ export const getPortfolio = async (req, res) => {
     }
     
     // Récupérer tous les éléments associés en parallèle
-    const [skills, projects, experiences, education, certifications, websites, links, media] = await Promise.all([
+    const [skills, projects, experiences, education, certifications, media] = await Promise.all([
       pool.query('SELECT * FROM skills WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id]),
       pool.query('SELECT * FROM projects WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id]),
       pool.query('SELECT * FROM experiences WHERE portfolio_id = $1 ORDER BY start_date DESC', [portfolio.id]),
       pool.query('SELECT * FROM education WHERE portfolio_id = $1 ORDER BY start_date DESC', [portfolio.id]),
       pool.query('SELECT * FROM certifications WHERE portfolio_id = $1 ORDER BY date DESC', [portfolio.id]),
-      pool.query('SELECT * FROM websites WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id]),
-      pool.query('SELECT * FROM links WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id]),
       pool.query('SELECT * FROM media WHERE portfolio_id = $1', [portfolio.id])
     ]);
+    
+    // Récupérer websites et links si media existe
+    let websites = { rows: [] };
+    let links = { rows: [] };
+    if (media.rows.length > 0) {
+      const mediaId = media.rows[0].id;
+      [websites, links] = await Promise.all([
+        pool.query('SELECT * FROM websites WHERE media_id = $1 ORDER BY created_at DESC', [mediaId]),
+        pool.query('SELECT * FROM links WHERE media_id = $1 ORDER BY created_at DESC', [mediaId])
+      ]);
+    }
     
     res.json({
       profile: {
@@ -51,9 +60,11 @@ export const getPortfolio = async (req, res) => {
       experiences: experiences.rows,
       education: education.rows,
       certifications: certifications.rows,
-      websites: websites.rows,
-      links: links.rows,
-      media: media.rows[0] || { linkedin: '', github: '', twitter: '', websites: [], links: [] }
+      media: {
+        ...(media.rows[0] || {}),
+        websites: websites.rows,
+        links: links.rows
+      }
     });
   } catch (error) {
     console.error('[portfolio] getPortfolio error:', error);
@@ -91,16 +102,25 @@ export const getUserPortfolio = async (req, res) => {
     }
     
     // Récupérer tous les éléments associés en parallèle
-    const [skills, projects, experiences, education, certifications, websites, links, media] = await Promise.all([
+    const [skills, projects, experiences, education, certifications, media] = await Promise.all([
       pool.query('SELECT * FROM skills WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id]),
       pool.query('SELECT * FROM projects WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id]),
       pool.query('SELECT * FROM experiences WHERE portfolio_id = $1 ORDER BY start_date DESC', [portfolio.id]),
       pool.query('SELECT * FROM education WHERE portfolio_id = $1 ORDER BY start_date DESC', [portfolio.id]),
       pool.query('SELECT * FROM certifications WHERE portfolio_id = $1 ORDER BY date DESC', [portfolio.id]),
-      pool.query('SELECT * FROM websites WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id]),
-      pool.query('SELECT * FROM links WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id]),
-      pool.query('SELECT * FROM media WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolio.id])
+      pool.query('SELECT * FROM media WHERE portfolio_id = $1', [portfolio.id])
     ]);
+    
+    // Récupérer websites et links si media existe
+    let websites = { rows: [] };
+    let links = { rows: [] };
+    if (media.rows.length > 0) {
+      const mediaId = media.rows[0].id;
+      [websites, links] = await Promise.all([
+        pool.query('SELECT * FROM websites WHERE media_id = $1 ORDER BY created_at DESC', [mediaId]),
+        pool.query('SELECT * FROM links WHERE media_id = $1 ORDER BY created_at DESC', [mediaId])
+      ]);
+    }
     
     res.json({
       profile: {
@@ -109,9 +129,10 @@ export const getUserPortfolio = async (req, res) => {
         title: portfolio.title || '',
         bio: portfolio.bio || '',
         email: user.email,
-        avatarUrl: portfolio.avatar_url
+        phone: portfolio.phone || '',
+        location: portfolio.location || ''
       },
-      skills: skills.rows,
+      skills: skills.rows.map(s => ({ name: s.skill_name })),
       projects: projects.rows.map(p => ({
         ...p,
         technologies: typeof p.technologies === 'string' ? JSON.parse(p.technologies) : p.technologies
@@ -119,9 +140,11 @@ export const getUserPortfolio = async (req, res) => {
       experiences: experiences.rows,
       education: education.rows,
       certifications: certifications.rows,
-      websites: websites.rows,
-      links: links.rows,
-      media: media.rows
+      media: {
+        ...(media.rows[0] || {}),
+        websites: websites.rows,
+        links: links.rows
+      }
     });
   } catch (error) {
     console.error('[portfolio] getUserPortfolio error:', error);

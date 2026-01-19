@@ -42,6 +42,9 @@ CREATE TABLE projects (
     title VARCHAR(255) NOT NULL,
     description TEXT,
     technologies VARCHAR(500),
+    github_url VARCHAR(500),
+    live_url VARCHAR(500),
+    image_url VARCHAR(500),
     created_at TIMESTAMP,
     FOREIGN KEY (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE
 );
@@ -119,6 +122,7 @@ CREATE TABLE activities (
     id BIGINT PRIMARY KEY,
     portfolio_id BIGINT NOT NULL,
     action VARCHAR(255) NOT NULL,
+    details TEXT,
     name VARCHAR(255),
     timestamp BIGINT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
