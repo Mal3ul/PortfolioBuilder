@@ -15,10 +15,10 @@ async function migrate() {
     const db = await fs.readJSON(DB_FILE);
     console.log(`📦 Found ${db.users.length} users to migrate`);
     
-    // 1. Migrer les utilisateurs
+    // Migrer les utilisateurs
     for (const user of db.users) {
       await pool.query(
-        `INSERT INTO users (id, name, email, password, role, created_at, reset_token, reset_token_expires)
+        `INSERT INTO users (id, name, email, password, role, created_at, reset_password_token, reset_password_expiry)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
          ON CONFLICT (id) DO UPDATE SET
            name = EXCLUDED.name,
@@ -33,7 +33,7 @@ async function migrate() {
           user.role || 'user',
           user.createdAt || new Date().toISOString(),
           user.resetToken || null,
-          user.resetTokenExpires || null
+          user.resetTokenExpires ? new Date(user.resetTokenExpires).getTime() : null
         ]
       );
       console.log(`✅ User: ${user.email}`);
@@ -41,24 +41,24 @@ async function migrate() {
     
     // 2. Migrer les portfolios
     if (db.portfolios) {
-      for (const portfolio of db.portfolios) {
+      const portfolioEntries = typeof db.portfolios === 'object' && !Array.isArray(db.portfolios)
+        ? Object.entries(db.portfolios).map(([userId, data]) => ({ userId, ...data }))
+        : db.portfolios;
+      
+      for (const portfolio of portfolioEntries) {
         const result = await pool.query(
-          `INSERT INTO portfolios (user_id, title, description, tagline, avatar_url, created_at, updated_at)
-           VALUES ($1, $2, $3, $4, $5, $6, $7)
+          `INSERT INTO portfolios (id, user_id, title, bio, updated_at)
+           VALUES ($1, $2, $3, $4, $5)
            ON CONFLICT (user_id) DO UPDATE SET
              title = EXCLUDED.title,
-             description = EXCLUDED.description,
-             tagline = EXCLUDED.tagline,
-             avatar_url = EXCLUDED.avatar_url,
+             bio = EXCLUDED.bio,
              updated_at = EXCLUDED.updated_at
            RETURNING id`,
           [
-            portfolio.userId,
-            portfolio.title || '',
-            portfolio.description || '',
-            portfolio.tagline || '',
-            portfolio.avatarUrl || null,
-            portfolio.createdAt || new Date().toISOString(),
+            parseInt(portfolio.userId),
+            parseInt(portfolio.userId),
+            portfolio.profile?.title || portfolio.title || '',
+            portfolio.profile?.bio || portfolio.description || '',
             new Date().toISOString()
           ]
         );

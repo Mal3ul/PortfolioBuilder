@@ -1,5 +1,28 @@
 import pool from "../config/database.js";
 
+// Get current user's portfolio
+export const getPortfolio = async (req, res) => {
+  const userId = req.user.id;
+  
+  try {
+    const portfolioResult = await pool.query(
+      'SELECT * FROM portfolios WHERE user_id = $1',
+      [userId]
+    );
+    
+    const portfolio = portfolioResult.rows[0];
+    
+    if (!portfolio) {
+      return res.status(404).json({ message: "Portfolio introuvable" });
+    }
+    
+    res.json(portfolio);
+  } catch (error) {
+    console.error('[portfolio] getPortfolio error:', error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
 // Get user portfolio with all relations
 export const getUserPortfolio = async (req, res) => {
   const { userId } = req.params;
@@ -88,4 +111,37 @@ export const updatePortfolio = async (req, res) => {
   }
 };
 
-export default { getUserPortfolio, updatePortfolio };
+// Save/Create portfolio (alias for updatePortfolio)
+export const savePortfolio = async (req, res) => {
+  const { userId, profile, skills, projects } = req.body;
+  
+  try {
+    // Upsert portfolio
+    await pool.query(
+      `INSERT INTO portfolios (user_id, title, description, tagline, avatar_url, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       ON CONFLICT (user_id) DO UPDATE SET
+         title = EXCLUDED.title,
+         description = EXCLUDED.description,
+         tagline = EXCLUDED.tagline,
+         avatar_url = EXCLUDED.avatar_url,
+         updated_at = EXCLUDED.updated_at`,
+      [
+        userId,
+        profile?.title || '',
+        profile?.bio || '',
+        profile?.tagline || '',
+        profile?.avatarUrl || null,
+        new Date().toISOString(),
+        new Date().toISOString()
+      ]
+    );
+    
+    res.json({ message: "Portfolio sauvegardé" });
+  } catch (error) {
+    console.error('[portfolio] savePortfolio error:', error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
+export default { getPortfolio, getUserPortfolio, updatePortfolio, savePortfolio };

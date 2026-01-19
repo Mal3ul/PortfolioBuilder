@@ -140,10 +140,10 @@ router.post("/forgot-password", async (req, res) => {
     }
 
     const resetToken = crypto.randomBytes(32).toString("hex");
-    const resetTokenExpires = new Date(Date.now() + 3600000).toISOString(); // 1h
+    const resetTokenExpires = Date.now() + 3600000; // 1h en timestamp
 
     await pool.query(
-      'UPDATE users SET reset_token = $1, reset_token_expires = $2 WHERE id = $3',
+      'UPDATE users SET reset_password_token = $1, reset_password_expiry = $2 WHERE id = $3',
       [resetToken, resetTokenExpires, user.id]
     );
 
@@ -183,8 +183,8 @@ router.post("/reset-password", async (req, res) => {
 
   try {
     const result = await pool.query(
-      'SELECT * FROM users WHERE reset_token = $1 AND reset_token_expires > $2',
-      [token, new Date().toISOString()]
+      'SELECT * FROM users WHERE reset_password_token = $1 AND reset_password_expiry > $2',
+      [token, Date.now()]
     );
 
     const user = result.rows[0];
@@ -194,7 +194,7 @@ router.post("/reset-password", async (req, res) => {
     }
 
     await pool.query(
-      'UPDATE users SET password = $1, reset_token = NULL, reset_token_expires = NULL WHERE id = $2',
+      'UPDATE users SET password = $1, reset_password_token = NULL, reset_password_expiry = NULL WHERE id = $2',
       [newPassword, user.id]
     );
 
