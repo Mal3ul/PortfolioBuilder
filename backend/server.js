@@ -1,11 +1,13 @@
-import dotenv from 'dotenv';
-dotenv.config();
+import './env-loader.js';
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import path from "path";
-import { fileURLToPath } from "url";
 
 // Routes
 import authRoutes from "./routes/auth.routes.js";
@@ -16,7 +18,6 @@ import activitiesRoutes from "./routes/activities.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -65,7 +66,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 const PORT = process.env.PORT || 10000;
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Server running on port ${PORT}`);
   if (process.env.NODE_ENV !== 'production') {
     console.log(`📍 Test URL: http://localhost:${PORT}/api/portfolio/user/1768672901622`);

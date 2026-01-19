@@ -1,6 +1,7 @@
 import express from "express";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
+import bcryptjs from "bcryptjs";
 import pool from "../config/database.js";
 import { sendPasswordResetEmail } from "../utils/email.js";
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config.js";
@@ -36,13 +37,19 @@ router.post("/login", async (req, res) => {
 
   try {
     const result = await pool.query(
-      'SELECT * FROM users WHERE email = $1 AND password = $2',
-      [email, password]
+      'SELECT * FROM users WHERE email = $1',
+      [email]
     );
 
     const user = result.rows[0];
 
     if (!user) {
+      return res.status(401).json({ message: "Identifiants invalides" });
+    }
+
+    // Vérifier le password avec bcryptjs
+    const isPasswordValid = await bcryptjs.compare(password, user.password);
+    if (!isPasswordValid) {
       return res.status(401).json({ message: "Identifiants invalides" });
     }
 
@@ -88,11 +95,14 @@ router.post("/register", async (req, res) => {
     const lastName = rest.join(" ").trim();
     const userId = Date.now().toString();
 
+    // Hasher le password
+    const hashedPassword = await bcryptjs.hash(password, 10);
+
     // Créer l'utilisateur
     await pool.query(
       `INSERT INTO users (id, name, email, password, role, created_at)
        VALUES ($1, $2, $3, $4, $5, $6)`,
-      [userId, name, email, password, 'user', new Date().toISOString()]
+      [userId, name, email, hashedPassword, 'user', new Date().toISOString()]
     );
 
     // Créer le portfolio associé

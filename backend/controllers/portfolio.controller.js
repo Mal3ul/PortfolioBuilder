@@ -155,19 +155,45 @@ export const getUserPortfolio = async (req, res) => {
 // Update portfolio profile
 export const updatePortfolio = async (req, res) => {
   const userId = req.user?.id;
-  const { firstName, lastName, title, bio, email, phone, location } = req.body;
+  
+  // Support ancien format { firstName, ... } et nouveau format { profile: { firstName, ... } }
+  const profileData = req.body.profile || req.body;
+  const { firstName, lastName, title, bio, email, phone, location } = profileData;
   
   if (!userId) {
     return res.status(401).json({ message: "Non authentifié" });
   }
   
   try {
+    // Récupérer le portfolio existant
+    const existingResult = await pool.query(
+      'SELECT * FROM portfolios WHERE user_id = $1',
+      [userId]
+    );
+    
+    const existing = existingResult.rows[0];
+    
+    if (!existing) {
+      return res.status(404).json({ message: "Portfolio introuvable" });
+    }
+    
+    // Ne mettre à jour que les champs fournis (merge)
     const result = await pool.query(
       `UPDATE portfolios
        SET first_name = $1, last_name = $2, title = $3, bio = $4, email = $5, phone = $6, location = $7, updated_at = $8
        WHERE user_id = $9
        RETURNING *`,
-      [firstName, lastName, title, bio, email, phone, location, new Date().toISOString(), userId]
+      [
+        firstName !== undefined ? firstName : existing.first_name,
+        lastName !== undefined ? lastName : existing.last_name,
+        title !== undefined ? title : existing.title,
+        bio !== undefined ? bio : existing.bio,
+        email !== undefined ? email : existing.email,
+        phone !== undefined ? phone : existing.phone,
+        location !== undefined ? location : existing.location,
+        new Date().toISOString(),
+        userId
+      ]
     );
     
     const portfolio = result.rows[0];
