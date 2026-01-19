@@ -3,10 +3,20 @@ import { useState } from "react";
 import AlertBanner from "../../components/AlertBanner";
 
 export default function Profile() {
-  const { profile, setProfile, saveProfile } = usePortfolio();
+  const { profile, setProfile, saveProfile, loading } = usePortfolio();
   const [saveMessage, setSaveMessage] = useState("");
   const [saveError, setSaveError] = useState("");
   const [validationErrors, setValidationErrors] = useState({});
+  
+  // Afficher un loader pendant le chargement
+  if (loading) {
+    return <div className="tab-panel"><p>Chargement...</p></div>;
+  }
+  
+  // Vérifier que profile existe
+  if (!profile) {
+    return <div className="tab-panel"><p>Erreur: Impossible de charger le profil</p></div>;
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,10 +27,10 @@ export default function Profile() {
     e.preventDefault();
     const errors = {};
     
-    if (!profile.firstName || !profile.firstName.trim()) {
+    if (!profile?.firstName || !profile.firstName.trim()) {
       errors.firstName = "Le prénom est obligatoire";
     }
-    if (!profile.lastName || !profile.lastName.trim()) {
+    if (!profile?.lastName || !profile.lastName.trim()) {
       errors.lastName = "Le nom est obligatoire";
     }
     
@@ -69,7 +79,7 @@ export default function Profile() {
                   name="firstName"
                   className={`input ${validationErrors.firstName ? 'input-error' : ''}`}
                   placeholder="Jean"
-                  value={profile.firstName}
+                  value={profile?.firstName || ''}
                   onChange={handleChange}
                   required
                 />
@@ -82,7 +92,7 @@ export default function Profile() {
                   name="lastName"
                   className={`input ${validationErrors.lastName ? 'input-error' : ''}`}
                   placeholder="Dupont"
-                  value={profile.lastName}
+                  value={profile?.lastName || ''}
                   onChange={handleChange}
                   required
                 />
@@ -96,7 +106,7 @@ export default function Profile() {
                 name="title"
                 className="input"
                 placeholder="Développeur Full-Stack"
-                value={profile.title}
+                value={profile?.title || ''}
                 onChange={handleChange}
               />
             </div>
@@ -108,7 +118,7 @@ export default function Profile() {
                 className="textarea"
                 rows={6}
                 placeholder="Passionné par le développement web et les nouvelles technologies..."
-                value={profile.bio}
+                value={profile?.bio || ''}
                 onChange={handleChange}
               />
             </div>
@@ -119,7 +129,7 @@ export default function Profile() {
                 name="phone"
                 type="tel"
                 className="input"
-                value={profile.phone}
+                value={profile?.phone || ''}
                 onChange={handleChange}
               />
             </div>
@@ -129,7 +139,7 @@ export default function Profile() {
               <input
                 name="location"
                 className="input"
-                value={profile.location}
+                value={profile?.location || ''}
                 onChange={handleChange}
               />
             </div>
