@@ -53,7 +53,16 @@ export const portfolioService = {
   updatePortfolio,
 
   updateSkills: async (skills) => {
-    return updatePortfolio({ skills });
+    const response = await fetch(`${baseURL}/skills`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ skills }),
+    });
+    if (!response.ok) {
+      handleUnauthorized(response);
+      throw new Error("Erreur lors de la sauvegarde des compétences");
+    }
+    return response.json();
   },
 
   updateProjects: async (projects) => {

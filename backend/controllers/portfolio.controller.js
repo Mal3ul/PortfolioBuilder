@@ -162,14 +162,26 @@ export const updatePortfolio = async (req, res) => {
   }
   
   try {
-    await pool.query(
+    const result = await pool.query(
       `UPDATE portfolios
        SET first_name = $1, last_name = $2, title = $3, bio = $4, email = $5, phone = $6, location = $7, updated_at = $8
-       WHERE user_id = $9`,
+       WHERE user_id = $9
+       RETURNING *`,
       [firstName, lastName, title, bio, email, phone, location, new Date().toISOString(), userId]
     );
     
-    res.json({ message: "Portfolio mis à jour" });
+    const portfolio = result.rows[0];
+    res.json({
+      profile: {
+        firstName: portfolio.first_name || '',
+        lastName: portfolio.last_name || '',
+        title: portfolio.title || '',
+        bio: portfolio.bio || '',
+        email: portfolio.email || '',
+        phone: portfolio.phone || '',
+        location: portfolio.location || ''
+      }
+    });
   } catch (error) {
     console.error('[portfolio] updatePortfolio error:', error);
     res.status(500).json({ message: "Erreur serveur" });

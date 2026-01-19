@@ -4,6 +4,7 @@ import {
   getSkills,
   addSkill,
   updateSkill,
+  updateAllSkills,
   deleteSkill
 } from "../controllers/skills.controller.js";
 import { verifyToken } from "./auth.routes.js";
@@ -13,6 +14,9 @@ const router = express.Router();
 
 // Récupérer les compétences d'un utilisateur
 router.get("/:userId", getSkills);
+
+// Mettre à jour TOUTES les compétences (remplace complètement)
+router.put("/", verifyToken, requireAnyRole(['user','admin']), updateAllSkills);
 
 // Ajouter une compétence
 router.post("/", verifyToken, requireAnyRole(['user','admin']), requireSelfOrAdmin({ inBody: true, paramKey: 'userId' }), addSkill);

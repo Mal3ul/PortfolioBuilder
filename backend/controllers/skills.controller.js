@@ -84,6 +84,62 @@ export const updateSkill = async (req, res) => {
   }
 };
 
+// Update all skills for current user
+export const updateAllSkills = async (req, res) => {
+  const userId = req.user?.id;
+  const { skills } = req.body;
+  
+  if (!userId) {
+    return res.status(401).json({ message: "Non authentifié" });
+  }
+  
+  if (!Array.isArray(skills)) {
+    return res.status(400).json({ message: "Skills doit être un array" });
+  }
+  
+  try {
+    // Récupérer le portfolio_id
+    const portfolioResult = await pool.query(
+      'SELECT id FROM portfolios WHERE user_id = $1',
+      [userId]
+    );
+    
+    if (portfolioResult.rows.length === 0) {
+      return res.status(404).json({ message: "Portfolio introuvable" });
+    }
+    
+    const portfolioId = portfolioResult.rows[0].id;
+    
+    // Supprimer toutes les compétences existantes
+    await pool.query(
+      'DELETE FROM skills WHERE portfolio_id = $1',
+      [portfolioId]
+    );
+    
+    // Ajouter les nouvelles compétences
+    for (const skillName of skills) {
+      await pool.query(
+        `INSERT INTO skills (portfolio_id, skill_name, created_at)
+         VALUES ($1, $2, $3)`,
+        [portfolioId, skillName, new Date().toISOString()]
+      );
+    }
+    
+    // Retourner les compétences
+    const result = await pool.query(
+      'SELECT * FROM skills WHERE portfolio_id = $1 ORDER BY created_at DESC',
+      [portfolioId]
+    );
+    
+    res.json({
+      skills: result.rows.map(s => s.skill_name)
+    });
+  } catch (error) {
+    console.error('[skills] updateAllSkills error:', error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+
 // Delete skill
 export const deleteSkill = async (req, res) => {
   const { id } = req.params;
@@ -102,4 +158,4 @@ export const deleteSkill = async (req, res) => {
   }
 };
 
-export default { getSkills, addSkill, updateSkill, deleteSkill };
+export default { getSkills, addSkill, updateSkill, updateAllSkills, deleteSkill };
