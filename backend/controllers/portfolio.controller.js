@@ -93,8 +93,12 @@ export const getUserPortfolio = async (req, res) => {
 
 // Update portfolio profile
 export const updatePortfolio = async (req, res) => {
-  const { userId } = req.params;
+  const userId = req.user?.id;
   const { firstName, lastName, title, bio, email, phone, location } = req.body;
+  
+  if (!userId) {
+    return res.status(401).json({ message: "Non authentifié" });
+  }
   
   try {
     await pool.query(

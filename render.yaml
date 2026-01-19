@@ -11,9 +11,9 @@ services:
       - key: DATABASE_URL
         value: postgresql://portfolio_builder_bdd_user:2ttYsFLs3KHY3WApN20ZOVPF7AdSH7LT@dpg-d5mfmin5r7bs73d4dl2g-a/portfolio_builder_bdd
       - key: JWT_SECRET
-        scope: project
+        value: super_secret_jwt_key_change_in_production_2026
       - key: JWT_EXPIRES_IN
-        scope: project
+        value: 30m
       - key: SMTP_HOST
         scope: project
       - key: SMTP_PORT
