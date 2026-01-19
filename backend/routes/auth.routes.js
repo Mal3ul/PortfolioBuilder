@@ -10,16 +10,22 @@ const router = express.Router();
 // Middleware pour vérifier JWT
 export const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
+  
+  console.log('[auth] verifyToken middleware - Authorization header:', req.headers.authorization ? '✅ présent' : '❌ manquant');
+  console.log('[auth] verifyToken middleware - Token:', token ? `✅ ${token.substring(0, 20)}...` : '❌ undefined');
 
   if (!token) {
+    console.log('[auth] verifyToken - 401: Token manquant');
     return res.status(401).json({ message: "Token manquant" });
   }
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
+    console.log('[auth] verifyToken - ✅ Token valide pour user:', decoded.id);
     req.user = decoded;
     next();
   } catch (error) {
+    console.log('[auth] verifyToken - 401: Token invalide', error.message);
     return res.status(401).json({ message: "Token invalide ou expiré" });
   }
 };
