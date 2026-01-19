@@ -2,7 +2,11 @@ import pool from "../config/database.js";
 
 // Get activities
 export const getActivities = async (req, res) => {
-  const { userId } = req.params;
+  const userId = req.user?.id;
+  
+  if (!userId) {
+    return res.status(401).json({ message: "Non authentifié" });
+  }
   
   try {
     const result = await pool.query(
@@ -22,8 +26,12 @@ export const getActivities = async (req, res) => {
 
 // Add activity
 export const addActivity = async (req, res) => {
-  const { userId } = req.params;
+  const userId = req.user?.id;
   const { action, details } = req.body;
+  
+  if (!userId) {
+    return res.status(401).json({ message: "Non authentifié" });
+  }
   
   try {
     const result = await pool.query(
