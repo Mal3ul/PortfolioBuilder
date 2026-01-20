@@ -8,7 +8,7 @@ export default function AdminLayout() {
       <SidebarAdmin />
 
       {/* Contenu principal */}
-      <main style={{ flex: 1, padding: "1rem" }}>
+      <main style={{ flex: 1}}>
         <Outlet />
       </main>
     </div>

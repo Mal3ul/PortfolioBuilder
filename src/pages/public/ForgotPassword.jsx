@@ -47,10 +47,12 @@ export default function ForgotPassword() {
         setMessage(data.message);
         setEmail("");
         
-        // En développement, afficher le token pour tester
+        // Afficher le token en dev
         if (data.devToken) {
           console.log("🔑 Token de réinitialisation:", data.devToken);
-          console.log("🔗 URL de test:", `http://localhost:5173/reset-password/${data.devToken}`);
+          console.log("🔗 URL de réinitialisation:", data.devUrl);
+          // Afficher aussi dans l'UI
+          // setMessage(data.message + "\n\n🔗 Lien de réinitialisation : " + data.devUrl);
         }
       } else {
         setError(data.message || "Une erreur est survenue");

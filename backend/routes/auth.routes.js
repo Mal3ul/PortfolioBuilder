@@ -83,6 +83,18 @@ router.post("/login", async (req, res) => {
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
 
+  console.log("📝 Register request received:", { name, email, password });
+
+  // Validation des champs requis
+  if (!name || !email || !password) {
+    console.log("❌ Validation failed - missing fields");
+    return res.status(400).json({ message: "Tous les champs sont requis (name, email, password)" });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({ message: "Le mot de passe doit faire au moins 6 caractères" });
+  }
+
   try {
     // Vérifier si l'email existe déjà
     const existingUser = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
@@ -107,15 +119,16 @@ router.post("/register", async (req, res) => {
 
     // Créer le portfolio associé
     await pool.query(
-      `INSERT INTO portfolios (id, user_id, first_name, last_name, title, bio, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      `INSERT INTO portfolios (id, user_id, first_name, last_name, title, bio, email, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
         userId, // L'id du portfolio = l'id de l'utilisateur
         userId,
         firstName || 'User',
         lastName || '',
-        `${firstName || 'User'}'s Portfolio`,
         '',
+        '',
+        email,
         new Date().toISOString()
       ]
     );
@@ -164,24 +177,15 @@ router.post("/forgot-password", async (req, res) => {
       [resetToken, resetTokenExpires, user.id]
     );
 
-    const emailResult = await sendPasswordResetEmail(email, resetToken, user.name);
-    console.log('[auth] email result', emailResult);
+    // Ne pas envoyer d'email, juste retourner le token en dev
+    console.log('[auth] ✅ Token de réinitialisation généré:', resetToken);
+    console.log('[auth] 🔗 URL:', `http://localhost:5173/reset-password/${resetToken}`);
 
-    if (!emailResult.success) {
-      return res.status(502).json({
-        message: "Erreur lors de l'envoi de l'email",
-        error: emailResult.error
-      });
-    }
-
-    const responseData = { message: "Email de réinitialisation envoyé" };
-    
-    if (process.env.NODE_ENV !== 'production') {
-      responseData.devInfo = {
-        resetToken,
-        resetUrl: `http://localhost:5173/reset-password?token=${resetToken}`
-      };
-    }
+    const responseData = { 
+      message: "Token de réinitialisation généré (voir console backend)",
+      devToken: resetToken,
+      devUrl: `http://localhost:5173/reset-password/${resetToken}`
+    };
 
     res.json(responseData);
   } catch (error) {
@@ -210,9 +214,12 @@ router.post("/reset-password", async (req, res) => {
       return res.status(400).json({ message: "Token invalide ou expiré" });
     }
 
+    // Hash le nouveau mot de passe avant de le sauvegarder
+    const hashedPassword = await bcryptjs.hash(newPassword, 10);
+
     await pool.query(
       'UPDATE users SET password = $1, reset_password_token = NULL, reset_password_expiry = NULL WHERE id = $2',
-      [newPassword, user.id]
+      [hashedPassword, user.id]
     );
 
     res.json({ message: "Mot de passe réinitialisé avec succès" });
@@ -239,6 +246,85 @@ router.get("/me", verifyToken, async (req, res) => {
     res.json(user);
   } catch (error) {
     console.error('[auth] me error:', error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+});
+
+// Change email
+router.post("/change-email", async (req, res) => {
+  const { newEmail, userId } = req.body;
+
+  if (!newEmail || !userId) {
+    return res.status(400).json({ message: "Email et userId requis" });
+  }
+
+  try {
+    // Vérifier si l'email existe déjà
+    const existingUser = await pool.query(
+      'SELECT id FROM users WHERE email = $1 AND id != $2',
+      [newEmail, userId]
+    );
+
+    if (existingUser.rows.length > 0) {
+      return res.status(400).json({ message: "Cet email est déjà utilisé" });
+    }
+
+    // Mettre à jour l'email dans users
+    await pool.query(
+      'UPDATE users SET email = $1 WHERE id = $2',
+      [newEmail, userId]
+    );
+
+    // Mettre à jour aussi dans portfolios si existe
+    await pool.query(
+      'UPDATE portfolios SET email = $1 WHERE user_id = $2',
+      [newEmail, userId]
+    );
+
+    res.json({ message: "Email modifié avec succès" });
+  } catch (error) {
+    console.error('[auth] change-email error:', error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+});
+
+// Change password
+router.post("/change-password", async (req, res) => {
+  const { currentPassword, newPassword, userId } = req.body;
+
+  if (!currentPassword || !newPassword || !userId) {
+    return res.status(400).json({ message: "Tous les champs sont requis" });
+  }
+
+  try {
+    const result = await pool.query(
+      'SELECT password FROM users WHERE id = $1',
+      [userId]
+    );
+
+    const user = result.rows[0];
+
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur introuvable" });
+    }
+
+    // Vérifier l'ancien mot de passe
+    const isPasswordValid = await bcryptjs.compare(currentPassword, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Mot de passe actuel incorrect" });
+    }
+
+    // Hash le nouveau mot de passe
+    const hashedPassword = await bcryptjs.hash(newPassword, 10);
+
+    await pool.query(
+      'UPDATE users SET password = $1 WHERE id = $2',
+      [hashedPassword, userId]
+    );
+
+    res.json({ message: "Mot de passe modifié avec succès" });
+  } catch (error) {
+    console.error('[auth] change-password error:', error);
     res.status(500).json({ message: "Erreur serveur" });
   }
 });

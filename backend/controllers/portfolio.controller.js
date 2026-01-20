@@ -155,10 +155,7 @@ export const getUserPortfolio = async (req, res) => {
 // Update portfolio profile
 export const updatePortfolio = async (req, res) => {
   const userId = req.user?.id;
-  
-  // Support ancien format { firstName, ... } et nouveau format { profile: { firstName, ... } }
-  const profileData = req.body.profile || req.body;
-  const { firstName, lastName, title, bio, email, phone, location } = profileData;
+  const { firstName, lastName, title, bio, email, phone, location } = req.body;
   
   if (!userId) {
     return res.status(401).json({ message: "Non authentifié" });

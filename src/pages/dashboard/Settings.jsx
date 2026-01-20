@@ -5,7 +5,7 @@ import { Lock, Mail } from "lucide-react";
 import "../../styles/Editor.css";
 
 export default function Settings() {
-  const { user } = useAuth();
+  const { user, updateUserEmail } = useAuth();
   const [email, setEmail] = useState(user?.email || "");
   const [emailChanged, setEmailChanged] = useState(false);
   
@@ -26,7 +26,9 @@ export default function Settings() {
     
     setLoading(true);
     try {
-      await authService.changeEmail(email, user?.userId);
+      const userId = user?.id || user?.userId;
+      await authService.changeEmail(email, userId);
+      updateUserEmail(email); // Mettre à jour le contexte auth
       setSuccessMessage("Email modifié avec succès !");
       setEmailChanged(false);
       setTimeout(() => setSuccessMessage(""), 3000);
@@ -61,7 +63,8 @@ export default function Settings() {
     
     setLoading(true);
     try {
-      await authService.changePassword(currentPassword, newPassword, user?.userId);
+      const userId = user?.id || user?.userId;
+      await authService.changePassword(currentPassword, newPassword, userId);
       setSuccessMessage("Mot de passe modifié avec succès !");
       setCurrentPassword("");
       setNewPassword("");
@@ -114,10 +117,10 @@ export default function Settings() {
                   className="input"
                   placeholder="nouveau@email.com"
                   // value={email}
-                  // onChange={(e) => {
-                  //   setEmail(e.target.value);
-                  //   setEmailChanged(e.target.value !== user?.email);
-                  // }}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setEmailChanged(e.target.value !== user?.email);
+                  }}
                 />
               </div>
 

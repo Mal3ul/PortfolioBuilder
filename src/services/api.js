@@ -136,7 +136,8 @@ export const authService = {
       body: JSON.stringify(userData),
     });
     if (!response.ok) {
-      throw new Error("Erreur lors de l'inscription");
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Erreur lors de l'inscription");
     }
     return response.json();
   },

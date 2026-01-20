@@ -42,7 +42,7 @@ export default function AdminDashboard() {
         };
 
         // Fetch users from backend
-        const usersRes = await fetch("/api/auth/users", {
+        const usersRes = await fetch("/api/admin/users", {
           headers
         });
         if (!usersRes.ok) {
@@ -51,7 +51,8 @@ export default function AdminDashboard() {
         const usersData = await usersRes.json();
         
         // Transform users to match table format
-        const transformedUsers = (Array.isArray(usersData) ? usersData : []).map((user) => ({
+        const usersList = usersData.users || [];
+        const transformedUsers = usersList.map((user) => ({
           id: user.id,
           name: user.name,
           email: user.email,
@@ -95,8 +96,29 @@ export default function AdminDashboard() {
     fetchData();
   }, [navigate]);
 
-  const handleDeleteUser = (id) => {
-    setUsers((prev) => prev.filter((u) => u.id !== id));
+  const handleDeleteUser = async (id) => {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ?")) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/admin/users/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error("Erreur lors de la suppression");
+      }
+      
+      // Mise à jour de l'état local après suppression réussie
+      setUsers((prev) => prev.filter((u) => u.id !== id));
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      alert("Erreur lors de la suppression de l'utilisateur");
+    }
   };
 
   const handleEditUser = (id) => {
