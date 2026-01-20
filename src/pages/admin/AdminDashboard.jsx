@@ -63,26 +63,33 @@ export default function AdminDashboard() {
 
         setUsers(transformedUsers);
 
-        // Fetch portfolio data from backend
-        const portfolioRes = await fetch("/api/portfolio", {
+        // Fetch all portfolios from admin endpoint
+        const portfolioRes = await fetch("/api/admin/portfolios", {
           headers
         });
         if (!portfolioRes.ok) {
           throw new Error(`Portfolio API error: ${portfolioRes.status}`);
         }
         const portfolioData = await portfolioRes.json();
-        
-        // Transform portfolio data to match table format
-        if (portfolioData && portfolioData.profile) {
-          const transformedPortfolios = [{
-            id: 1,
-            user: (portfolioData.profile?.firstName || "") + " " + (portfolioData.profile?.lastName || ""),
-            title: portfolioData.profile?.title || "Portfolio",
+
+        // Transform portfolios list to match table format
+        const portfoliosList = portfolioData.portfolios || [];
+        const transformedPortfolios = portfoliosList.map((p) => {
+          const userName = p.user_name || `${p.first_name || ""} ${p.last_name || ""}`.trim();
+          const displayUser = userName || p.user_email || p.portfolio_email || "";
+          const updated = p.updated_at
+            ? new Date(p.updated_at).toLocaleDateString("fr-FR", { year: "numeric", month: "short", day: "2-digit" })
+            : "-";
+          return {
+            id: p.id,
+            userId: p.user_id,
+            user: displayUser,
+            title: p.title || "Portfolio",
             status: "Publié",
-            updated: new Date(portfolioData.updatedAt).toLocaleDateString("fr-FR", { year: "numeric", month: "short", day: "2-digit" }),
-          }];
-          setPortfolios(transformedPortfolios);
-        }
+            updated,
+          };
+        });
+        setPortfolios(transformedPortfolios);
       } catch (error) {
         console.error("Error fetching data:", error);
         // Set empty data on error to show empty tables
@@ -126,8 +133,31 @@ export default function AdminDashboard() {
     alert("Édition du profil utilisateur " + id);
   };
 
-  const handleDeletePortfolio = (id) => {
-    setPortfolios((prev) => prev.filter((p) => p.id !== id));
+  const handleDeletePortfolio = async (id) => {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer ce portfolio ?")) {
+      return;
+    }
+    try {
+      const response = await fetch(`/api/admin/portfolios/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: `HTTP ${response.status}` }));
+        throw new Error(errorData.message || `Erreur ${response.status}`);
+      }
+      setPortfolios((prev) => prev.filter((p) => p.id !== id));
+      alert("Portfolio supprimé avec succès");
+    } catch (error) {
+      console.error("Error deleting portfolio:", error);
+      alert(`Suppression échouée: ${error.message}`);
+    }
+  };
+
+  const handleViewPortfolio = (userId) => {
+    window.open(`/portfolio/${userId}`, '_blank');
   };
 
   const totalUsers = users.length;
@@ -333,7 +363,11 @@ export default function AdminDashboard() {
                             <td>{portfolio.title}</td>
                             <td className="text-gray-600">{portfolio.user}</td>
                             <td className="text-gray-500">{portfolio.updated}</td>
-                            <td>
+                            <td className="action-buttons">
+                              <button className="btn btn-ghost btn-sm action-btn" onClick={() => handleViewPortfolio(portfolio.userId)}>
+                                <Eye size={14} />
+                                Voir
+                              </button>
                               <button className="btn btn-ghost btn-sm action-btn" onClick={() => handleDeletePortfolio(portfolio.id)}>Supprimer</button>
                             </td>
                           </tr>
