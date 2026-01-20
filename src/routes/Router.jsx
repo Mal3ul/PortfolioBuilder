@@ -37,8 +37,6 @@ import Editeur from "../pages/dashboard/PortfolioEditor";
 
 // Admin
 import AdminDashboard from "../pages/admin/AdminDashboard";
-import AdminUsers from "../pages/admin/AdminUsers";
-import AdminTemplates from "../pages/admin/AdminTemplates";
 
 // Error
 import Error from "../pages/public/Error";

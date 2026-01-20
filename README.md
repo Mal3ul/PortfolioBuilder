@@ -1,107 +1,174 @@
 # Portfolio Builder
 
-**Portfolio Builder** est une application web qui permet aux utilisateurs de créer, personnaliser et partager leur portfolio. 
+**Portfolio Builder** est une plateforme web complète permettant aux utilisateurs de créer, personnaliser et partager leur portfolio.
 
 ---
 
 ## Technologies utilisées
 
-- **Frontend :** React, React Router, Lucide Icons    
-- **Base de données :** PostgreSQL 
+### Frontend
+- **React** + **Vite**
+- **React Router**
+- **Lucide Icons**
+
+### Backend
+- **Node.js** + **Express**
+- **PostgreSQL** 
+- **JWT** 
+- **Nodemailer**
 
 ---
 
 ## Installation et lancement
 
-1. Cloner le dépôt public :
-
 ```bash
+# Cloner le dépôt
 git clone https://github.com/Mal3ul/PortfolioBuilder.git
-```
+cd PortfolioBuilder
 
-2. Installer les dépendances :
+# Installer les dépendances
+npm install
 
-```bash
-npm create vite@latest . —- -—template react
-npm install react-router-dom lucide-react
-```
-3. Lancer l’application :
-
-```bash
+# Lancer en mode développement
 npm run dev
 ```
 
-4. L’application sera accessible sur : 
+L'application est accessible sur `http://localhost:5173`
+
+### Backend
 
 ```bash
-http://localhost:3000
+cd backend
+
+# Installer les dépendances
+npm install
+
+# Configuration PostgreSQL, JWT_SECRET, SMTP_HOST, etc.
+
+```
+---
+
+## Structure du projet
+
 ```
 
-## Structure du projet :
+PortfolioBuilder/
+├── src/
+│   ├── App.jsx
+│   ├── main.jsx
+│   ├── components/
+│   │   ├── Sidebar.jsx
+│   │   ├── SidebarAdmin.jsx
+│   │   ├── Header.jsx
+│   │   ├── Footer.jsx
+│   │   └── AlertBanner.jsx
+│   ├── pages/
+│   │   ├── admin/
+│   │   │   └── AdminDashboard.jsx
+│   │   ├── dashboard/
+│   │   │   ├── DashboardHome.jsx
+│   │   │   ├── Profile.jsx
+│   │   │   ├── Experience.jsx
+│   │   │   ├── Projects.jsx
+│   │   │   ├── Skills.jsx
+│   │   │   ├── Education.jsx
+│   │   │   ├── Certifications.jsx
+│   │   │   ├── Media.jsx
+│   │   │   ├── Settings.jsx
+│   │   │   ├── PortfolioTemplate.jsx
+│   │   │   ├── PortfolioEditor.jsx
+│   │   │   └── EditorLayout.jsx
+│   │   ├── public/
+│   │   │   ├── Home.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── ForgotPassword.jsx
+│   │   │   ├── ResetPassword.jsx
+│   │   │   ├── PublicPortfolio.jsx
+│   │   │   └── Error.jsx
+│   ├── layouts/
+│   │   ├── DashboardLayout.jsx
+│   │   ├── AdminLayout.jsx
+│   │   ├── EditorLayout.jsx
+│   │   └── PublicLayout.jsx
+│   ├── routes/
+│   │   └── Router.jsx
+│   ├── context/
+│   │   ├── PortfolioContext.jsx
+│   │   └── AuthContext.jsx
+│   ├── services/
+│   │   └── api.js
+│   └── styles/
+│       ├── App.css
+│       ├── Dashboard.css
+│       ├── Editor.css
+│       ├── AuthPage.css
+│       ├── LandingPage.css
+│       └── PortfolioTemplate.css
+├── backend/
+│   ├── server.js
+│   ├── controllers/
+│   │   ├── auth.controller.js
+│   │   ├── portfolio.controller.js
+│   │   ├── projects.controller.js
+│   │   ├── skills.controller.js
+│   │   ├── activities.controller.js
+│   │   └── media.controller.js
+│   ├── routes/
+│   │   ├── auth.routes.js
+│   │   ├── portfolio.routes.js
+│   │   ├── projects.routes.js
+│   │   ├── skills.routes.js
+│   │   ├── activities.routes.js
+│   │   └── admin.routes.js
+│   ├── config/
+│   │   └── database.js
+│   └── data/
+│       ├── user.json
+│       └── portfolio.json
+└── package.json
 ```
-/src
-|  App.css
-|  App.jsx
-|  index.css
-|  main.jsx
-├─  /layout
-|    AdminLayout.jsx
-|    DashboardLayout.jsx
-|    PublicLayout.jsx
-├─  /components
-|    Footer.jsx
-|    Sidebar.jsx
-|    Header.jsx
-|    HeaderHome.page.jsx
-├─  /pages
-├─  ├─/admin
-|   |    AdminHome.jsx
-|   |    AdminTemplates.jsx
-|   |    AdminUsers.jsx
-├─  ├─/dashboard
-|   |    Certifications.jsx
-|   |    DashboardHome.jsx
-|   |    Education.jsx
-|   |    Experience.jsx
-|   |    Media.jsx
-|   |    Profile.jsx
-|   |    Projects.jsx
-|   |    Settings.jsx
-|   |    Skills.jsx
-|   |    Templates.jsx
-├─  ├─/publics
-|   |    Home.jsx
-|   |    Login.jsx
-|   |    PublicPortfolio.jsx
-|   |    Register.jsx
-├─  /routes
-|     Router.jsx
-├─  /styles
-|     AuthPage.css
-|     Dashboard.css
-|     LandingPage.css
-|     Public.css
-```
-## API REST :
 
-| Route                     | Méthode | Description                                      | Exemple                                                                           | Codes HTTP    |
-| ------------------------- | ------- | ------------------------------------------------ | --------------------------------------------------------------------------------- | ------------- |
-| `/api/auth/register`      | POST    | Créer un compte utilisateur                      | `{ "name": "Jean Dupont", "email": "email@example.com", "password": "12345" }`    | 201, 400      | 
-| `/api/auth/login`         | POST    | Connecter un utilisateur                         | `{ "email": "email@example.com", "password": "12345" }`                           | 200, 401      |
-| `/api/portfolio/:userId`  | GET     | Récupérer les données du portfolio               | -                                                                                 | 200, 404      |
-| `/api/portfolio/:userId`  | PUT     | Mettre à jour les informations du portfolio      | `{ "bio": "...", "title": "...", "avatar": "url" }`                               | 200, 400, 404 |
-| `/api/projects/:userId`   | GET     | Récupérer la liste des projets                   | -                                                                                 | 200, 404      |
-| `/api/projects`           | POST    | Ajouter un projet                                | `{ "title": "Projet 1", "description": "...", "technologies": ["React", "API"] }` | 201, 400      |
-| `/api/projects/:projectId`| PUT     | Mettre à jour un projet existant                 | `{ "title": "Projet modifié", "description": "...", "technologies": [...] }`      | 200, 400, 404 |
-| `/api/projects/:projectId`| DELETE  | Supprimer un projet                              | -                                                                                 | 204, 404      |
-| `/api/skills/:userId`     | GET     | Récupérer les compétences de l’utilisateur       | -                                                                                 | 200, 404      |
-| `/api/skills`             | POST    | Ajouter une compétence                           | `{ "skill": "React", "description": "..."} `                                      | 201, 400      |
-| `/api/skills/:skillId`    | PUT     | Mettre à jour une compétence                     | `{ "skill": "React avancé", "description": "..."} `                               | 200, 400, 404 |
-| `/api/skills/:skillId`    | DELETE  | Supprimer une compétence                         | -                                                                                 | 204, 404      |
-| `/api/activities/:userId` | GET     | Récupérer l’historique d’activité                | -                                                                                 | 200, 404      |
 
-# Portfolio Builder
-## Configuration de l’environnement
-- Copiez le fichier d’exemple du backend: [backend/.env.example](backend/.env.example) vers [backend/.env](backend/.env) et remplissez les variables (JWT, port serveur, clés Brevo).
-- Ne commitez jamais vos fichiers `.env`. Les secrets sont ignorés via [ .gitignore ](./.gitignore).
-- Pour l’envoi d’emails en production, utilisez une adresse vérifiée chez Brevo et configurez les enregistrements DNS (SPF/DKIM/DMARC) sur votre domaine.
+
+## API REST
+
+### Authentification
+| Route | Méthode | Description |
+|-------|---------|-------------|
+| `/api/auth/register` | POST | Créer un compte utilisateur |
+| `/api/auth/login` | POST | Connecter un utilisateur |
+| `/api/auth/forgot-password` | POST | Demander réinitialisation mot de passe |
+| `/api/auth/reset-password` | POST | Réinitialiser le mot de passe |
+
+### Portfolio
+| Route | Méthode | Description |
+|-------|---------|-------------|
+| `/api/portfolio/user/:userId` | GET | Récupérer le portfolio d'un utilisateur |
+| `/api/portfolio` | PUT | Mettre à jour le portfolio |
+| `/api/media` | POST/PUT | Gérer image profil et CV |
+
+### Projets
+| Route | Méthode | Description |
+|-------|---------|-------------|
+| `/api/projects/user/:userId` | GET | Lister les projets |
+| `/api/projects` | POST | Créer un projet |
+| `/api/projects/:projectId` | PUT | Modifier un projet |
+| `/api/projects/:projectId` | DELETE | Supprimer un projet |
+
+### Compétences
+| Route | Méthode | Description |
+|-------|---------|-------------|
+| `/api/skills/user/:userId` | GET | Lister les compétences |
+| `/api/skills` | POST | Ajouter une compétence |
+| `/api/skills/:skillId` | PUT | Modifier une compétence |
+| `/api/skills/:skillId` | DELETE | Supprimer une compétence |
+
+### Administration
+| Route | Méthode | Description |
+|-------|---------|-------------|
+| `/api/admin/users` | GET | Lister tous les utilisateurs |
+| `/api/admin/users/:userId/role` | PATCH | Modifier le rôle d'un utilisateur |
+| `/api/admin/users/:userId` | DELETE | Supprimer un utilisateur |
+| `/api/admin/portfolios` | GET | Lister tous les portfolios |
+| `/api/admin/portfolios/:portfolioId` | DELETE | Supprimer un portfolio |

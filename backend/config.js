@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 
 // Charger les variables d'environnement depuis un fichier .env si présent
-dotenv.config();
+dotenv.config({ quiet: true });
 
 // Secret JWT centralisé
 export const JWT_SECRET = process.env.JWT_SECRET || "CHANGE_ME_DEV";

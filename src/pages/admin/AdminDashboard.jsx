@@ -29,7 +29,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // ✅ Récupérer le token du localStorage
+        // Récupérer le token du localStorage
         const token = localStorage.getItem("token");
         
         if (!token) {

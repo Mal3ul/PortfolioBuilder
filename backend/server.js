@@ -1,9 +1,21 @@
-import './env-loader.js';
-
+import dotenv from 'dotenv';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const envPath = path.join(__dirname, '.env');
+
+// Charger le .env seulement s'il existe (en dev local)
+if (fs.existsSync(envPath)) {
+  console.log('[env] Loading .env from:', envPath);
+  const result = dotenv.config({ path: envPath, quiet: true });
+  console.log('[env] dotenv result:', result.error ? `ERROR: ${result.error.message}` : `loaded ${Object.keys(result.parsed || {}).length} vars`);
+} else {
+  console.log('[env] .env not found at', envPath, '- using system environment variables (production mode)');
+}
+
+// console.log('[env] DATABASE_URL:', process.env.DATABASE_URL ? `présent (${process.env.DATABASE_URL.substring(0, 50)}...)` : 'undefined');
 
 import express from "express";
 import cors from "cors";
@@ -59,25 +71,22 @@ app.use((err, req, res, next) => {
 
 // Gestionnaire d'erreurs non capturées
 process.on('uncaughtException', (err) => {
-  console.error('❌ Uncaught Exception:', err);
+  console.error('[FATAL] Uncaught Exception:', err);
   process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+  console.error('[FATAL] Unhandled Rejection at:', promise, 'reason:', reason);
   process.exit(1);
 });
 
 const PORT = process.env.PORT || 10000;
 const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`✅ Server running on port ${PORT}`);
-  if (process.env.NODE_ENV !== 'production') {
-    console.log(`📍 Test URL: http://localhost:${PORT}/api/portfolio/user/1768672901622`);
-  }
+  console.log(`[SERVER] Server running on port ${PORT}`);
 });
 
 server.on('error', (err) => {
-  console.error('❌ Server error:', err);
+  console.error('[ERROR] Server error:', err);
   process.exit(1);
 });
 

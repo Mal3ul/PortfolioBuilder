@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { RefreshCw, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import PortfolioTemplate from "../dashboard/PortfolioTemplate";
 import "../../styles/PortfolioTemplate.css";
 
@@ -225,30 +225,6 @@ export default function PublicPortfolio() {
               </button>
             )}
           </div>
-          <button
-            onClick={handleRefresh}
-            disabled={loading}
-            style={{
-              padding: '0.6rem 1rem',
-              backgroundColor: '#6366f1',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              fontSize: '0.9rem',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-              opacity: loading ? 0.6 : 1,
-              transition: 'all 0.2s',
-              whiteSpace: 'nowrap'
-            }}
-            title="Rafraîchir les données"
-          >
-            <RefreshCw size={16} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
-            {loading ? '...' : 'Rafr.'}
-          </button>
         </div>
       </div>
 

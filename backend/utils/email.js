@@ -5,11 +5,10 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-dotenv.config({ path: path.join(__dirname, '../.env') });
+dotenv.config({ path: path.join(__dirname, '../.env'), quiet: true });
 
 // En développement, on simule l'envoi d'email
 const isDevelopment = (process.env.NODE_ENV || '').trim().toLowerCase() !== 'production';
-console.log('[email] NODE_ENV =', process.env.NODE_ENV, 'isDevelopment =', isDevelopment);
 
 // Configuration du transporteur email
 let transporter;
@@ -88,12 +87,12 @@ export const sendPasswordResetEmail = async (email, resetToken, userName) => {
 
       if (!res.ok) {
         const errText = await res.text();
-        console.error('❌ Brevo API error:', res.status, errText);
+        console.error('[ERROR] Brevo API error:', res.status, errText);
         return { success: false, error: `brevo_api_${res.status}` };
       }
 
       const data = await res.json();
-      console.log('📧 [BREVO] Email envoyé:', data.messageId || data);
+      console.log('[BREVO] Email envoyé:', data.messageId || data);
       return { success: true, messageId: data.messageId || 'brevo' };
     }
 
@@ -106,16 +105,16 @@ export const sendPasswordResetEmail = async (email, resetToken, userName) => {
     });
     
     if (isDevelopment) {
-      console.log('📧 [DEV] Email simulé - Token de réinitialisation:', resetToken);
+      console.log('[DEV] Email simulé - Token de réinitialisation:', resetToken);
       console.log('🔗 [DEV] URL de réinitialisation:', resetUrl);
       console.log('📨 [DEV] Email destination:', email);
     } else {
-      console.log('📧 Email envoyé:', info.messageId);
+      console.log('[EMAIL] Email envoyé:', info.messageId);
     }
     
     return { success: true, messageId: info.messageId, resetUrl: isDevelopment ? resetUrl : undefined };
   } catch (error) {
-    console.error('❌ Erreur envoi email:', error);
+    console.error('[ERROR] Erreur envoi email:', error);
     return { success: false, error: error.message };
   }
 };

@@ -1,6 +1,6 @@
 const baseURL = "/api";
 
-// ✅ Fonction utilitaire pour ajouter JWT aux requêtes
+// Fonction utilitaire pour ajouter JWT aux requêtes
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
   const headers = {
@@ -12,7 +12,7 @@ const getAuthHeaders = () => {
   return headers;
 };
 
-// ✅ Gestion d'erreur JWT (401)
+// Gestion d'erreur JWT (401)
 const handleUnauthorized = (error) => {
   if (error.status === 401) {
     localStorage.removeItem("user");

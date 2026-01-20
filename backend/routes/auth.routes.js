@@ -12,8 +12,8 @@ const router = express.Router();
 export const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   
-  console.log('[auth] verifyToken middleware - Authorization header:', req.headers.authorization ? '✅ présent' : '❌ manquant');
-  console.log('[auth] verifyToken middleware - Token:', token ? `✅ ${token.substring(0, 20)}...` : '❌ undefined');
+  console.log('[auth] verifyToken middleware - Authorization header:', req.headers.authorization ? 'présent' : 'manquant');
+  console.log('[auth] verifyToken middleware - Token:', token ? `${token.substring(0, 20)}...` : 'undefined');
 
   if (!token) {
     console.log('[auth] verifyToken - 401: Token manquant');
@@ -22,7 +22,7 @@ export const verifyToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    console.log('[auth] verifyToken - ✅ Token valide pour user:', decoded.id);
+    console.log('[auth] verifyToken - Token valide pour user:', decoded.id);
     req.user = decoded;
     next();
   } catch (error) {
@@ -83,11 +83,11 @@ router.post("/login", async (req, res) => {
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
 
-  console.log("📝 Register request received:", { name, email, password });
+  console.log("[AUTH] Register request received:", { name, email, password });
 
   // Validation des champs requis
   if (!name || !email || !password) {
-    console.log("❌ Validation failed - missing fields");
+    console.log("[ERROR] Validation failed - missing fields");
     return res.status(400).json({ message: "Tous les champs sont requis (name, email, password)" });
   }
 
@@ -178,7 +178,7 @@ router.post("/forgot-password", async (req, res) => {
     );
 
     // Ne pas envoyer d'email, juste retourner le token en dev
-    console.log('[auth] ✅ Token de réinitialisation généré:', resetToken);
+    console.log('[auth] Token de réinitialisation généré:', resetToken);
     console.log('[auth] 🔗 URL:', `http://localhost:5173/reset-password/${resetToken}`);
 
     const responseData = { 
