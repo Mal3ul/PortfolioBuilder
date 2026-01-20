@@ -8,6 +8,43 @@ export default function PortfolioTemplate({ userData }) {
   const [educationSortOrder, setEducationSortOrder] = useState("none");
   const [certificationsSortOrder, setCertificationsSortOrder] = useState("none");
 
+  // Fonction pour ouvrir le CV dans un nouvel onglet
+  const handleDownloadCV = () => {
+    // Chercher le cvFile dans userData.media si c'est un objet
+    const cvFile = userData?.media?.cvFile || null;
+    const cvFileName = userData?.media?.cvFileName || "CV.pdf";
+    
+    console.log('[Portfolio] CV data:', { cvFile: cvFile ? 'present' : 'missing', cvFileName, mediaKeys: Object.keys(userData?.media || {}) });
+    
+    if (cvFile) {
+      // Ouvrir le PDF dans un nouvel onglet
+      const newWindow = window.open('', '_blank');
+      if (newWindow) {
+        newWindow.document.write(`
+          <html>
+            <head><title>${cvFileName}</title></head>
+            <body style="margin:0;">
+              <iframe src="${cvFile}" style="width:100%;height:100vh;border:none;"></iframe>
+            </body>
+          </html>
+        `);
+        newWindow.document.close();
+      } else {
+        alert("Veuillez autoriser les popups pour voir le CV");
+      }
+      
+      // Version téléchargement (commentée)
+      // const link = document.createElement('a');
+      // link.href = cvFile;
+      // link.download = cvFileName;
+      // document.body.appendChild(link);
+      // link.click();
+      // document.body.removeChild(link);
+    } else {
+      alert("Aucun CV disponible");
+    }
+  };
+
   // Fonction pour trier les compétences
   const getSortedSkills = () => {
     const skillsCopy = [...skills];
@@ -83,10 +120,22 @@ export default function PortfolioTemplate({ userData }) {
               <h1>{profile?.name || "Votre Nom"}</h1>
               <h2 className="hero-title">{profile?.title || "Votre Titre"}</h2>
               <p className="hero-bio">{profile?.bio || "Votre biographie professionnelle."}</p>
-              <a href="#contact" className="btn-primary">Me Contacter</a>
+              <button onClick={handleDownloadCV} className="btn-primary" style={{ cursor: 'pointer', border: 'none' }}>
+                {userData?.media?.cvFile ? "Voir mon CV" : "Me Contacter"}
+              </button>
             </div>
             <div className="hero-image">
-              <div className="avatar-large">{profile?.avatar || "👤"}</div>
+              <div className="avatar-large">
+                {profile?.avatar && profile.avatar.startsWith('data:image') ? (
+                  <img 
+                    src={profile.avatar} 
+                    alt={profile.name || "Photo de profil"} 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+                  />
+                ) : (
+                  profile?.avatar || "👤"
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -279,9 +328,9 @@ export default function PortfolioTemplate({ userData }) {
       <footer id="contact" className="portfolio-footer">
         <div className="container-portfolio">
           <h3>Restons en contact</h3>
-          {media && media.length > 0 && (
+          {media?.links && media.links.length > 0 && (
             <ul className="social-links">
-              {media.map((link, index) => (
+              {media.links.map((link, index) => (
                 <li key={index}>
                   <a href={link.url} target="_blank" rel="noopener noreferrer">
                     {link.platform}

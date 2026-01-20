@@ -69,7 +69,7 @@ export default function PublicPortfolio() {
             name: `${data.profile?.firstName || ''} ${data.profile?.lastName || ''}`.trim(),
             title: data.profile?.title || '',
             bio: data.profile?.bio || '',
-            avatar: "👤"
+            avatar: data.media?.profile_image || data.media?.profileImage || "👤"
           },
           projects: (data.projects || []).map(p => ({
             id: p.id,
@@ -102,12 +102,16 @@ export default function PublicPortfolio() {
             date: cert.date,
             description: cert.description
           })),
-          media: [
-            data.media?.linkedin && { platform: "LinkedIn", url: data.media.linkedin },
-            data.media?.github && { platform: "GitHub", url: data.media.github },
-            data.media?.twitter && { platform: "Twitter", url: data.media.twitter },
-            ...(data.media?.websites || []).map(url => ({ platform: "Website", url }))
-          ].filter(Boolean)
+          media: {
+            cvFile: data.media?.cvFile || data.media?.cv_file || '',
+            cvFileName: data.media?.cvFileName || data.media?.cv_file_name || 'CV.pdf',
+            links: [
+              data.media?.linkedin && { platform: "LinkedIn", url: data.media.linkedin },
+              data.media?.github && { platform: "GitHub", url: data.media.github },
+              data.media?.twitter && { platform: "Twitter", url: data.media.twitter },
+              ...(data.media?.websites || []).map(w => ({ platform: "Website", url: typeof w === 'string' ? w : w.url }))
+            ].filter(Boolean)
+          }
         };
         
         setUserData(transformedData);

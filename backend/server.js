@@ -16,13 +16,15 @@ import projectsRoutes from "./routes/projects.routes.js";
 import skillsRoutes from "./routes/skills.routes.js";
 import activitiesRoutes from "./routes/activities.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import mediaRoutes from "./routes/media.routes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 
 const app = express();
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -31,6 +33,7 @@ app.use("/api/projects", projectsRoutes);
 app.use("/api/skills", skillsRoutes);
 app.use("/api/activities", activitiesRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/media", mediaRoutes);
 
 // Servir les fichiers statiques du frontend en production
 if (process.env.NODE_ENV === 'production') {

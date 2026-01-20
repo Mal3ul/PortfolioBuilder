@@ -61,7 +61,13 @@ export const getPortfolio = async (req, res) => {
       education: education.rows,
       certifications: certifications.rows,
       media: {
-        ...(media.rows[0] || {}),
+        linkedin: media.rows[0]?.linkedin || '',
+        github: media.rows[0]?.github || '',
+        twitter: media.rows[0]?.twitter || '',
+        profile_image: media.rows[0]?.profile_image || '',
+        profileImage: media.rows[0]?.profile_image || '',
+        cvFile: media.rows[0]?.cv_file || '',
+        cvFileName: media.rows[0]?.cv_file_name || '',
         websites: websites.rows,
         links: links.rows
       }
@@ -141,7 +147,13 @@ export const getUserPortfolio = async (req, res) => {
       education: education.rows,
       certifications: certifications.rows,
       media: {
-        ...(media.rows[0] || {}),
+        linkedin: media.rows[0]?.linkedin || '',
+        github: media.rows[0]?.github || '',
+        twitter: media.rows[0]?.twitter || '',
+        profile_image: media.rows[0]?.profile_image || '',
+        profileImage: media.rows[0]?.profile_image || '',
+        cvFile: media.rows[0]?.cv_file || '',
+        cvFileName: media.rows[0]?.cv_file_name || '',
         websites: websites.rows,
         links: links.rows
       }

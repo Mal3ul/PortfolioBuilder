@@ -82,7 +82,16 @@ export const portfolioService = {
   },
 
   updateMedia: async (media) => {
-    return updatePortfolio({ media });
+    const response = await fetch(`${baseURL}/media`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ media }),
+    });
+    if (!response.ok) {
+      handleUnauthorized(response);
+      throw new Error("Erreur lors de la mise à jour des médias");
+    }
+    return response.json();
   },
 };
 
