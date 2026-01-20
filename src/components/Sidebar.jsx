@@ -1,4 +1,4 @@
-import { User, Briefcase, FolderOpen, Award, Settings, LogOut, LayoutDashboard } from "lucide-react";
+import { User, Briefcase, FolderOpen, Award, Settings, LogOut, Settings2 } from "lucide-react";
 import "../styles/Dashboard.css";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -67,14 +67,17 @@ export default function Sidebar() {
           </NavLink>
         )}
 
+        
+      </nav>
+
+      <div className="sidebar-logout">
         {user?.role === "admin" && (
           <NavLink className="menu-item" to="/admin">
-            <LayoutDashboard size={20} />
+            <Settings2 size={20} />
             <span className="menu-label">Admin</span>
           </NavLink>
         )}
-      </nav>
-
+      </div>
       <div className="sidebar-logout">
         <button className="logout-btn" onClick={handleLogout}>
           <LogOut size={18} />

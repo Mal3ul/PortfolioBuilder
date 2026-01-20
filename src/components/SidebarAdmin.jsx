@@ -1,4 +1,4 @@
-import { FolderOpen, Users, LogOut } from "lucide-react";
+import { FolderOpen, Users, LogOut, LayoutDashboard } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -45,6 +45,11 @@ export default function SidebarAdmin() {
           <Users size={20} />
           <span className="menu-label">Users</span>
         </NavLink>
+        
+          <NavLink className="menu-item" to="/dashboard">
+            <LayoutDashboard size={20} />
+            <span className="menu-label">Dashboard</span>
+          </NavLink>
       </nav>
 
       <div className="sidebar-logout">

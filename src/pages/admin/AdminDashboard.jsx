@@ -23,6 +23,8 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [portfolios, setPortfolios] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editingUser, setEditingUser] = useState(null);
+  const [editForm, setEditForm] = useState({ name: "", email: "", role: "user" });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,9 +55,9 @@ export default function AdminDashboard() {
         // Transform users to match table format
         const usersList = usersData.users || [];
         const transformedUsers = usersList.map((user) => ({
-          id: user.id,
-          name: user.name,
-          email: user.email,
+          id: String(user.id),
+          name: String(user.name || "Sans nom"),
+          email: String(user.email || ""),
           role: user.role === "admin" ? "Admin" : "Utilisateur",
           status: "Actif",
           lastActive: new Date().toLocaleDateString("fr-FR", { year: "numeric", month: "short", day: "2-digit" }),
@@ -76,19 +78,20 @@ export default function AdminDashboard() {
         const portfoliosList = portfolioData.portfolios || [];
         const transformedPortfolios = portfoliosList.map((p) => {
           const userName = p.user_name || `${p.first_name || ""} ${p.last_name || ""}`.trim();
-          const displayUser = userName || p.user_email || p.portfolio_email || "";
+          const displayUser = String(userName || p.user_email || p.portfolio_email || "Sans utilisateur");
           const updated = p.updated_at
             ? new Date(p.updated_at).toLocaleDateString("fr-FR", { year: "numeric", month: "short", day: "2-digit" })
             : "-";
           return {
-            id: p.id,
-            userId: p.user_id,
+            id: String(p.id),
+            userId: String(p.user_id),
             user: displayUser,
-            title: p.title || "Portfolio",
+            title: String(p.title || "Portfolio"),
             status: "Publié",
             updated,
           };
         });
+        console.log('[AdminDashboard] Transformed portfolios:', transformedPortfolios.length);
         setPortfolios(transformedPortfolios);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -129,8 +132,57 @@ export default function AdminDashboard() {
   };
 
   const handleEditUser = (id) => {
-    // Placeholder action; hook to modal or route when available
-    alert("Édition du profil utilisateur " + id);
+    const user = users.find(u => u.id === id);
+    if (user) {
+      setEditingUser(user);
+      setEditForm({
+        name: user.name,
+        email: user.email,
+        role: user.role === "Admin" ? "admin" : "user"
+      });
+    }
+  };
+
+  const handleSaveUser = async () => {
+    if (!editForm.name || !editForm.email) {
+      alert("Le nom et l'email sont requis");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/users/${editingUser.id}/role`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ role: editForm.role }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la mise à jour");
+      }
+
+      // Mettre à jour l'état local
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === editingUser.id
+            ? { ...u, name: editForm.name, email: editForm.email, role: editForm.role === "admin" ? "Admin" : "Utilisateur" }
+            : u
+        )
+      );
+
+      setEditingUser(null);
+      alert("Utilisateur mis à jour avec succès");
+    } catch (error) {
+      console.error("Error updating user:", error);
+      alert("Erreur lors de la mise à jour de l'utilisateur");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingUser(null);
+    setEditForm({ name: "", email: "", role: "user" });
   };
 
   const handleDeletePortfolio = async (id) => {
@@ -194,10 +246,12 @@ export default function AdminDashboard() {
 
   const filteredPortfolios = useMemo(() => {
     const q = portfolioQuery.toLowerCase();
-    return portfolios.filter((p) =>
+    const filtered = portfolios.filter((p) =>
       p.title.toLowerCase().includes(q) ||
       p.user.toLowerCase().includes(q)
     );
+    console.log('[AdminDashboard] Filtered portfolios:', filtered.length, 'from', portfolios.length);
+    return filtered;
   }, [portfolioQuery, portfolios]);
 
   return (
@@ -358,7 +412,13 @@ export default function AdminDashboard() {
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredPortfolios.map((portfolio) => (
+                        {loading && (
+                          <tr><td colSpan="4" style={{textAlign: 'center', padding: '2rem'}}>Chargement...</td></tr>
+                        )}
+                        {!loading && filteredPortfolios.length === 0 && (
+                          <tr><td colSpan="4" style={{textAlign: 'center', padding: '2rem'}}>Aucun portfolio trouvé</td></tr>
+                        )}
+                        {!loading && filteredPortfolios.map((portfolio) => (
                           <tr key={portfolio.id}>
                             <td>{portfolio.title}</td>
                             <td className="text-gray-600">{portfolio.user}</td>
@@ -382,6 +442,59 @@ export default function AdminDashboard() {
 
         </div>
       </main>
+
+      {/* Modal d'édition utilisateur */}
+      {editingUser && (
+        <div className="modal-overlay" onClick={handleCancelEdit}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2 className="modal-title">Éditer l'utilisateur</h2>
+            <div className="modal-body">
+              <div className="form-group">
+                <label htmlFor="edit-name">Nom</label>
+                <input
+                  id="edit-name"
+                  type="text"
+                  className="input"
+                  value={editForm.name}
+                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  placeholder="Nom complet"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="edit-email">Email</label>
+                <input
+                  id="edit-email"
+                  type="email"
+                  className="input"
+                  value={editForm.email}
+                  onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                  placeholder="email@example.com"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="edit-role">Rôle</label>
+                <select
+                  id="edit-role"
+                  className="input"
+                  value={editForm.role}
+                  onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
+                >
+                  <option value="user">Utilisateur</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-ghost" onClick={handleCancelEdit}>
+                Annuler
+              </button>
+              <button className="btn btn-primary" onClick={handleSaveUser}>
+                Enregistrer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

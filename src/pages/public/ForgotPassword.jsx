@@ -80,10 +80,6 @@ export default function ForgotPassword() {
           <span className="auth-logo-text">Portfolio Builder</span>
         </div>
 
-        <div className="auth-card">
-          <h1 className="auth-title">Mot de passe oublié</h1>
-          <p className="card-description">Entre ton email pour recevoir un lien de réinitialisation.</p>
-
           {message && (
             <div className="alert alert-success">
               {message}
@@ -95,6 +91,10 @@ export default function ForgotPassword() {
               {error}
             </div>
           )}
+        <div className="auth-card">
+          <h1 className="auth-title">Mot de passe oublié</h1>
+          <p className="card-description">Entre ton email pour recevoir un lien de réinitialisation.</p>
+
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">

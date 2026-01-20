@@ -1,13 +1,39 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Sparkles, Layout, Palette, Share2, Zap, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "../../styles/LandingPage.css";
 
 export default function Home() {
   const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        // Extraire l'ID du token JWT
+        const decoded = JSON.parse(atob(token.split('.')[1]));
+        if (decoded.id) {
+          setIsAuthenticated(true);
+          setUserId(decoded.id);
+        }
+      } catch (err) {
+        console.error("Erreur décodage token:", err);
+      }
+    }
+  }, []);
 
   const onGetStarted = () => {
-    navigate("/register");
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    } else {
+      navigate("/register");
+    }
+  };
+
+  const onViewProfile = () => {
+    navigate("/dashboard");
   };
 
   const onViewDemo = () => {
@@ -48,8 +74,14 @@ export default function Home() {
           <nav className="landing-nav">
             <a href="#features">Fonctionnalités</a>
             <a href="#templates">Templates</a>
-            <button className="btn btn-ghost" onClick={() => navigate("/login")}>Connexion</button>
-            <button className="btn btn-primary" onClick={onGetStarted}>Commencer</button>
+            {isAuthenticated ? (
+              <button className="btn btn-primary" onClick={onViewProfile}>Mon profil</button>
+            ) : (
+              <>
+                <button className="btn btn-ghost" onClick={() => navigate("/login")}>Connexion</button>
+                <button className="btn btn-primary" onClick={onGetStarted}>Commencer</button>
+              </>
+            )}
           </nav>
         </div>
       </header>
@@ -69,7 +101,7 @@ export default function Home() {
 
           <div className="hero-buttons">
             <button className="btn btn-primary btn-lg" onClick={onGetStarted}>
-              Commencer maintenant
+              {isAuthenticated ? "Aller à mon profil" : "Commencer maintenant"}
             </button>
             <button className="btn btn-outline btn-lg" onClick={onViewDemo}>
               Voir un exemple
