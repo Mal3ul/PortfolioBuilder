@@ -100,7 +100,7 @@ export const PortfolioProvider = ({ userId, children }) => {
     try {
       // Utiliser id ou userId pour compatibilité
       const currentUserId = user?.id || user?.userId;
-      console.log("🔑 Envoi userId au backend:", currentUserId, "User object:", user);
+
       
       const data = await portfolioService.updatePortfolio({ 
         profile: updatedProfile,

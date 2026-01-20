@@ -78,7 +78,9 @@ export default function AdminDashboard() {
         const portfoliosList = portfolioData.portfolios || [];
         const transformedPortfolios = portfoliosList.map((p) => {
           const userName = p.user_name || `${p.first_name || ""} ${p.last_name || ""}`.trim();
-          const displayUser = String(userName || p.user_email || p.portfolio_email || "Sans utilisateur");
+          const email = p.user_email || p.portfolio_email || p.email || "";
+          const displayUser = String(userName || email || "Sans utilisateur");
+          const displayEmail = String(email || "Email non renseigné");
           const updated = p.updated_at
             ? new Date(p.updated_at).toLocaleDateString("fr-FR", { year: "numeric", month: "short", day: "2-digit" })
             : "-";
@@ -86,12 +88,13 @@ export default function AdminDashboard() {
             id: String(p.id),
             userId: String(p.user_id),
             user: displayUser,
+            email: displayEmail,
             title: String(p.title || "Portfolio"),
             status: "Publié",
             updated,
           };
         });
-        console.log('[AdminDashboard] Transformed portfolios:', transformedPortfolios.length);
+
         setPortfolios(transformedPortfolios);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -247,10 +250,10 @@ export default function AdminDashboard() {
   const filteredPortfolios = useMemo(() => {
     const q = portfolioQuery.toLowerCase();
     const filtered = portfolios.filter((p) =>
-      p.title.toLowerCase().includes(q) ||
-      p.user.toLowerCase().includes(q)
+      p.user.toLowerCase().includes(q) ||
+      (p.email || "").toLowerCase().includes(q)
     );
-    console.log('[AdminDashboard] Filtered portfolios:', filtered.length, 'from', portfolios.length);
+
     return filtered;
   }, [portfolioQuery, portfolios]);
 
@@ -405,7 +408,7 @@ export default function AdminDashboard() {
                     <table className="data-table">
                       <thead>
                         <tr>
-                          <th>Titre</th>
+                          <th>Email</th>
                           <th>Utilisateur</th>
                           <th>Dernière mise à jour</th>
                           <th>Actions</th>
@@ -420,7 +423,7 @@ export default function AdminDashboard() {
                         )}
                         {!loading && filteredPortfolios.map((portfolio) => (
                           <tr key={portfolio.id}>
-                            <td>{portfolio.title}</td>
+                            <td className="text-gray-600">{portfolio.email}</td>
                             <td className="text-gray-600">{portfolio.user}</td>
                             <td className="text-gray-500">{portfolio.updated}</td>
                             <td className="action-buttons">

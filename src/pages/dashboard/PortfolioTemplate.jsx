@@ -14,7 +14,7 @@ export default function PortfolioTemplate({ userData }) {
     const cvFile = userData?.media?.cvFile || null;
     const cvFileName = userData?.media?.cvFileName || "CV.pdf";
     
-    console.log('[Portfolio] CV data:', { cvFile: cvFile ? 'present' : 'missing', cvFileName, mediaKeys: Object.keys(userData?.media || {}) });
+
     
     if (cvFile) {
       // Ouvrir le PDF dans un nouvel onglet

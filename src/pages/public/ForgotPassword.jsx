@@ -49,8 +49,7 @@ export default function ForgotPassword() {
         
         // Afficher le token en dev
         if (data.devToken) {
-          console.log("🔑 Token de réinitialisation:", data.devToken);
-          console.log("🔗 URL de réinitialisation:", data.devUrl);
+
           // Afficher aussi dans l'UI
           // setMessage(data.message + "\n\n🔗 Lien de réinitialisation : " + data.devUrl);
         }

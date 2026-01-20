@@ -1,4 +1,4 @@
-import { User, Briefcase, FolderOpen, Award, Settings, LogOut, Settings2 } from "lucide-react";
+import { User, Briefcase, FolderOpen, Award, Settings, LogOut, Settings2, LayoutDashboard } from "lucide-react";
 import "../styles/Dashboard.css";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
