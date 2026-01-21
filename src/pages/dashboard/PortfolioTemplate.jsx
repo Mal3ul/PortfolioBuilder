@@ -332,21 +332,6 @@ export default function PortfolioTemplate({ userData }) {
       <footer id="contact" className="portfolio-footer">
         <div className="container-portfolio">
           <h3>Restons en contact</h3>
-          {/* Coordonnées directes */}
-          {(profile?.email || profile?.phone) && (
-            <div className="contact-info" style={{ marginBottom: '1rem' }}>
-              {profile?.email && (
-                <p style={{ margin: 0 }}>
-                  Email: <a href={`mailto:${profile.email}`}>{profile.email}</a>
-                </p>
-              )}
-              {profile?.phone && (
-                <p style={{ margin: 0 }}>
-                  Téléphone: <a href={`tel:${profile.phone}`}>{profile.phone}</a>
-                </p>
-              )}
-            </div>
-          )}
           {media?.links && media.links.length > 0 && (
             <ul className="social-links">
               {media.links.map((link, index) => {
@@ -365,7 +350,21 @@ export default function PortfolioTemplate({ userData }) {
               })}
             </ul>
           )}
-          <p>&copy; {new Date().getFullYear()} Portfolio Builder. Tous droits réservés.</p>
+          {(profile?.email || profile?.phone) && (
+            <div className="contact-info" style={{ marginBottom: '1rem' }}>
+              {profile?.email && (
+                <p style={{ margin: 0 }}>
+                  Email : <a href={`mailto:${profile.email}`}>{profile.email}</a>
+                </p>
+              )}
+              {profile?.phone && (
+                <p style={{ margin: 0 }}>
+                  Téléphone : <a href={`tel:${profile.phone}`}>{profile.phone}</a>
+                </p>
+              )}
+            </div>
+          )}
+          <p>&copy; 2026 Portfolio Builder. Tous droits réservés.</p>
         </div>
       </footer>
     </div>
