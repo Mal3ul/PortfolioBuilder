@@ -130,7 +130,12 @@ export default function Profile() {
                 type="tel"
                 className="input"
                 value={profile?.phone || ''}
-                onChange={handleChange}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^\d]/g, '').slice(0, 10);
+                  handleChange({ target: { name: 'phone', value } });
+                }}
+                maxLength="10"
+                placeholder="0123456789"
               />
             </div>
 

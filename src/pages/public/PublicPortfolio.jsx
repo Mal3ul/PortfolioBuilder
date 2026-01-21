@@ -66,9 +66,13 @@ export default function PublicPortfolio() {
         // Transformer les données pour le template
         const transformedData = {
           profile: {
+            firstName: data.profile?.firstName || '',
+            lastName: data.profile?.lastName || '',
             name: `${data.profile?.firstName || ''} ${data.profile?.lastName || ''}`.trim(),
             title: data.profile?.title || '',
             bio: data.profile?.bio || '',
+            email: data.profile?.email || '',
+            phone: data.profile?.phone || '',
             avatar: data.media?.profile_image || data.media?.profileImage || "👤"
           },
           projects: (data.projects || []).map(p => ({

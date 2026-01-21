@@ -225,6 +225,7 @@ export const updatePortfolio = async (req, res) => {
       await client.query('BEGIN');
 
       // Récupérer ou créer le portfolio
+      console.log('[portfolio] updatePortfolio: start for user', userId);
       let portfolioRes = await client.query(
         'SELECT * FROM portfolios WHERE user_id = $1',
         [userId]
@@ -239,6 +240,7 @@ export const updatePortfolio = async (req, res) => {
       }
 
       const portfolioId = portfolioRow.id;
+      console.log('[portfolio] updatePortfolio: portfolioId =', portfolioId);
 
       // Mise à jour du profil si fourni
       if (firstName !== undefined || lastName !== undefined || title !== undefined || bio !== undefined || email !== undefined || phone !== undefined || location !== undefined) {
@@ -246,10 +248,19 @@ export const updatePortfolio = async (req, res) => {
         const updatedLastName = capitalize(lastName !== undefined ? lastName : portfolioRow.last_name);
         
         // Mettre à jour le portfolio
-        await client.query(
+        console.log('[portfolio] updatePortfolio: updating portfolio with', {
+          firstName: updatedFirstName,
+          lastName: updatedLastName,
+          title: title !== undefined ? title : portfolioRow.title,
+          bio: bio !== undefined ? bio : portfolioRow.bio,
+          email: email !== undefined ? email : portfolioRow.email,
+          phone: phone !== undefined ? phone : portfolioRow.phone,
+          location: location !== undefined ? location : portfolioRow.location,
+        });
+        const upd = await client.query(
           `UPDATE portfolios
            SET first_name = $1, last_name = $2, title = $3, bio = $4, email = $5, phone = $6, location = $7, updated_at = $8
-           WHERE user_id = $9`,
+           WHERE id = $9`,
           [
             updatedFirstName,
             updatedLastName,
@@ -259,17 +270,19 @@ export const updatePortfolio = async (req, res) => {
             phone !== undefined ? phone : portfolioRow.phone,
             location !== undefined ? location : portfolioRow.location,
             new Date().toISOString(),
-            userId
+            portfolioId
           ]
         );
+        console.log('[portfolio] updatePortfolio: portfolio update rowCount =', upd.rowCount);
         
         // Mettre à jour aussi la table users avec le nouveau nom
         if (firstName !== undefined || lastName !== undefined) {
           const fullName = `${updatedFirstName} ${updatedLastName}`.trim();
-          await client.query(
+          const updUser = await client.query(
             'UPDATE users SET name = $1 WHERE id = $2',
             [fullName, userId]
           );
+          console.log('[portfolio] updatePortfolio: users update rowCount =', updUser.rowCount);
         }
       }
 
@@ -358,10 +371,11 @@ export const updatePortfolio = async (req, res) => {
       }
 
       await client.query('COMMIT');
+      console.log('[portfolio] updatePortfolio: commit OK');
 
       // Retourner les données mises à jour
       const [portfolioFinalRes, skillsRes, projectsRes, experiencesRes, educationRes, certificationsRes] = await Promise.all([
-        client.query('SELECT * FROM portfolios WHERE user_id = $1', [userId]),
+        client.query('SELECT * FROM portfolios WHERE id = $1', [portfolioId]),
         client.query('SELECT * FROM skills WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolioId]),
         client.query('SELECT * FROM projects WHERE portfolio_id = $1 ORDER BY created_at DESC', [portfolioId]),
         client.query('SELECT * FROM experiences WHERE portfolio_id = $1 ORDER BY start_date DESC', [portfolioId]),
@@ -370,6 +384,14 @@ export const updatePortfolio = async (req, res) => {
       ]);
 
       const portfolioFinal = portfolioFinalRes.rows[0] || portfolioRow;
+      console.log('[portfolio] updatePortfolio: final profile =', {
+        firstName: portfolioFinal?.first_name,
+        lastName: portfolioFinal?.last_name,
+        title: portfolioFinal?.title,
+        email: portfolioFinal?.email,
+        phone: portfolioFinal?.phone,
+        location: portfolioFinal?.location,
+      });
 
       res.json({
         message: "Portfolio mis à jour",

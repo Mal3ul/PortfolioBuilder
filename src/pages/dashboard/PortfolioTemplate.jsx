@@ -3,6 +3,10 @@ import { ArrowUp, ArrowDown } from "lucide-react";
 
 export default function PortfolioTemplate({ userData }) {
   const { profile, projects = [], skills = [], experiences = [], education = [], certifications = [], media = [] } = userData || {};
+  const displayName = (profile?.firstName || profile?.lastName)
+    ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim()
+    : (profile?.name || 'Portfolio');
+  const avatarSrc = userData?.media?.profileImage || userData?.media?.profile_image || profile?.avatar;
   const [skillsSortOrder, setSkillsSortOrder] = useState("none"); // "asc" | "desc" | "none"
   const [experiencesSortOrder, setExperiencesSortOrder] = useState("none");
   const [educationSortOrder, setEducationSortOrder] = useState("none");
@@ -95,7 +99,7 @@ export default function PortfolioTemplate({ userData }) {
       <header className="portfolio-header">
         <nav className="portfolio-navbar">
           <div className="container-portfolio">
-            <a href="#accueil" className="portfolio-logo">{profile?.name || "Portfolio"}</a>
+            <a href="#accueil" className="portfolio-logo">{displayName}</a>
             <button className="menu-toggle" aria-label="Menu">
               <span className="menu-bar"></span>
               <span className="menu-bar"></span>
@@ -117,7 +121,7 @@ export default function PortfolioTemplate({ userData }) {
         <div className="container-portfolio">
           <div className="hero-flex">
             <div className="hero-content">
-              <h1>{profile?.name || "Votre Nom"}</h1>
+              <h1>{displayName || "Votre Nom"}</h1>
               <h2 className="hero-title">{profile?.title || "Votre Titre"}</h2>
               <p className="hero-bio">{profile?.bio || "Votre biographie."}</p>
               <button onClick={handleDownloadCV} className="btn-primary" style={{ cursor: 'pointer', border: 'none' }}>
@@ -126,14 +130,14 @@ export default function PortfolioTemplate({ userData }) {
             </div>
             <div className="hero-image">
               <div className="avatar-large">
-                {profile?.avatar && profile.avatar.startsWith('data:image') ? (
+                {avatarSrc && typeof avatarSrc === 'string' && avatarSrc.startsWith('data:image') ? (
                   <img 
-                    src={profile.avatar} 
-                    alt={profile.name || "Photo de profil"} 
+                    src={avatarSrc} 
+                    alt={displayName || "Photo de profil"} 
                     style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
                   />
                 ) : (
-                  profile?.avatar || "👤"
+                  avatarSrc || "👤"
                 )}
               </div>
             </div>
@@ -328,15 +332,37 @@ export default function PortfolioTemplate({ userData }) {
       <footer id="contact" className="portfolio-footer">
         <div className="container-portfolio">
           <h3>Restons en contact</h3>
+          {/* Coordonnées directes */}
+          {(profile?.email || profile?.phone) && (
+            <div className="contact-info" style={{ marginBottom: '1rem' }}>
+              {profile?.email && (
+                <p style={{ margin: 0 }}>
+                  Email: <a href={`mailto:${profile.email}`}>{profile.email}</a>
+                </p>
+              )}
+              {profile?.phone && (
+                <p style={{ margin: 0 }}>
+                  Téléphone: <a href={`tel:${profile.phone}`}>{profile.phone}</a>
+                </p>
+              )}
+            </div>
+          )}
           {media?.links && media.links.length > 0 && (
             <ul className="social-links">
-              {media.links.map((link, index) => (
-                <li key={index}>
-                  <a href={link.url} target="_blank" rel="noopener noreferrer">
-                    {link.platform}
-                  </a>
-                </li>
-              ))}
+              {media.links.map((link, index) => {
+                const url = typeof link === 'string' ? link : link?.url;
+                const label = typeof link === 'string'
+                  ? (link.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '') || 'Lien')
+                  : (link?.platform || (link?.url ? link.url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '') : 'Lien'));
+                if (!url) return null;
+                return (
+                  <li key={index}>
+                    <a href={url} target="_blank" rel="noopener noreferrer">
+                      {label}
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           )}
           <p>&copy; {new Date().getFullYear()} Portfolio Builder. Tous droits réservés.</p>

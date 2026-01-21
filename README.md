@@ -133,42 +133,55 @@ PortfolioBuilder/
 
 ## API REST
 
-### Authentification
-| Route | Méthode | Description |
-|-------|---------|-------------|
-| `/api/auth/register` | POST | Créer un compte utilisateur |
-| `/api/auth/login` | POST | Connecter un utilisateur |
-| `/api/auth/forgot-password` | POST | Demander réinitialisation mot de passe |
-| `/api/auth/reset-password` | POST | Réinitialiser le mot de passe |
+### Authentification (`/api/auth`)
+| Route | Méthode | Description | Auth |
+|-------|---------|-------------|------|
+| `/api/auth/register` | POST | Créer un compte utilisateur | ❌ |
+| `/api/auth/login` | POST | Connecter un utilisateur | ❌ |
+| `/api/auth/forgot-password` | POST | Demander réinitialisation mot de passe | ❌ |
+| `/api/auth/reset-password` | POST | Réinitialiser le mot de passe | ❌ |
 
-### Portfolio
-| Route | Méthode | Description |
-|-------|---------|-------------|
-| `/api/portfolio/user/:userId` | GET | Récupérer le portfolio d'un utilisateur |
-| `/api/portfolio` | PUT | Mettre à jour le portfolio |
-| `/api/media` | POST/PUT | Gérer image profil et CV |
+### Portfolio (`/api/portfolio`)
+| Route | Méthode | Description | Auth | Rôle |
+|-------|---------|-------------|------|------|
+| `/api/portfolio` | GET | Récupérer le portfolio de l'utilisateur connecté | ✅ | user/admin |
+| `/api/portfolio/user/:userId` | GET | Récupérer le portfolio d'un utilisateur (public) | ❌ | - |
+| `/api/portfolio` | POST | Créer/Initialiser le portfolio | ✅ | user/admin |
+| `/api/portfolio` | PUT | Mettre à jour le portfolio | ✅ | user/admin |
 
-### Projets
-| Route | Méthode | Description |
-|-------|---------|-------------|
-| `/api/projects/user/:userId` | GET | Lister les projets |
-| `/api/projects` | POST | Créer un projet |
-| `/api/projects/:projectId` | PUT | Modifier un projet |
-| `/api/projects/:projectId` | DELETE | Supprimer un projet |
+### Médias (`/api/media`)
+| Route | Méthode | Description | Auth | Rôle |
+|-------|---------|-------------|------|------|
+| `/api/media` | PUT | Mettre à jour image profil et CV | ✅ | user/admin |
 
-### Compétences
-| Route | Méthode | Description |
-|-------|---------|-------------|
-| `/api/skills/user/:userId` | GET | Lister les compétences |
-| `/api/skills` | POST | Ajouter une compétence |
-| `/api/skills/:skillId` | PUT | Modifier une compétence |
-| `/api/skills/:skillId` | DELETE | Supprimer une compétence |
+### Projets (`/api/projects`)
+| Route | Méthode | Description | Auth | Rôle |
+|-------|---------|-------------|------|------|
+| `/api/projects/:userId` | GET | Lister les projets d'un utilisateur (public) | ❌ | - |
+| `/api/projects` | POST | Créer un projet | ✅ | user/admin |
+| `/api/projects/:projectId` | PUT | Modifier un projet | ✅ | user/admin |
+| `/api/projects/:projectId` | DELETE | Supprimer un projet | ✅ | user/admin |
 
-### Administration
-| Route | Méthode | Description |
-|-------|---------|-------------|
-| `/api/admin/users` | GET | Lister tous les utilisateurs |
-| `/api/admin/users/:userId/role` | PATCH | Modifier le rôle d'un utilisateur |
-| `/api/admin/users/:userId` | DELETE | Supprimer un utilisateur |
-| `/api/admin/portfolios` | GET | Lister tous les portfolios |
-| `/api/admin/portfolios/:portfolioId` | DELETE | Supprimer un portfolio |
+### Compétences (`/api/skills`)
+| Route | Méthode | Description | Auth | Rôle |
+|-------|---------|-------------|------|------|
+| `/api/skills/:userId` | GET | Lister les compétences d'un utilisateur (public) | ❌ | - |
+| `/api/skills` | POST | Ajouter une compétence | ✅ | user/admin |
+| `/api/skills` | PUT | Mettre à jour TOUTES les compétences | ✅ | user/admin |
+| `/api/skills/:skillId` | PUT | Modifier une compétence | ✅ | user/admin |
+| `/api/skills/:skillId` | DELETE | Supprimer une compétence | ✅ | user/admin |
+
+### Activités (`/api/activities`)
+| Route | Méthode | Description | Auth | Rôle |
+|-------|---------|-------------|------|------|
+| `/api/activities` | GET | Récupérer les activités de l'utilisateur | ✅ | user/admin |
+| `/api/activities` | POST | Ajouter une activité | ✅ | user/admin |
+
+### Administration (`/api/admin`)
+| Route | Méthode | Description | Auth | Rôle |
+|-------|---------|-------------|------|------|
+| `/api/admin/users` | GET | Lister tous les utilisateurs | ✅ | admin |
+| `/api/admin/portfolios` | GET | Lister tous les portfolios | ✅ | admin |
+| `/api/admin/users/:userId/role` | PATCH | Modifier le rôle d'un utilisateur | ✅ | admin |
+| `/api/admin/users/:userId` | DELETE | Supprimer un utilisateur | ✅ | admin |
+| `/api/admin/portfolios/:portfolioId` | DELETE | Supprimer un portfolio | ✅ | admin |
