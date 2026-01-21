@@ -170,7 +170,7 @@ router.post("/forgot-password", async (req, res) => {
     }
 
     const resetToken = crypto.randomBytes(32).toString("hex");
-    const resetTokenExpires = Date.now() + 3600000; // 1h en timestamp
+    const resetTokenExpires = Date.now() + 3600000; // 1h de validité
 
     await pool.query(
       'UPDATE users SET reset_password_token = $1, reset_password_expiry = $2 WHERE id = $3',
@@ -178,8 +178,8 @@ router.post("/forgot-password", async (req, res) => {
     );
 
     // Ne pas envoyer d'email, juste retourner le token en dev
-    console.log('[auth] Token de réinitialisation généré:', resetToken);
-    console.log('[auth] 🔗 URL:', `http://localhost:5173/reset-password/${resetToken}`);
+    // console.log('[auth] Token de réinitialisation généré:', resetToken);
+    console.log('[auth] URL:', `http://localhost:5173/reset-password/${resetToken}`);
 
     const responseData = { 
       message: "Token de réinitialisation généré (voir console)",
