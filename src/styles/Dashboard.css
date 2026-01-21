@@ -20,6 +20,14 @@
 
  /** SIDEBAR */
 
+.mobile-menu-toggle {
+  display: none;
+}
+
+.mobile-menu-overlay {
+  display: none;
+}
+
 .dashboard-sidebar {
   width: 16rem;
   background-color: #fff;
@@ -137,6 +145,11 @@
 /** DASHBOARD  */
 .dashboard-header {
   margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .dashboard-title {
@@ -148,6 +161,13 @@
 .dashboard-subtitle {
   color: #4b5563;
   margin-top: 0.25rem;
+}
+
+.dashboard-header .btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
 }
 
 /** STATS GRID */
@@ -354,9 +374,75 @@
 
 /** RESPONSIVE */
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .dashboard-sidebar {
-    display: none;
+    width: 14rem;
+  }
+
+  .sidebar-logo {
+    padding: 1.25rem;
+  }
+
+  .logo-text {
+    font-size: 0.95rem;
+  }
+
+  .dashboard-content {
+    padding: 0.875rem;
+  }
+
+  .tab-panel {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1001;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background 0.2s;
+  }
+
+  .mobile-menu-toggle:hover {
+    background: #2563eb;
+  }
+
+  .mobile-menu-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+  .dashboard-sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    height: 100vh;
+    width: 16rem;
+    z-index: 1000;
+    transition: left 0.3s ease-in-out;
+    display: flex;
+  }
+
+  .dashboard-sidebar.mobile-open {
+    left: 0;
   }
 
   .dashboard {
@@ -364,7 +450,47 @@
   }
 
   .dashboard-main {
+    padding: 0.75rem;
+    padding-top: 4rem;
+  }
+
+  .dashboard-content {
+    padding: 0.5rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .card {
     padding: 1rem;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+  }
+
+  .btn-add, .btn-primary {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-content {
+    padding: 0.25rem;
+  }
+
+  .tab-panel {
+    padding: 0.875rem;
+  }
+
+  .input, .textarea {
+    font-size: 0.9rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -148,8 +148,25 @@ export default function DashboardHome({ onNavigateToEditeur }) {
   return (
     <div className="dashboard-content">
       <div className="dashboard-header">
-        <h1 className="dashboard-title">Tableau de bord</h1>
-        <p className="dashboard-subtitle">Bienvenue sur ton espace Portfolio Builder</p>
+        <div>
+          <h1 className="dashboard-title">Tableau de bord</h1>
+          <p className="dashboard-subtitle">Bienvenue sur ton espace Portfolio Builder</p>
+        </div>
+        <button 
+          className="btn btn-primary"
+          onClick={() => {
+            const token = localStorage.getItem("token");
+            if (token) {
+              const decoded = JSON.parse(atob(token.split('.')[1]));
+              if (decoded.id) {
+                navigate(`/portfolio/${decoded.id}`);
+              }
+            }
+          }}
+        >
+          <Eye size={18} />
+          Visualiser mon portfolio
+        </button>
       </div>
 
       <div className="stats-grid">

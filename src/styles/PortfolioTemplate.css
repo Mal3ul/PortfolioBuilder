@@ -91,11 +91,12 @@
 /** ===== HERO SECTION ===== */
 .portfolio-template .hero-section {
   min-height: 100vh;
-  min-width: 99vw;
+  min-width: 97vw;
+  OVERFLOW-X: HIDDEN;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 120px 2rem 80px;
+  padding: 120px 1.5rem 80px;
   background: linear-gradient(135deg, #e0f7fa 0%, #ffffff 100%);
 }
 
@@ -103,7 +104,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 4rem;
+  gap: 3rem;
 }
 
 .portfolio-template .hero-content {
@@ -151,7 +152,7 @@
 }
 
 .portfolio-template .hero-image {
-  flex: 0 0 300px;
+  flex: 0 0 280px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -367,6 +368,38 @@
 }
 
 /** ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .portfolio-template .container-portfolio {
+    padding: 0 1.5rem;
+  }
+
+  .portfolio-template .hero-flex {
+    gap: 2.5rem;
+  }
+
+  .portfolio-template .hero-content h1 {
+    font-size: 2.6rem;
+  }
+
+  .portfolio-template .hero-title {
+    font-size: 1.3rem;
+  }
+
+  .portfolio-template .hero-bio {
+    font-size: 1.05rem;
+  }
+
+  .portfolio-template .hero-image {
+    flex: 0 0 240px;
+  }
+
+  .portfolio-template .avatar-large {
+    width: 210px;
+    height: 210px;
+    font-size: 6rem;
+  }
+}
+
 @media (max-width: 768px) {
   .portfolio-template .hero-flex {
     flex-direction: column-reverse;
@@ -449,9 +482,14 @@
     font-size: 4rem;
   }
 
+  .portfolio-template .project-card,
+  .portfolio-template .parcours-item {
+    padding: 1.5rem;
+  }
+
   .portfolio-template .parcours-item,
   .portfolio-template .project-card {
-    padding: 1.5rem;
+    padding: 1.25rem;
   }
 
   .portfolio-template .social-links {

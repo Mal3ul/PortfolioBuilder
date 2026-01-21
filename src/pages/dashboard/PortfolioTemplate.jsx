@@ -119,7 +119,7 @@ export default function PortfolioTemplate({ userData }) {
             <div className="hero-content">
               <h1>{profile?.name || "Votre Nom"}</h1>
               <h2 className="hero-title">{profile?.title || "Votre Titre"}</h2>
-              <p className="hero-bio">{profile?.bio || "Votre biographie professionnelle."}</p>
+              <p className="hero-bio">{profile?.bio || "Votre biographie."}</p>
               <button onClick={handleDownloadCV} className="btn-primary" style={{ cursor: 'pointer', border: 'none' }}>
                 {userData?.media?.cvFile ? "Voir mon CV" : "Me Contacter"}
               </button>
@@ -314,8 +314,8 @@ export default function PortfolioTemplate({ userData }) {
               {getSortedCertifications().map((cert) => (
                 <div key={cert.id || cert.title} className="project-card">
                   <h3>{cert.title}</h3>
-                  <p className="parcours-company">{cert.organization || cert.issuer || "Organisme non renseigné"}</p>
-                  <p className="parcours-date">{cert.date || "Date non renseignée"}</p>
+                  <p className="parcours-company">{cert.organization || cert.issuer || ""}</p>
+                  <p className="parcours-date">{cert.date || ""}</p>
                   {cert.description && <p>{cert.description}</p>}
                 </div>
               ))}
@@ -324,7 +324,7 @@ export default function PortfolioTemplate({ userData }) {
         </section>
       )}
 
-      {/* Footer / Contact */}
+      {/* Footer */}
       <footer id="contact" className="portfolio-footer">
         <div className="container-portfolio">
           <h3>Restons en contact</h3>
@@ -339,7 +339,7 @@ export default function PortfolioTemplate({ userData }) {
               ))}
             </ul>
           )}
-          <p>&copy; {new Date().getFullYear()} {profile?.name || "Portfolio"}. Tous droits réservés.</p>
+          <p>&copy; {new Date().getFullYear()} Portfolio Builder. Tous droits réservés.</p>
         </div>
       </footer>
     </div>

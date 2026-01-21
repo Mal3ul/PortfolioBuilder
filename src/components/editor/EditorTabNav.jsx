@@ -9,7 +9,7 @@ const TABS = [
   { path: "certifications", label: "Certifications", icon: Album },
   { path: "experience", label: "Expériences", icon: Briefcase },
   { path: "skills", label: "Compétences", icon: Award },
-  { path: "media", label: "Liens", icon: Link },
+  { path: "media", label: "Liens & Médias", icon: Link },
   // { path: "templates", label: "Templates", icon: Layout },
 ];
 

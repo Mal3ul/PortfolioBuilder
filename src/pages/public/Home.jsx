@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Sparkles, Layout, Palette, Share2, Zap, Shield } from "lucide-react";
+import { Sparkles, Layout, Palette } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Footer from "../../components/Footer";
 import "../../styles/LandingPage.css";
 
 export default function Home() {
@@ -12,7 +13,8 @@ export default function Home() {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        // Extraire l'ID du token JWT
+
+        // l'id du token JWT
         const decoded = JSON.parse(atob(token.split('.')[1]));
         if (decoded.id) {
           setIsAuthenticated(true);
@@ -45,7 +47,7 @@ export default function Home() {
     {
       icon: Layout,
       title: "Design intuitif",
-      description: "Créez votre portfolio avec une interface simple et élégante",
+      description: "Créez votre portfolio avec une interface simple",
     },
     {
       icon: Palette,
@@ -54,7 +56,7 @@ export default function Home() {
     },
     {
       icon: Sparkles,
-      title: "Templates modernes",
+      title: "Templates",
       description: "Accédez à une bibliothèque de designs",
     },
   ];
@@ -152,6 +154,7 @@ export default function Home() {
           </button>
         </div>
       </section>
+      <Footer />
     </div>
   );
 }

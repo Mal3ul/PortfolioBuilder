@@ -80,7 +80,7 @@ export default function AdminDashboard() {
           const userName = p.user_name || `${p.first_name || ""} ${p.last_name || ""}`.trim();
           const email = p.user_email || p.portfolio_email || p.email || "";
           const displayUser = String(userName || email || "Sans utilisateur");
-          const displayEmail = String(email || "Email non renseigné");
+          const displayEmail = String(email || "");
           const updated = p.updated_at
             ? new Date(p.updated_at).toLocaleDateString("fr-FR", { year: "numeric", month: "short", day: "2-digit" })
             : "-";

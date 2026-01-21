@@ -196,3 +196,58 @@ textarea::placeholder {
   font-size: 0.875rem;
   color: #4b5563;
 }
+
+/* === RESPONSIVE === */
+
+@media (max-width: 640px) {
+  .auth-page {
+    padding: 1rem;
+  }
+
+  .auth-container {
+    max-width: 100%;
+  }
+
+  .auth-card {
+    padding: 1.5rem;
+  }
+
+  .auth-title {
+    font-size: 1.25rem;
+  }
+
+  .auth-logo-text {
+    font-size: 1.25rem;
+  }
+
+  .logo-icon-lg {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .input, .textarea {
+    font-size: 0.95rem;
+  }
+
+  .btn-primary {
+    padding: 0.625rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-page {
+    padding: 0.75rem;
+  }
+
+  .auth-card {
+    padding: 1.25rem;
+  }
+
+  .btn-back {
+    margin-bottom: 1rem;
+  }
+
+  .auth-logo {
+    margin-bottom: 1.5rem;
+  }
+}

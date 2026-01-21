@@ -65,7 +65,15 @@ export const PortfolioProvider = ({ userId, children }) => {
         setLoading(true);
         const data = await portfolioService.getPortfolio();
         if (data.profile) {
-          setProfile(data.profile);
+          setProfile({
+            firstName: data.profile.firstName || '',
+            lastName: data.profile.lastName || '',
+            title: data.profile.title || '',
+            bio: data.profile.bio || '',
+            email: data.profile.email || '',
+            phone: data.profile.phone || '',
+            location: data.profile.location || '',
+          });
         }
         if (data.skills) {
           setSkills(data.skills);
@@ -103,7 +111,13 @@ export const PortfolioProvider = ({ userId, children }) => {
 
       
       const data = await portfolioService.updatePortfolio({ 
-        profile: updatedProfile,
+        firstName: updatedProfile.firstName || '',
+        lastName: updatedProfile.lastName || '',
+        title: updatedProfile.title || '',
+        bio: updatedProfile.bio || '',
+        email: updatedProfile.email || '',
+        phone: updatedProfile.phone || '',
+        location: updatedProfile.location || '',
         userId: currentUserId 
       });
       setProfile(data.profile); // met à jour le context avec les données sauvegardées

@@ -115,6 +115,7 @@ export default function PublicPortfolio() {
         };
         
         setUserData(transformedData);
+        console.log('Portfolio données chargées:', transformedData);
       } catch (err) {
         console.error("Erreur lors du chargement du portfolio:", err);
         setError(err.message);

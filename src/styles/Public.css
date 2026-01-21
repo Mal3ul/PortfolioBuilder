@@ -158,3 +158,102 @@
 .btn-back:hover {
   color: #111827;
 }
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .public-header {
+    padding: 0.875rem 1.5rem;
+  }
+
+  .landing-header-content {
+    padding: 0.875rem 1.25rem;
+  }
+
+  .hero-section {
+    padding: 3.5rem 1.25rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .public-header {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .public-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .public-nav a {
+    margin-left: 0;
+    text-align: center;
+    padding: 0.5rem;
+  }
+
+  .landing-header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .hero-section {
+    padding: 2.5rem 1rem;
+  }
+
+  .home-hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero-description {
+    font-size: 1rem;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .hero-buttons .btn {
+    width: 100%;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+  .public-header .logo {
+    font-size: 1.125rem;
+  }
+
+  .public-header {
+    padding: 0.75rem;
+  }
+
+  .hero-section {
+    padding: 2rem 0.75rem;
+  }
+
+  .home-hero h1 {
+    font-size: 1.75rem;
+  }
+
+  .hero-description {
+    font-size: 0.9375rem;
+  }
+
+  .public-content {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .public-footer {
+    padding: 0.75rem;
+    font-size: 0.8125rem;
+  }
+}

@@ -9,7 +9,7 @@ export default function PublicLayout() {
     <div className="public-layout">
       {/* <Header /> */}
       <main className="public-content"><Outlet /></main>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }

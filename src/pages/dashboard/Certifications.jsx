@@ -27,7 +27,7 @@ export default function Certifications() {
   const handleChange = (id, field, value) => {
     setCertifications(
       certifications.map((cert) =>
-        cert.id === id ? { ...cert, [field]: value } : cert
+        cert.id === id ? { ...cert, [field]: value || '' } : cert
       )
     );
   };
@@ -88,7 +88,7 @@ export default function Certifications() {
                     name="title"
                     className="input"
                     placeholder="AWS Cloud Practitioner"
-                    value={certification.title}
+                    value={certification.title || ''}
                     onChange={(e) =>
                       handleChange(certification.id, "title", e.target.value)
                     }
@@ -101,7 +101,7 @@ export default function Certifications() {
                     name="organization"
                     className="input"
                     placeholder="Amazon"
-                    value={certification.organization}
+                    value={certification.organization || ''}
                     onChange={(e) =>
                       handleChange(certification.id, "organization", e.target.value)
                     }
@@ -114,7 +114,7 @@ export default function Certifications() {
                     type="date"
                     name="date"
                     className="input"
-                    value={certification.date}
+                    value={certification.date || ''}
                     onChange={(e) =>
                       handleChange(certification.id, "date", e.target.value)
                     }
@@ -128,7 +128,7 @@ export default function Certifications() {
                     className="textarea"
                     rows={4}
                     placeholder="Description de la certification..."
-                    value={certification.description}
+                    value={certification.description || ''}
                     onChange={(e) =>
                       handleChange(certification.id, "description", e.target.value)
                     }
