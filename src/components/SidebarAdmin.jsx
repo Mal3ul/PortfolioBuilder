@@ -18,7 +18,7 @@ export default function SidebarAdmin() {
     <aside className="dashboard-sidebar" style={{ width: 260 }}>
       <div className="sidebar-logo">
         <div className="logo-icon">AD</div>
-        <span className="logo-text">Admin Panel</span>
+        <span className="logo-text">Portfolio Builder</span>
       </div>
 
       <div className="sidebar-user">

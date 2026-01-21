@@ -87,7 +87,7 @@ export default function Certifications() {
                   <input
                     name="title"
                     className="input"
-                    placeholder="AWS Cloud Practitioner"
+                    placeholder="AWS Cloud"
                     value={certification.title || ''}
                     onChange={(e) =>
                       handleChange(certification.id, "title", e.target.value)

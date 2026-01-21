@@ -182,7 +182,7 @@ router.post("/forgot-password", async (req, res) => {
     console.log('[auth] 🔗 URL:', `http://localhost:5173/reset-password/${resetToken}`);
 
     const responseData = { 
-      message: "Token de réinitialisation généré (voir console backend)",
+      message: "Token de réinitialisation généré (voir console)",
       devToken: resetToken,
       devUrl: `http://localhost:5173/reset-password/${resetToken}`
     };
