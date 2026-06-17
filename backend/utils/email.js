@@ -7,26 +7,30 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '../.env'), quiet: true });
 
-// En développement, on simule l'envoi d'email
-const isDevelopment = (process.env.NODE_ENV || '').trim().toLowerCase() !== 'production';
+const isEmailNeutralized = (process.env.NEUTRALIZE_EMAIL || '').trim().toLowerCase() === 'true';
+const smtpPass = process.env.SMTP_PASS || process.env.SMTP_PASSWORD || '';
+const senderEmail = process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER || 'noreply@portfoliobuilder.com';
+const senderName = process.env.SMTP_FROM_NAME || 'Portfolio Builder';
+const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
+const hasSmtpConfig = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && smtpPass);
 
 // Configuration du transporteur email
 let transporter;
 
-if (isDevelopment) {
-  // Mode développement : pas d'envoi réel d'email
+if (isEmailNeutralized) {
+  // Mode neutralisé : pas d'envoi réel d'email
   transporter = nodemailer.createTransport({
     jsonTransport: true
   });
-} else {
-  // Production : utilisez un vrai service SMTP (Gmail, SendGrid, etc.)
+} else if (hasSmtpConfig) {
+  // Utiliser le vrai SMTP dès que la configuration est complète
   transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT || 587,
     secure: process.env.SMTP_SECURE === 'true',
     auth: {
       user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
+      pass: smtpPass
     },
     logger: true,
     debug: true,
@@ -34,10 +38,15 @@ if (isDevelopment) {
       rejectUnauthorized: false
     }
   });
+} else {
+  // Fallback local si les identifiants SMTP sont absents
+  transporter = nodemailer.createTransport({
+    jsonTransport: true
+  });
 }
 
 export const sendPasswordResetEmail = async (email, resetToken, userName) => {
-  const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+  const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
   
   const subject = 'Réinitialisation de votre mot de passe';
   const html = `
@@ -65,10 +74,25 @@ export const sendPasswordResetEmail = async (email, resetToken, userName) => {
     `;
 
   try {
+    if (isEmailNeutralized || !hasSmtpConfig) {
+      const info = await transporter.sendMail({
+        from: `${senderName} <${senderEmail}>`,
+        to: email,
+        subject,
+        html
+      });
+
+      console.log('[EMAIL] Neutralisé - aucun envoi réel effectué');
+      console.log('[EMAIL] Destinataire:', email);
+      console.log('[EMAIL] URL de réinitialisation:', resetUrl);
+
+      return { success: true, messageId: info.messageId || 'neutralized', resetUrl };
+    }
+
     // Préférence: utiliser API Brevo via HTTPS si disponible (évite blocages SMTP)
     if (process.env.BREVO_API_KEY) {
-      const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.SMTP_USER || 'noreply@portfoliobuilder.com';
-      const senderName = 'Portfolio Builder';
+      const apiSenderEmail = process.env.BREVO_SENDER_EMAIL || senderEmail;
+      const apiSenderName = process.env.BREVO_SENDER_NAME || senderName;
       const fetchFn = globalThis.fetch ? globalThis.fetch : (await import('node-fetch')).default;
       const res = await fetchFn('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
@@ -77,11 +101,11 @@ export const sendPasswordResetEmail = async (email, resetToken, userName) => {
           'content-type': 'application/json'
         },
         body: JSON.stringify({
-          sender: { email: senderEmail, name: senderName },
+          sender: { email: apiSenderEmail, name: apiSenderName },
           to: [{ email, name: userName || email }],
           subject,
           htmlContent: html,
-          replyTo: { email: senderEmail, name: senderName }
+          replyTo: { email: apiSenderEmail, name: apiSenderName }
         })
       });
 
@@ -98,13 +122,13 @@ export const sendPasswordResetEmail = async (email, resetToken, userName) => {
 
     // Fallback: SMTP via Nodemailer
     const info = await transporter.sendMail({
-      from: process.env.SMTP_USER || '"Portfolio Builder" <noreply@portfoliobuilder.com>',
+      from: `${senderName} <${senderEmail}>`,
       to: email,
       subject,
       html
     });
     
-    if (isDevelopment) {
+    if (isEmailNeutralized || !hasSmtpConfig) {
       console.log('[DEV] Email simulé - Token de réinitialisation:', resetToken);
       console.log('🔗 [DEV] URL de réinitialisation:', resetUrl);
       console.log('📨 [DEV] Email destination:', email);
@@ -112,7 +136,7 @@ export const sendPasswordResetEmail = async (email, resetToken, userName) => {
       console.log('[EMAIL] Email envoyé:', info.messageId);
     }
     
-    return { success: true, messageId: info.messageId, resetUrl: isDevelopment ? resetUrl : undefined };
+    return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error('[ERROR] Erreur envoi email:', error);
     return { success: false, error: error.message };

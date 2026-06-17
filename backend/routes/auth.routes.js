@@ -166,7 +166,7 @@ router.post("/forgot-password", async (req, res) => {
     const user = result.rows[0];
 
     if (!user) {
-      return res.status(404).json({ message: "Utilisateur introuvable" });
+      return res.json({ message: "Si un compte existe avec cet email, un lien de réinitialisation a été envoyé." });
     }
 
     const resetToken = crypto.randomBytes(32).toString("hex");
@@ -177,15 +177,21 @@ router.post("/forgot-password", async (req, res) => {
       [resetToken, resetTokenExpires, user.id]
     );
 
-    // Ne pas envoyer d'email, juste retourner le token en dev
-    // console.log('[auth] Token de réinitialisation généré:', resetToken);
-    console.log('[auth] URL:', `http://localhost:5173/reset-password/${resetToken}`);
+    const emailResult = await sendPasswordResetEmail(email, resetToken, user.name || 'Utilisateur');
 
-    const responseData = { 
-      message: "Token de réinitialisation généré (voir console)",
-      devToken: resetToken,
-      devUrl: `http://localhost:5173/reset-password/${resetToken}`
+    if (!emailResult.success) {
+      console.error('[auth] forgot-password email error:', emailResult.error);
+      return res.status(500).json({ message: "Impossible d'envoyer l'email de réinitialisation" });
+    }
+
+    const responseData = {
+      message: "Si un compte existe avec cet email, un lien de réinitialisation a été envoyé."
     };
+
+    if (emailResult.resetUrl) {
+      responseData.devUrl = emailResult.resetUrl;
+      responseData.devToken = resetToken;
+    }
 
     res.json(responseData);
   } catch (error) {

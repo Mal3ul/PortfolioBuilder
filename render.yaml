@@ -26,3 +26,5 @@ services:
         scope: project
       - key: BREVO_SENDER_EMAIL
         scope: project
+      - key: FRONTEND_URL
+        scope: project
