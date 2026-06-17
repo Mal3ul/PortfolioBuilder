@@ -40,4 +40,20 @@ pool.on('error', (err) => {
   console.error('[ERROR] Unexpected PostgreSQL error:', err);
 });
 
+// , ROLLBACK sinon.
+export const withTransaction = async (callback) => {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const result = await callback(client);
+    await client.query('COMMIT');
+    return result;
+  } catch (error) {
+    try { await client.query('ROLLBACK'); } catch { /* ignore */ }
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
 export default pool;

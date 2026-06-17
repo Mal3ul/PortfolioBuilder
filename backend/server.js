@@ -29,6 +29,7 @@ import skillsRoutes from "./routes/skills.routes.js";
 import activitiesRoutes from "./routes/activities.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import mediaRoutes from "./routes/media.routes.js";
+import { errorHandler } from "./middleware/errorHandler.js";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -64,10 +65,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Error handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: "Erreur serveur" });
-});
+app.use(errorHandler);
 
 // Gestionnaire d'erreurs non capturées
 process.on('uncaughtException', (err) => {

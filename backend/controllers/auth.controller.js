@@ -1,41 +1,43 @@
-import fs from "fs-extra";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import path from "path";
-import { fileURLToPath } from "url";
-import { JWT_SECRET, JWT_EXPIRES_IN } from "../config.js";
+import * as authService from "../services/auth.service.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const USERS_FILE = path.join(__dirname, "../data/users.json");
-
-export const register = async (req, res) => {
-  const { name, email, password } = req.body;
-  if (!name || !email || !password)
-    return res.status(400).json({ message: "Champs manquants" });
-
-  const users = await fs.readJSON(USERS_FILE).catch(() => []);
-  if (users.find(u => u.email === email))
-    return res.status(400).json({ message: "Email déjà utilisé" });
-
-  const hashed = await bcrypt.hash(password, 10);
-  const newUser = { id: Date.now(), name, email, password: hashed };
-  users.push(newUser);
-  await fs.writeJSON(USERS_FILE, users);
-
-  res.status(201).json({ message: "Utilisateur créé", user: { id: newUser.id, name, email } });
-};
+// Couche HTTP
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
-  const users = await fs.readJSON(USERS_FILE).catch(() => []);
-  const user = users.find(u => u.email === email);
-  if (!user) return res.status(401).json({ message: "Utilisateur non trouvé" });
+  const result = await authService.login(email, password);
+  res.json(result);
+};
 
-  const valid = await bcrypt.compare(password, user.password);
-  if (!valid) return res.status(401).json({ message: "Mot de passe incorrect" });
+export const register = async (req, res) => {
+  const { name, email, password } = req.body;
+  const result = await authService.register({ name, email, password });
+  res.status(201).json(result);
+};
 
-  const token = jwt.sign({ id: user.id, email: user.email, role: user.role || "user" }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-  res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role || "user" } });
+export const forgotPassword = async (req, res) => {
+  const result = await authService.forgotPassword(req.body.email);
+  res.json(result);
+};
+
+export const resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body;
+  const result = await authService.resetPassword(token, newPassword);
+  res.json(result);
+};
+
+export const me = async (req, res) => {
+  const result = await authService.getMe(req.user.id);
+  res.json(result);
+};
+
+export const changeEmail = async (req, res) => {
+  const { newEmail, userId } = req.body;
+  const result = await authService.changeEmail(userId, newEmail);
+  res.json(result);
+};
+
+export const changePassword = async (req, res) => {
+  const { currentPassword, newPassword, userId } = req.body;
+  const result = await authService.changePassword(userId, currentPassword, newPassword);
+  res.json(result);
 };

@@ -1,9 +1,10 @@
 import express from "express";
 import { updateMedia } from "../controllers/media.controller.js";
-import { verifyToken } from "./auth.routes.js";
+import { verifyToken } from "../middleware/auth.js";
+import { asyncHandler } from "../middleware/asyncHandler.js";
 
 const router = express.Router();
 
-router.put("/", verifyToken, updateMedia);
+router.put("/", verifyToken, asyncHandler(updateMedia));
 
 export default router;
