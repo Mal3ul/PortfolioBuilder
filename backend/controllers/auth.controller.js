@@ -31,13 +31,15 @@ export const me = async (req, res) => {
 };
 
 export const changeEmail = async (req, res) => {
-  const { newEmail, userId } = req.body;
-  const result = await authService.changeEmail(userId, newEmail);
+  const { newEmail } = req.body;
+  // userId vient du token vérifié, pas du body (sécurité)
+  const result = await authService.changeEmail(req.user.id, newEmail);
   res.json(result);
 };
 
 export const changePassword = async (req, res) => {
-  const { currentPassword, newPassword, userId } = req.body;
-  const result = await authService.changePassword(userId, currentPassword, newPassword);
+  const { currentPassword, newPassword } = req.body;
+  // userId vient du token vérifié, pas du body (sécurité)
+  const result = await authService.changePassword(req.user.id, currentPassword, newPassword);
   res.json(result);
 };

@@ -154,9 +154,7 @@ export const authService = {
   changeEmail: async (newEmail, userId) => {
     const response = await fetch(`${baseURL}/auth/change-email`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ newEmail, userId }),
     });
     if (!response.ok) {
@@ -169,9 +167,7 @@ export const authService = {
   changePassword: async (currentPassword, newPassword, userId) => {
     const response = await fetch(`${baseURL}/auth/change-password`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ currentPassword, newPassword, userId }),
     });
     if (!response.ok) {
