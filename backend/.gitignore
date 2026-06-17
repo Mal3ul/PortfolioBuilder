@@ -14,3 +14,6 @@ logs/
 # Builds
 dist/
 build/
+
+# Brouillons
+brouillons/

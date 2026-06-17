@@ -105,9 +105,11 @@ export default function Home() {
             <button className="btn btn-primary btn-lg" onClick={onGetStarted}>
               {isAuthenticated ? "Aller à mon profil" : "Commencer maintenant"}
             </button>
+            {/* 
             <button className="btn btn-outline btn-lg" onClick={onViewDemo}>
               Voir un exemple
             </button>
+            */}
           </div>
         </div>
 
