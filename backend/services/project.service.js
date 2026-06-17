@@ -25,14 +25,27 @@ export const addProject = async (userId, project) => {
   return withParsedTechnologies(created);
 };
 
-export const updateProject = async (id, project) => {
+// Vérifie que le projet existe et appartient bien à l'utilisateur (anti-IDOR).
+const checkOwnership = async (userId, projectId) => {
+  const portfolioId = await portfolioRepository.findIdByUserId(userId);
+  if (!portfolioId) throw notFound("Portfolio introuvable");
+
+  const project = await projectRepository.findById(projectId);
+  if (!project || String(project.portfolio_id) !== String(portfolioId)) {
+    throw notFound("Projet introuvable");
+  }
+};
+
+export const updateProject = async (userId, id, project) => {
+  await checkOwnership(userId, id);
+
   const updated = await projectRepository.update(id, project);
-  if (!updated) throw notFound("Projet introuvable");
   return withParsedTechnologies(updated);
 };
 
-export const deleteProject = async (id) => {
-  const deleted = await projectRepository.remove(id);
-  if (!deleted) throw notFound("Projet introuvable");
+export const deleteProject = async (userId, id) => {
+  await checkOwnership(userId, id);
+
+  await projectRepository.remove(id);
   return { message: "Projet supprimé" };
 };

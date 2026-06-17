@@ -10,6 +10,11 @@ export const findByPortfolioId = async (portfolioId, executor = pool) => {
   return result.rows;
 };
 
+export const findById = async (id, executor = pool) => {
+  const result = await executor.query('SELECT * FROM projects WHERE id = $1', [id]);
+  return result.rows[0] || null;
+};
+
 export const create = async (portfolioId, project, executor = pool) => {
   const result = await executor.query(
     `INSERT INTO projects (portfolio_id, title, description, technologies, github_url, live_url, image_url, created_at)

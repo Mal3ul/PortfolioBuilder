@@ -17,14 +17,14 @@ export const addProject = async (req, res) => {
 
 export const updateProject = async (req, res) => {
   const { title, description, technologies, githubUrl, liveUrl, imageUrl } = req.body;
-  const result = await projectService.updateProject(req.params.projectId, {
+  const result = await projectService.updateProject(req.body.userId, req.params.projectId, {
     title, description, technologies, githubUrl, liveUrl, imageUrl
   });
   res.json(result);
 };
 
 export const deleteProject = async (req, res) => {
-  const result = await projectService.deleteProject(req.params.projectId);
+  const result = await projectService.deleteProject(req.body.userId, req.params.projectId);
   res.json(result);
 };
 
