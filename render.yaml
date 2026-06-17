@@ -8,10 +8,11 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      # Secrets: valeurs à renseigner dans le dashboard Render (jamais dans le code)
       - key: DATABASE_URL
-        value: postgresql://portfolio_builder_bdd_user:2ttYsFLs3KHY3WApN20ZOVPF7AdSH7LT@dpg-d5mfmin5r7bs73d4dl2g-a/portfolio_builder_bdd
+        sync: false
       - key: JWT_SECRET
-        value: super_secret_jwt_key_change_in_production_2026
+        sync: false
       - key: JWT_EXPIRES_IN
         value: 30m
       - key: SMTP_HOST
