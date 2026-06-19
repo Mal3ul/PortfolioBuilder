@@ -1,0 +1,28 @@
+node_modules
+backend/node_modules
+dist
+build
+.git
+.gitignore
+brouillons
+.env
+*.env
+**/.env
+**/*.env
+!.env.example
+*.log
+npm-debug.log*
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+coverage
+reports
+
+# Fichiers d'orchestration/doc inutiles dans le contexte de build
+# (NE PAS exclure tests/ : le stage "test" du Dockerfile en a besoin)
+docker-*.yaml
+Makefile
+deploy.sh
+README*
+*.md

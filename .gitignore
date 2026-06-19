@@ -26,8 +26,11 @@ pnpm-debug.log*
 .DS_Store
 Thumbs.db
 
-# Coverage
-coverage/# Logs
+# Coverage & test reports
+coverage/
+reports/
+
+# Logs
 logs
 *.log
 npm-debug.log*
