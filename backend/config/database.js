@@ -23,12 +23,15 @@ if (!process.env.DATABASE_URL) {
   throw new Error('[database] DATABASE_URL manquant. Vérifie backend/.env');
 }
 
-// Configuration du pool PostgreSQL
+// Configuration du pool PostgreSQL.
+// SSL activé pour les bases managées (Render) ; désactivé si sslmode=disable
+// (cas du PostgreSQL interne en Docker, sans SSL).
+const wantsSSL = process.env.DATABASE_URL?.includes('render.com')
+  && !process.env.DATABASE_URL?.includes('sslmode=disable');
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' || process.env.DATABASE_URL?.includes('render.com') 
-    ? { rejectUnauthorized: false } 
-    : false
+  ssl: wantsSSL ? { rejectUnauthorized: false } : false
 });
 
 // Test de connexion
