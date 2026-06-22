@@ -13,8 +13,8 @@ fi
 echo "==> Récupération du code (git pull)"
 git pull
 
-echo "==> Purge du cache BuildKit (évite le bug dist/app/index.html)"
-docker builder prune -af
+echo "==> Suppression de l'ancienne image (évite le bug dist/app/index.html)"
+docker rmi portfoliobuilder-app 2>/dev/null || true
 
 echo "==> Build des images"
 docker compose -f docker-prod.yaml build
