@@ -67,25 +67,25 @@ export default function ForgotPassword() {
         
       <div className="auth-container">
         <Link to="/" className="btn-back">
-          <ArrowLeft size={16} /> Retour à l'accueil
+          <ArrowLeft size={16} aria-hidden="true" /> Retour à l'accueil
         </Link>
-        
+
         <div className="auth-logo">
           <div className="logo-icon-lg">
-            <Sparkles size={22} color="white" />
+            <Sparkles size={22} color="white" aria-hidden="true" />
           </div>
           <span className="auth-logo-text">Portfolio Builder</span>
         </div>
 
           {message && (
-            <div className="alert alert-success">
-              {message}
+            <div className="alert alert-success" role="status">
+              <span className="sr-only">Succès : </span>{message}
             </div>
           )}
 
           {error && (
-            <div className="alert alert-error">
-              {error}
+            <div className="alert alert-error" role="alert">
+              <span className="sr-only">Erreur : </span>{error}
             </div>
           )}
         <div className="auth-card">
@@ -95,10 +95,11 @@ export default function ForgotPassword() {
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
-              <label>Email <span className="required-star">*</span></label>
+              <label htmlFor="forgot-email">Email <span className="required-star" aria-hidden="true">*</span></label>
               <div className="input-wrapper">
-                <Mail className="input-icon" size={16} />
+                <Mail className="input-icon" size={16} aria-hidden="true" />
                 <input
+                  id="forgot-email"
                   type="email"
                   className={`input input-login input-with-icon ${validationErrors.email ? "input-error" : ""}`}
                   placeholder="ton@email.com"
@@ -106,9 +107,11 @@ export default function ForgotPassword() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   disabled={loading}
+                  aria-invalid={validationErrors.email ? "true" : "false"}
+                  aria-describedby={validationErrors.email ? "forgot-email-error" : undefined}
                 />
               </div>
-                {validationErrors.email && <span className="error-message">{validationErrors.email}</span>}
+                {validationErrors.email && <span id="forgot-email-error" className="error-message" role="alert">{validationErrors.email}</span>}
             </div>
 
             <button type="submit" className="btn btn-primary w-full" disabled={loading}>

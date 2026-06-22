@@ -150,13 +150,13 @@ export default function PublicPortfolio() {
   };
 
   if (loading) {
-    return <div style={{ padding: '2rem', textAlign: 'center' }}>Chargement du portfolio...</div>;
+    return <div role="status" style={{ padding: '2rem', textAlign: 'center' }}>Chargement du portfolio...</div>;
   }
 
   if (error) {
     return (
       <div style={{ padding: '2rem', textAlign: 'center' }}>
-        <p style={{ color: 'red', marginBottom: '1rem' }}>Erreur : {error}</p>
+        <p role="alert" style={{ color: '#b91c1c', marginBottom: '1rem' }}>Erreur : {error}</p>
         <button onClick={handleRefresh} style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>
           Réessayer
         </button>
@@ -187,14 +187,15 @@ export default function PublicPortfolio() {
             display: 'flex',
             alignItems: 'center'
           }}>
-            <Search size={18} style={{
+            <Search size={18} aria-hidden="true" style={{
               position: 'absolute',
               left: '12px',
-              color: '#999',
+              color: '#767676',
               pointerEvents: 'none'
             }} />
             <input
               type="text"
+              aria-label="Rechercher dans le portfolio"
               placeholder="Rechercher (nom, titre, technologie...)..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -214,6 +215,7 @@ export default function PublicPortfolio() {
             />
             {searchTerm && (
               <button
+                type="button"
                 onClick={handleClearSearch}
                 style={{
                   position: 'absolute',
@@ -221,12 +223,13 @@ export default function PublicPortfolio() {
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  color: '#999',
+                  color: '#767676',
                   padding: '0.2rem'
                 }}
+                aria-label="Effacer la recherche"
                 title="Effacer la recherche"
               >
-                <X size={18} />
+                <X size={18} aria-hidden="true" />
               </button>
             )}
           </div>

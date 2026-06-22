@@ -8,6 +8,18 @@
   line-height: 1.5;
 }
 
+/* Un symbole précède le message : l'état ne dépend pas QUE de la couleur
+   (lisible par les personnes daltoniennes). */
+.alert-success::before {
+  content: "\2713\00a0"; /* ✓ */
+  font-weight: 700;
+}
+
+.alert-error::before {
+  content: "\26a0\00a0"; /* ⚠ */
+  font-weight: 700;
+}
+
 .alert-success {
   background-color: #d1fae5;
   color: #065f46;
