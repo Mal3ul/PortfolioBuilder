@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ArrowLeft, Mail, Lock, User, Sparkles } from "lucide-react";
+import { ArrowLeft, Mail, Lock, User, Sparkles, ShieldCheck } from "lucide-react";
 import "../../styles/AuthPage.css";
 import "../../styles/FormValidation.css";
 import "../../styles/AuthAlerts.css";
+import "../../styles/LegalPage.css";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
@@ -82,12 +83,12 @@ export default function Register() {
       <div className="auth-container">
 
         <Link to="/" className="btn-back">
-          <ArrowLeft size={16} /> Retour à l'accueil
+          <ArrowLeft size={16} aria-hidden="true" /> Retour à l'accueil
         </Link>
 
         <div className="auth-logo">
           <div className="logo-icon-lg">
-            <Sparkles size={22} color="white" />
+            <Sparkles size={22} color="white" aria-hidden="true" />
           </div>
           <span className="auth-logo-text">Portfolio Builder</span>
         </div>
@@ -98,75 +99,87 @@ export default function Register() {
           <p className="card-description">Commence à construire ton portfolio.</p>
 
           {submitError && (
-            <div className="alert alert-error" style={{ marginBottom: '1rem' }}>
-              {submitError}
+            <div className="alert alert-error" role="alert" style={{ marginBottom: '1rem' }}>
+              <span className="sr-only">Erreur : </span>{submitError}
             </div>
           )}
 
           <form onSubmit={handleRegister} className="auth-form">
 
             <div className="form-group">
-              <label>Nom complet <span className="required-star">*</span></label>
+              <label htmlFor="register-name">Nom complet <span className="required-star" aria-hidden="true">*</span></label>
               <div className="input-wrapper">
-                <User className="input-icon" size={16} />
+                <User className="input-icon" size={16} aria-hidden="true" />
                 <input
+                  id="register-name"
                   type="text"
                   className="input input-login input-with-icon"
                   placeholder="Jean Dupont"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
+                  aria-invalid={errors.name ? "true" : "false"}
+                  aria-describedby={errors.name ? "register-name-error" : undefined}
                 />
               </div>
-                {errors.name && <span className="error-message">{errors.name}</span>}
+                {errors.name && <span id="register-name-error" className="error-message" role="alert">{errors.name}</span>}
             </div>
 
             <div className="form-group">
-              <label>Email <span className="required-star">*</span></label>
+              <label htmlFor="register-email">Email <span className="required-star" aria-hidden="true">*</span></label>
               <div className="input-wrapper">
-                <Mail className="input-icon" size={16} />
+                <Mail className="input-icon" size={16} aria-hidden="true" />
                 <input
+                  id="register-email"
                   type="email"
                   className="input input-login input-with-icon"
                   placeholder="ton.email@exemple.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  aria-invalid={errors.email ? "true" : "false"}
+                  aria-describedby={errors.email ? "register-email-error" : undefined}
                 />
               </div>
-                {errors.email && <span className="error-message">{errors.email}</span>}
+                {errors.email && <span id="register-email-error" className="error-message" role="alert">{errors.email}</span>}
             </div>
 
             <div className="form-group">
-              <label>Mot de passe <span className="required-star">*</span></label>
+              <label htmlFor="register-password">Mot de passe <span className="required-star" aria-hidden="true">*</span></label>
               <div className="input-wrapper">
-                <Lock className="input-icon" size={16} />
+                <Lock className="input-icon" size={16} aria-hidden="true" />
                 <input
+                  id="register-password"
                   type="password"
                   className="input input-login input-with-icon"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  aria-invalid={errors.password ? "true" : "false"}
+                  aria-describedby={errors.password ? "register-password-error" : undefined}
                 />
               </div>
-                {errors.password && <span className="error-message">{errors.password}</span>}
+                {errors.password && <span id="register-password-error" className="error-message" role="alert">{errors.password}</span>}
               </div>
 
               <div className="form-group">
-                <label>Confirmer le mot de passe <span className="required-star">*</span></label>
+                <label htmlFor="register-confirm">Confirmer le mot de passe <span className="required-star" aria-hidden="true">*</span></label>
                 <div className="input-wrapper">
-                  <Lock className="input-icon" size={16} />
+                  <Lock className="input-icon" size={16} aria-hidden="true" />
                   <input
+                    id="register-confirm"
                     type="password"
                     className="input input-login input-with-icon"
                     placeholder="••••••••"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
+                    aria-invalid={errors.confirmPassword ? "true" : "false"}
+                    aria-describedby={errors.confirmPassword ? "register-confirm-error" : undefined}
                   />
                 </div>
-                {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
+                {errors.confirmPassword && <span id="register-confirm-error" className="error-message" role="alert">{errors.confirmPassword}</span>}
             </div>
 
             <button type="submit" className="btn btn-primary w-full" disabled={loading}>
@@ -177,6 +190,15 @@ export default function Register() {
 
           <p className="auth-footer-text">
             Déjà membre ? <Link to="/login">Connexion</Link>
+          </p>
+
+          <p className="data-notice">
+            <ShieldCheck size={16} aria-hidden="true" />
+            <span>
+              En créant un compte, tu acceptes que nous collections et traitions tes données
+              personnelles pour le fonctionnement du service. Pour en savoir plus, consulte
+              notre <Link to="/confidentialite">politique de confidentialité</Link>.
+            </span>
           </p>
         </div>
 

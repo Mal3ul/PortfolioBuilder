@@ -5,17 +5,18 @@ import {
   updateProject,
   deleteProject
 } from "../controllers/projects.controller.js";
-import { verifyToken } from "./auth.routes.js";
+import { verifyToken } from "../middleware/auth.js";
+import { asyncHandler } from "../middleware/asyncHandler.js";
 import { requireAnyRole, requireSelfOrAdmin } from "../middleware/roles.js";
 
 const router = express.Router();
 
-// Lecture publique par userId si voulu; sinon, protéger aussi avec verifyToken + selfOrAdmin
-router.get("/:userId", getProjects);
+// Lecture publique par userId
+router.get("/:userId", asyncHandler(getProjects));
 
-// Pour créer/mettre à jour/supprimer, exiger auth + rôle user/admin et vérifier propriétaire via body.userId
-router.post("/", verifyToken, requireAnyRole(['user','admin']), requireSelfOrAdmin({ inBody: true, paramKey: 'userId' }), addProject);
-router.put("/:projectId", verifyToken, requireAnyRole(['user','admin']), requireSelfOrAdmin({ inBody: true, paramKey: 'userId' }), updateProject);
-router.delete("/:projectId", verifyToken, requireAnyRole(['user','admin']), requireSelfOrAdmin({ inBody: true, paramKey: 'userId' }), deleteProject);
+// Création/mise à jour/suppression: auth + rôle user/admin + propriétaire via body.userId
+router.post("/", verifyToken, requireAnyRole(['user', 'admin']), requireSelfOrAdmin({ inBody: true, paramKey: 'userId' }), asyncHandler(addProject));
+router.put("/:projectId", verifyToken, requireAnyRole(['user', 'admin']), requireSelfOrAdmin({ inBody: true, paramKey: 'userId' }), asyncHandler(updateProject));
+router.delete("/:projectId", verifyToken, requireAnyRole(['user', 'admin']), requireSelfOrAdmin({ inBody: true, paramKey: 'userId' }), asyncHandler(deleteProject));
 
 export default router;

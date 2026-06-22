@@ -1,0 +1,71 @@
+# Stack UTILITAIRE : exécution des tests dans des conteneurs jetables.
+# Usage : docker compose -f docker-utils.yaml run --rm <service>   (ou via le Makefile)
+name: portfoliobuilder-utils
+
+# Environnement commun aux conteneurs de test
+x-test-env: &test-env
+  NODE_ENV: test
+  DATABASE_URL: postgresql://pb_test:pb_test@test-db:5432/pb_test?sslmode=disable
+  JWT_SECRET: test-secret
+  JWT_EXPIRES_IN: 30m
+  NEUTRALIZE_EMAIL: "true"
+
+# Build commun (stage "test" du Dockerfile)
+x-test-build: &test-build
+  build:
+    context: .
+    target: test
+  image: portfoliobuilder-app:test
+
+services:
+  # Base PostgreSQL éphémère (tmpfs : aucune persistance, repart vierge à chaque run)
+  test-db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: pb_test
+      POSTGRES_USER: pb_test
+      POSTGRES_PASSWORD: pb_test
+    tmpfs:
+      - /var/lib/postgresql/data
+    volumes:
+      - ./backend/schema.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pb_test -d pb_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Suite complète (unitaire + intégration)
+  test:
+    <<: *test-build
+    environment: *test-env
+    depends_on:
+      test-db:
+        condition: service_healthy
+    command: npm run test
+
+  # Tests unitaires uniquement (pas besoin de base de données)
+  test-unit:
+    <<: *test-build
+    environment: *test-env
+    command: npm run test:unit
+
+  # Tests d'intégration / non-régression (base éphémère)
+  test-integration:
+    <<: *test-build
+    environment: *test-env
+    depends_on:
+      test-db:
+        condition: service_healthy
+    command: npm run test:integration
+
+  # Couverture (rapport HTML écrit dans ./reports/coverage sur l'hôte)
+  coverage:
+    <<: *test-build
+    environment: *test-env
+    depends_on:
+      test-db:
+        condition: service_healthy
+    command: npm run coverage
+    volumes:
+      - ./reports/coverage:/app/coverage

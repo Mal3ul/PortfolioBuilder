@@ -68,7 +68,7 @@ export default function Home() {
         <div className="landing-header-content">
           <div className="landing-logo">
             <div className="logo-icon">
-              <Sparkles size={18} />
+              <Sparkles size={18} aria-hidden="true" />
             </div>
             <span className="logo-text">Portfolio Builder</span>
           </div>
@@ -91,7 +91,7 @@ export default function Home() {
       <section className="hero-section">
         <div className="hero-content">
           <div className="hero-badge">
-            <Sparkles size={16} />
+            <Sparkles size={16} aria-hidden="true" />
             <span>Créez votre portfolio professionnel</span>
           </div>
 
@@ -105,13 +105,15 @@ export default function Home() {
             <button className="btn btn-primary btn-lg" onClick={onGetStarted}>
               {isAuthenticated ? "Aller à mon profil" : "Commencer maintenant"}
             </button>
+            {/* 
             <button className="btn btn-outline btn-lg" onClick={onViewDemo}>
               Voir un exemple
             </button>
+            */}
           </div>
         </div>
 
-        <div className="hero-preview" aria-hidden>
+        <div className="hero-preview" aria-hidden="true">
           <div className="preview-card">
             <div className="preview-placeholder">
               <Layout size={64} />
@@ -134,7 +136,7 @@ export default function Home() {
               <div key={index} className="feature-card card">
                 <div className="card-content">
                   <div className="feature-icon">
-                    <Icon size={22} />
+                    <Icon size={22} aria-hidden="true" />
                   </div>
                   <h3 className="feature-title">{feature.title}</h3>
                   <p className="feature-description">{feature.description}</p>

@@ -20,6 +20,7 @@
     "express": "^5.2.1",
     "fs-extra": "^11.3.3",
     "jsonwebtoken": "^9.0.3",
+    "node-cron": "^3.0.3",
     "nodemailer": "^6.10.1",
     "portfolio-builder": "file:.."
   }

@@ -1,4 +1,5 @@
 import { Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
@@ -25,9 +26,9 @@ export default function Footer() {
           <div className="footer-column">
             <h3 className="footer-heading">Entreprise</h3>
             <ul className="footer-links">
-              <li><a href="#">À propos</a></li>
-              <li><a href="#">Contact</a></li>
-              <li><a href="#">Confidentialité</a></li>
+              <li><a href="mailto:contact@nessia.eu">Contact</a></li>
+              <li><Link to="/mentions-legales">Mentions légales</Link></li>
+              <li><Link to="/confidentialite">Confidentialité</Link></li>
             </ul>
           </div>
         </div>

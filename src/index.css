@@ -3,6 +3,43 @@
   padding: 0;
 }
 
+/* === Accessibilité === */
+
+/* Texte réservé aux lecteurs d'écran (invisible à l'écran) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Lien d'évitement : caché jusqu'au focus clavier */
+.skip-link {
+  position: absolute;
+  left: 0;
+  top: -100%;
+  z-index: 2000;
+  padding: 0.75rem 1rem;
+  background: #1e1b4b;
+  color: #ffffff;
+  border-radius: 0 0 0.5rem 0;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* Indicateur de focus visible et cohérent au clavier */
+:focus-visible {
+  outline: 3px solid #6366f1;
+  outline-offset: 2px;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

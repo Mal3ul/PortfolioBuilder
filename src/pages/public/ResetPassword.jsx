@@ -64,22 +64,22 @@ export default function ResetPassword() {
           </p>
 
           {message && (
-            <div className="alert alert-success">
-              {message}
+            <div className="alert alert-success" role="status">
+              <span className="sr-only">Succès : </span>{message}
               <br />
               <small>Redirection vers la page de connexion...</small>
             </div>
           )}
 
           {error && (
-            <div className="alert alert-error">
-              {error}
+            <div className="alert alert-error" role="alert">
+              <span className="sr-only">Erreur : </span>{error}
             </div>
           )}
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="newPassword">Nouveau mot de passe <span className="required-star">*</span></label>
+              <label htmlFor="newPassword">Nouveau mot de passe <span className="required-star" aria-hidden="true">*</span></label>
               <input
                 type="password"
                 id="newPassword"
@@ -89,12 +89,13 @@ export default function ResetPassword() {
                 required
                 disabled={loading}
                 minLength={6}
+                aria-invalid={error ? "true" : "false"}
                 className={error ? "input-error" : ""}
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="confirmPassword">Confirmer le mot de passe <span className="required-star">*</span></label>
+              <label htmlFor="confirmPassword">Confirmer le mot de passe <span className="required-star" aria-hidden="true">*</span></label>
               <input
                 type="password"
                 id="confirmPassword"
@@ -104,6 +105,7 @@ export default function ResetPassword() {
                 required
                 disabled={loading}
                 minLength={6}
+                aria-invalid={error ? "true" : "false"}
                 className={error ? "input-error" : ""}
               />
             </div>

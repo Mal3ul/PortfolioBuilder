@@ -43,7 +43,7 @@ cd backend
 # Installer les dépendances
 npm install
 
-# Configuration PostgreSQL, JWT_SECRET, SMTP_HOST, etc.
+# Configuration PostgreSQL, JWT_SECRET, NEUTRALIZE_EMAIL, SMTP_HOST, SMTP_USER, SMTP_PASSWORD, etc.
 
 ```
 ---
@@ -144,44 +144,44 @@ PortfolioBuilder/
 ### Portfolio (`/api/portfolio`)
 | Route | Méthode | Description | Auth | Rôle |
 |-------|---------|-------------|------|------|
-| `/api/portfolio` | GET | Récupérer le portfolio de l'utilisateur connecté | ✅ | user/admin |
-| `/api/portfolio/user/:userId` | GET | Récupérer le portfolio d'un utilisateur (public) | ❌ | - |
-| `/api/portfolio` | POST | Créer/Initialiser le portfolio | ✅ | user/admin |
-| `/api/portfolio` | PUT | Mettre à jour le portfolio | ✅ | user/admin |
+| `/api/portfolio` | GET | Récupérer le portfolio de l'utilisateur connecté | oui | user/admin |
+| `/api/portfolio/user/:userId` | GET | Récupérer le portfolio d'un utilisateur (public) | non | - |
+| `/api/portfolio` | POST | Créer/Initialiser le portfolio | oui | user/admin |
+| `/api/portfolio` | PUT | Mettre à jour le portfolio | oui | user/admin |
 
 ### Médias (`/api/media`)
 | Route | Méthode | Description | Auth | Rôle |
 |-------|---------|-------------|------|------|
-| `/api/media` | PUT | Mettre à jour image profil et CV | ✅ | user/admin |
+| `/api/media` | PUT | Mettre à jour image profil et CV | oui | user/admin |
 
 ### Projets (`/api/projects`)
 | Route | Méthode | Description | Auth | Rôle |
 |-------|---------|-------------|------|------|
-| `/api/projects/:userId` | GET | Lister les projets d'un utilisateur (public) | ❌ | - |
-| `/api/projects` | POST | Créer un projet | ✅ | user/admin |
-| `/api/projects/:projectId` | PUT | Modifier un projet | ✅ | user/admin |
-| `/api/projects/:projectId` | DELETE | Supprimer un projet | ✅ | user/admin |
+| `/api/projects/:userId` | GET | Lister les projets d'un utilisateur (public) | non | - |
+| `/api/projects` | POST | Créer un projet | oui | user/admin |
+| `/api/projects/:projectId` | PUT | Modifier un projet | oui | user/admin |
+| `/api/projects/:projectId` | DELETE | Supprimer un projet | oui | user/admin |
 
 ### Compétences (`/api/skills`)
 | Route | Méthode | Description | Auth | Rôle |
 |-------|---------|-------------|------|------|
-| `/api/skills/:userId` | GET | Lister les compétences d'un utilisateur (public) | ❌ | - |
-| `/api/skills` | POST | Ajouter une compétence | ✅ | user/admin |
-| `/api/skills` | PUT | Mettre à jour TOUTES les compétences | ✅ | user/admin |
-| `/api/skills/:skillId` | PUT | Modifier une compétence | ✅ | user/admin |
-| `/api/skills/:skillId` | DELETE | Supprimer une compétence | ✅ | user/admin |
+| `/api/skills/:userId` | GET | Lister les compétences d'un utilisateur (public) | non | - |
+| `/api/skills` | POST | Ajouter une compétence | oui | user/admin |
+| `/api/skills` | PUT | Mettre à jour TOUTES les compétences | oui | user/admin |
+| `/api/skills/:skillId` | PUT | Modifier une compétence | oui | user/admin |
+| `/api/skills/:skillId` | DELETE | Supprimer une compétence | oui | user/admin |
 
 ### Activités (`/api/activities`)
 | Route | Méthode | Description | Auth | Rôle |
 |-------|---------|-------------|------|------|
-| `/api/activities` | GET | Récupérer les activités de l'utilisateur | ✅ | user/admin |
-| `/api/activities` | POST | Ajouter une activité | ✅ | user/admin |
+| `/api/activities` | GET | Récupérer les activités de l'utilisateur | oui | user/admin |
+| `/api/activities` | POST | Ajouter une activité | oui | user/admin |
 
 ### Administration (`/api/admin`)
 | Route | Méthode | Description | Auth | Rôle |
 |-------|---------|-------------|------|------|
-| `/api/admin/users` | GET | Lister tous les utilisateurs | ✅ | admin |
-| `/api/admin/portfolios` | GET | Lister tous les portfolios | ✅ | admin |
-| `/api/admin/users/:userId/role` | PATCH | Modifier le rôle d'un utilisateur | ✅ | admin |
-| `/api/admin/users/:userId` | DELETE | Supprimer un utilisateur | ✅ | admin |
-| `/api/admin/portfolios/:portfolioId` | DELETE | Supprimer un portfolio | ✅ | admin |
+| `/api/admin/users` | GET | Lister tous les utilisateurs | oui | admin |
+| `/api/admin/portfolios` | GET | Lister tous les portfolios | oui | admin |
+| `/api/admin/users/:userId/role` | PATCH | Modifier le rôle d'un utilisateur | oui | admin |
+| `/api/admin/users/:userId` | DELETE | Supprimer un utilisateur | oui | admin |
+| `/api/admin/portfolios/:portfolioId` | DELETE | Supprimer un portfolio | oui | admin |

@@ -1,0 +1,87 @@
+# Stack de PRODUCTION : tunnel + proxy + app + database.
+# Entrée publique via Cloudflare Tunnel uniquement (aucun port exposé sur l'hôte).
+name: portfoliobuilder-prod
+
+networks:
+  # Réseau public dédié : cloudflared ↔ nginx, avec accès internet
+  # pour que pb-tunnel joigne l'edge Cloudflare.
+  pb-public-net:
+    driver: bridge
+  # Réseau interne isolé : aucun conteneur ne peut sortir vers internet.
+  pb-net:
+    internal: true
+
+volumes:
+  pb-pgdata:
+
+services:
+  pb-database:
+    image: postgres:17-alpine
+    container_name: pb-database
+    restart: unless-stopped
+    networks:
+      - pb-net
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-portfolio_builder}
+      POSTGRES_USER: ${POSTGRES_USER:-pb_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD manquant}
+    volumes:
+      - pb-pgdata:/var/lib/postgresql/data
+      - ./backend/schema.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pb_user} -d ${POSTGRES_DB:-portfolio_builder}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pb-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: portfoliobuilder-app
+    container_name: pb-app
+    restart: unless-stopped
+    networks:
+      - pb-net
+    depends_on:
+      pb-database:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "10000"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-pb_user}:${POSTGRES_PASSWORD}@pb-database:5432/${POSTGRES_DB:-portfolio_builder}?sslmode=disable
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET manquant}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-30m}
+      NEUTRALIZE_EMAIL: ${NEUTRALIZE_EMAIL:-false}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM_EMAIL: ${SMTP_FROM_EMAIL:-}
+      SMTP_FROM_NAME: ${SMTP_FROM_NAME:-PortfolioBuilder}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+
+  pb-proxy:
+    image: nginx:alpine
+    container_name: pb-proxy
+    restart: unless-stopped
+    networks:
+      - pb-public-net
+      - pb-net
+    depends_on:
+      pb-app:
+        condition: service_healthy
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+  pb-tunnel:
+    image: cloudflare/cloudflared:2026.6.1
+    container_name: pb-tunnel
+    restart: unless-stopped
+    networks:
+      - pb-public-net
+    depends_on:
+      - pb-proxy
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:?TUNNEL_TOKEN manquant}

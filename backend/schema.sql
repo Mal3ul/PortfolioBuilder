@@ -7,6 +7,8 @@ CREATE TABLE users (
     role VARCHAR(50) DEFAULT 'user' CHECK (role IN ('user', 'admin')),
     reset_password_token VARCHAR(255),
     reset_password_expiry BIGINT,
+    last_login_at TIMESTAMP,
+    inactivity_warning_sent_at TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -131,6 +133,7 @@ CREATE TABLE activities (
 
 
 CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_last_login_at ON users(last_login_at);
 CREATE INDEX idx_portfolios_user_id ON portfolios(user_id);
 CREATE INDEX idx_skills_portfolio_id ON skills(portfolio_id);
 CREATE INDEX idx_projects_portfolio_id ON projects(portfolio_id);

@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { ArrowLeft, Mail, Lock, Sparkles } from "lucide-react";
+import { ArrowLeft, Mail, Lock, Sparkles, ShieldCheck } from "lucide-react";
 import "../../styles/AuthPage.css";
 import "../../styles/FormValidation.css";
+import "../../styles/LegalPage.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { authService } from "../../services/api";
@@ -68,12 +69,12 @@ export default function Login() {
       <div className="auth-container">
 
         <Link to="/" className="btn-back">
-          <ArrowLeft size={16} /> Retour à l'accueil
+          <ArrowLeft size={16} aria-hidden="true" /> Retour à l'accueil
         </Link>
 
         <div className="auth-logo">
           <div className="logo-icon-lg">
-            <Sparkles size={22} color="white" />
+            <Sparkles size={22} color="white" aria-hidden="true" />
           </div>
           <span className="auth-logo-text">Portfolio Builder</span>
         </div>
@@ -88,35 +89,41 @@ export default function Login() {
           <form onSubmit={handleLogin} className="auth-form">
 
             <div className="form-group">
-              <label>Email <span className="required-star">*</span></label>
+              <label htmlFor="login-email">Email <span className="required-star" aria-hidden="true">*</span></label>
               <div className="input-wrapper">
-                <Mail className="input-icon" size={16} />
+                <Mail className="input-icon" size={16} aria-hidden="true" />
                 <input
+                  id="login-email"
                   type="email"
                   className={`input input-login input-with-icon ${errors.email ? "input-error" : ""}`}
                   placeholder="ton@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  aria-invalid={errors.email ? "true" : "false"}
+                  aria-describedby={errors.email ? "login-email-error" : undefined}
                 />
               </div>
-              {errors.email && <span className="error-message">{errors.email}</span>}
+              {errors.email && <span id="login-email-error" className="error-message" role="alert">{errors.email}</span>}
             </div>
 
             <div className="form-group">
-              <label>Mot de passe <span className="required-star">*</span></label>
+              <label htmlFor="login-password">Mot de passe <span className="required-star" aria-hidden="true">*</span></label>
               <div className="input-wrapper">
-                <Lock className="input-icon" size={16} />
+                <Lock className="input-icon" size={16} aria-hidden="true" />
                 <input
+                  id="login-password"
                   type="password"
                   className={`input input-login input-with-icon ${errors.password ? "input-error" : ""}`}
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  aria-invalid={errors.password ? "true" : "false"}
+                  aria-describedby={errors.password ? "login-password-error" : undefined}
                 />
               </div>
-              {errors.password && <span className="error-message">{errors.password}</span>}
+              {errors.password && <span id="login-password-error" className="error-message" role="alert">{errors.password}</span>}
             </div>
 
             <button type="submit" disabled={loading} className="btn btn-primary w-full">
@@ -132,6 +139,15 @@ export default function Login() {
 
           <p className="auth-footer-text">
             Tu n'as pas de compte ? <Link to="/register" style={{ color: '#6366f1', fontWeight: 'bold' }}>S'inscrire</Link>
+          </p>
+
+          <p className="data-notice">
+            <ShieldCheck size={16} aria-hidden="true" />
+            <span>
+              En te connectant, tu acceptes que nous collections et traitions tes données
+              personnelles pour le fonctionnement du service. Pour en savoir plus, consulte
+              notre <Link to="/confidentialite">politique de confidentialité</Link>.
+            </span>
           </p>
         </div>
       </div>

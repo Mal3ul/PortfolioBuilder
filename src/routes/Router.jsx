@@ -17,6 +17,8 @@ import Register from "../pages/public/Register";
 import PublicPortfolio from "../pages/public/PublicPortfolio";
 import ForgotPassword from "../pages/public/ForgotPassword";
 import ResetPassword from "../pages/public/ResetPassword";
+import MentionsLegales from "../pages/public/MentionsLegales";
+import Confidentialite from "../pages/public/Confidentialite";
 
 // Dashboard
 import DashboardHome from "../pages/dashboard/DashboardHome";
@@ -52,6 +54,8 @@ const router = createBrowserRouter([
       { path: "/forgot-password", element: <ForgotPassword /> },
       { path: "/reset-password/:token", element: <ResetPassword /> },
       { path: "/portfolio/:userId", element: <PublicPortfolio /> },
+      { path: "/mentions-legales", element: <MentionsLegales /> },
+      { path: "/confidentialite", element: <Confidentialite /> },
     ],
   },
 
