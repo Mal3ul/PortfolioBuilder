@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Déploiement / mise à jour de la stack Docker PortfolioBuilder.
-# Usage : ./deploy.sh
+# Script de déploiement — NE PAS faire git pull ici (déjà fait par le wrapper).
 set -euo pipefail
 
 cd "$(dirname "$0")"
@@ -10,16 +9,13 @@ if [ ! -f .env ]; then
   exit 1
 fi
 
-echo "==> Récupération du code (git pull)"
-git pull
-
-echo "==> Suppression de l'ancienne image (évite le bug dist/app/index.html)"
+echo "==> Suppression de l'ancienne image (évite réutilisation de layers corrompus)"
 docker rmi portfoliobuilder-app 2>/dev/null || true
 
-echo "==> Build des images"
+echo "==> Build de l'image"
 docker compose -f docker-prod.yaml build
 
-echo "==> (re)démarrage des conteneurs (prod)"
+echo "==> (re)démarrage des conteneurs"
 docker compose -f docker-prod.yaml up -d
 
 echo "==> Nettoyage des images orphelines"
