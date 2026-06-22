@@ -39,7 +39,13 @@ const formatRelations = (relations) => ({
   }
 });
 
-// Portfolio de l'utilisateur connecté.
+/**
+ * Récupère le portfolio complet de l'utilisateur connecté (profil + relations).
+ * Le portfolio est créé à la volée s'il n'existe pas encore.
+ * @param {string} userId - Identifiant de l'utilisateur connecté.
+ * @returns {Promise<object>} Le portfolio formaté pour l'API.
+ * @throws {HttpError} 401 si non authentifié, 404 si le portfolio est introuvable.
+ */
 export const getOwnPortfolio = async (userId) => {
   if (!userId) throw unauthorized("Non authentifié");
 
@@ -65,7 +71,12 @@ export const getOwnPortfolio = async (userId) => {
   };
 };
 
-// Portfolio public d'un utilisateur (par userId).
+/**
+ * Récupère le portfolio public d'un utilisateur (consultation sans authentification).
+ * @param {string} userId - Identifiant de l'utilisateur ciblé.
+ * @returns {Promise<object>} Le portfolio formaté pour l'API.
+ * @throws {HttpError} 404 si l'utilisateur ou le portfolio est introuvable.
+ */
 export const getPublicPortfolio = async (userId) => {
   const user = await userRepository.findById(userId);
   if (!user) throw notFound("Utilisateur introuvable");
@@ -98,7 +109,15 @@ export const getPublicPortfolio = async (userId) => {
   };
 };
 
-// Mise à jour complète du portfolio (profil + collections) en transaction.
+/**
+ * Met à jour le portfolio de l'utilisateur (profil et collections) dans une
+ * transaction : projets, expériences, formations et certifications fournis
+ * remplacent intégralement l'existant.
+ * @param {string} userId - Identifiant de l'utilisateur connecté.
+ * @param {object} data - Champs de profil et tableaux de collections à enregistrer.
+ * @returns {Promise<object>} Le portfolio mis à jour.
+ * @throws {HttpError} 401 si non authentifié, 404 si le portfolio est introuvable.
+ */
 export const updatePortfolio = async (userId, data) => {
   if (!userId) throw unauthorized("Non authentifié");
 
@@ -188,7 +207,12 @@ export const updatePortfolio = async (userId, data) => {
   };
 };
 
-// Sauvegarde (upsert) du profil portfolio.
+/**
+ * Crée ou met à jour (upsert) le profil du portfolio d'un utilisateur.
+ * @param {string} userId - Identifiant de l'utilisateur.
+ * @param {object} profile - Champs du profil (firstName, lastName, title, bio…).
+ * @returns {Promise<{message: string}>} Message de confirmation.
+ */
 export const savePortfolio = async (userId, profile) => {
   await portfolioRepository.upsertProfile(userId, profile);
   return { message: "Portfolio sauvegardé" };
