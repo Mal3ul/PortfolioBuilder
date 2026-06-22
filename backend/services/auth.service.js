@@ -22,6 +22,9 @@ export const login = async (email, password) => {
     await userRepository.updateRole(user.id, role);
   }
 
+  // Enregistre la connexion (sert au suivi d'inactivité / conservation des données).
+  await userRepository.updateLastLogin(user.id);
+
   const token = signToken({ id: user.id, email: user.email, role });
   return { token, userId: user.id, name: user.name, email: user.email, role };
 };

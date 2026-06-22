@@ -78,6 +78,50 @@ export const updatePasswordAndClearReset = async (id, hashedPassword) => {
   );
 };
 
+// Enregistre la connexion de l'utilisateur et réinitialise un éventuel
+// avertissement d'inactivité (le compte est redevenu actif).
+export const updateLastLogin = async (id) => {
+  await pool.query(
+    'UPDATE users SET last_login_at = NOW(), inactivity_warning_sent_at = NULL WHERE id = $1',
+    [id]
+  );
+};
+
+// Comptes inactifs depuis plus de `inactiveDays` jours et pas encore avertis.
+// COALESCE(last_login_at, created_at) : pour un compte qui ne s'est jamais
+// reconnecté depuis la mise en place du suivi, on se base sur la date de création.
+export const findInactiveToWarn = async (inactiveDays) => {
+  const result = await pool.query(
+    `SELECT id, name, email
+       FROM users
+      WHERE inactivity_warning_sent_at IS NULL
+        AND COALESCE(last_login_at, created_at) < NOW() - ($1::int * INTERVAL '1 day')`,
+    [inactiveDays]
+  );
+  return result.rows;
+};
+
+export const markInactivityWarning = async (id) => {
+  await pool.query(
+    'UPDATE users SET inactivity_warning_sent_at = NOW() WHERE id = $1',
+    [id]
+  );
+};
+
+// Comptes à supprimer : inactifs depuis plus de `inactiveDays` jours ET déjà
+// avertis depuis au moins `graceDays` jours (délai de grâce après l'e-mail).
+export const findInactiveToDelete = async (inactiveDays, graceDays) => {
+  const result = await pool.query(
+    `SELECT id, name, email
+       FROM users
+      WHERE inactivity_warning_sent_at IS NOT NULL
+        AND inactivity_warning_sent_at < NOW() - ($2::int * INTERVAL '1 day')
+        AND COALESCE(last_login_at, created_at) < NOW() - ($1::int * INTERVAL '1 day')`,
+    [inactiveDays, graceDays]
+  );
+  return result.rows;
+};
+
 export const findAll = async () => {
   const result = await pool.query(
     'SELECT id, name, email, role, created_at FROM users ORDER BY created_at DESC'

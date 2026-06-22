@@ -18,6 +18,7 @@ if (fs.existsSync(envPath)) {
 // console.log('[env] DATABASE_URL:', process.env.DATABASE_URL ? `présent (${process.env.DATABASE_URL.substring(0, 50)}...)` : 'undefined');
 
 import app from "./app.js";
+import { startScheduledJobs } from "./services/scheduler.service.js";
 
 // Gestionnaire d'erreurs non capturées
 process.on('uncaughtException', (err) => {
@@ -33,6 +34,8 @@ process.on('unhandledRejection', (reason, promise) => {
 const PORT = process.env.PORT || 10000;
 const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`[SERVER] Server running on port ${PORT}`);
+  // Démarre les tâches planifiées (nettoyage des comptes inactifs).
+  startScheduledJobs();
 });
 
 server.on('error', (err) => {
