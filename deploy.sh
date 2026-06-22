@@ -13,8 +13,11 @@ fi
 echo "==> Récupération du code (git pull)"
 git pull
 
-echo "==> Build + (re)démarrage des conteneurs (prod)"
-docker compose -f docker-prod.yaml up -d --build
+echo "==> Build des images (sans cache : évite le bug dist/app/index.html)"
+docker compose -f docker-prod.yaml build --no-cache
+
+echo "==> (re)démarrage des conteneurs (prod)"
+docker compose -f docker-prod.yaml up -d
 
 echo "==> Nettoyage des images orphelines"
 docker image prune -f
