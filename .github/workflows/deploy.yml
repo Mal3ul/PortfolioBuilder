@@ -13,7 +13,7 @@ on:
 jobs:
   # ── Intégration continue : analyse statique + tests ──────────────
   test:
-    name: Tests & analyse statique
+    name: Tests et Analyse
     runs-on: ubuntu-latest
 
     steps:
