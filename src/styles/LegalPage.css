@@ -126,3 +126,37 @@
   color: #6366f1;
   font-weight: 500;
 }
+
+/* ---- Responsive : adaptation aux petits écrans (mobile) ---- */
+@media (max-width: 480px) {
+  .legal-page {
+    padding: 1.5rem 0.75rem 3rem;
+  }
+
+  .legal-container {
+    padding: 1.5rem 1.25rem;
+    border-radius: 12px;
+  }
+
+  .legal-title {
+    font-size: 1.45rem;
+  }
+
+  .legal-container h2 {
+    font-size: 1.1rem;
+  }
+
+  /* Tableau de conservation des données : plus compact pour rester lisible */
+  .legal-table {
+    font-size: 0.85rem;
+  }
+
+  .legal-table th,
+  .legal-table td {
+    padding: 0.45rem 0.5rem;
+  }
+
+  .legal-table th {
+    width: 45%;
+  }
+}
