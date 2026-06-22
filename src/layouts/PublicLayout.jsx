@@ -7,8 +7,9 @@ import { Outlet } from "react-router-dom";
 export default function PublicLayout() {
   return (
     <div className="public-layout">
+      <a href="#main-content" className="skip-link">Aller au contenu principal</a>
       {/* <Header /> */}
-      <main className="public-content"><Outlet /></main>
+      <main id="main-content" className="public-content"><Outlet /></main>
       {/* <Footer /> */}
     </div>
   );
