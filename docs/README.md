@@ -1,7 +1,7 @@
 # Dossier de conception — Portfolio Builder
 
 Ce dossier regroupe la documentation de conception et d'architecture du projet
-(référentiel RNCP — Bloc 2 : *Concevoir et organiser une application*).
+(référentiel RNCP — Blocs 2 et 3 : *Concevoir, organiser, tester et déployer une application*).
 
 ## Sommaire
 
@@ -13,6 +13,9 @@ Ce dossier regroupe la documentation de conception et d'architecture du projet
 | [04 — Architecture](04-architecture.md) | Architecture multicouche, diagrammes de séquence et de déploiement. |
 | [05 — Gestion de projet](05-gestion-de-projet.md) | Méthode Agile, backlog, planning, outils. |
 | [06 — Maquettes](06-maquettes.md) | Arborescence des écrans et maquettes fonctionnelles. |
+| [07 — Plan de tests](07-plan-de-tests.md) | Stratégie, niveaux de test, cahier de recette, CI. |
+| [08 — Déploiement](08-deploiement.md) | Chaîne CI/CD, mise en production, rollback, diagnostic. |
+| [09 — Veille](09-veille.md) | Veille technologique et de sécurité. |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | Documentation technique détaillée (couches, flux, tests). |
 
 ## Diagrammes
