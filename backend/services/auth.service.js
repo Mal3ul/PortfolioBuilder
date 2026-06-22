@@ -6,6 +6,8 @@ import * as portfolioRepository from "../repositories/portfolio.repository.js";
 import { sendPasswordResetEmail } from "../utils/email.js";
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config.js";
 import { badRequest, unauthorized, notFound } from "../utils/httpError.js";
+import { Email } from "../domain/Email.js";
+import { Password } from "../domain/Password.js";
 
 const signToken = (user) =>
   jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
@@ -33,25 +35,27 @@ export const register = async ({ name, email, password }) => {
   if (!name || !email || !password) {
     throw badRequest("Tous les champs sont requis (name, email, password)");
   }
-  if (password.length < 6) {
-    throw badRequest("Le mot de passe doit faire au moins 6 caractères");
-  }
 
-  if (await userRepository.existsByEmail(email)) {
+  // Validation via les value objects du domaine (POO) : ils normalisent
+  // l'email et garantissent la politique de mot de passe.
+  const emailVo = new Email(email);
+  const passwordVo = new Password(password);
+
+  if (await userRepository.existsByEmail(emailVo.value)) {
     throw badRequest("Email déjà utilisé");
   }
 
   const [firstName = "", ...rest] = (name || "").trim().split(" ");
   const lastName = rest.join(" ").trim();
   const userId = Date.now().toString();
-  const hashedPassword = await bcryptjs.hash(password, 10);
+  const hashedPassword = await bcryptjs.hash(passwordVo.value, 10);
   const createdAt = new Date().toISOString();
 
-  await userRepository.create({ id: userId, name, email, password: hashedPassword, role: 'user', createdAt });
-  await portfolioRepository.createWithId({ id: userId, userId, firstName, lastName, email });
+  await userRepository.create({ id: userId, name, email: emailVo.value, password: hashedPassword, role: 'user', createdAt });
+  await portfolioRepository.createWithId({ id: userId, userId, firstName, lastName, email: emailVo.value });
 
-  const token = signToken({ id: userId, email, role: 'user' });
-  return { token, userId, name, email, role: 'user' };
+  const token = signToken({ id: userId, email: emailVo.value, role: 'user' });
+  return { token, userId, name, email: emailVo.value, role: 'user' };
 };
 
 const RESET_MESSAGE = "Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.";
@@ -103,12 +107,15 @@ export const getMe = async (userId) => {
 export const changeEmail = async (userId, newEmail) => {
   if (!newEmail || !userId) throw badRequest("Email et userId requis");
 
-  if (await userRepository.existsByEmail(newEmail, userId)) {
+  // Réutilisation du value object Email (même règle de validation qu'à l'inscription).
+  const emailVo = new Email(newEmail);
+
+  if (await userRepository.existsByEmail(emailVo.value, userId)) {
     throw badRequest("Cet email est déjà utilisé");
   }
 
-  await userRepository.updateEmail(userId, newEmail);
-  await portfolioRepository.updateEmailByUserId(userId, newEmail);
+  await userRepository.updateEmail(userId, emailVo.value);
+  await portfolioRepository.updateEmailByUserId(userId, emailVo.value);
   return { message: "Email modifié avec succès" };
 };
 
