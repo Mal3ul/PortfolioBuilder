@@ -140,7 +140,7 @@ export default function DashboardHome({ onNavigateToEditeur }) {
     : [{ action: 'Aucune activité', name: 'Commence à remplir ton portfolio', timestamp: Date.now() }];
 
   const stats = [
-    { label: 'Vues du portfolio', value: '324', icon: Eye },
+    { label: 'Vues du portfolio', value: '0', icon: Eye }, // TODO: non fonctionnel, à intégrer dans les améliorations futures
     { label: 'Projets publiés', value: projects.length.toString(), icon: FolderOpen },
     { label: 'Taux de complétion', value: `${totalCompletion}%`, icon: TrendingUp }
   ];

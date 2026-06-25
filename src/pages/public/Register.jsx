@@ -31,8 +31,12 @@ export default function Register() {
     }
     if (!password) {
       newErrors.password = "Le mot de passe est obligatoire";
-    } else if (password.length < 6) {
-      newErrors.password = "Le mot de passe doit contenir au moins 6 caractères";
+    } else if (password.length < 8) {
+      newErrors.password = "Le mot de passe doit contenir au moins 8 caractères";
+    } else if (!/\d/.test(password)) {
+      newErrors.password = "Le mot de passe doit contenir au moins un chiffre";
+    } else if (!/[^A-Za-z0-9]/.test(password)) {
+      newErrors.password = "Le mot de passe doit contenir au moins un caractère spécial";
     }
     if (!confirmPassword) {
       newErrors.confirmPassword = "La confirmation du mot de passe est obligatoire";
@@ -157,9 +161,12 @@ export default function Register() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   aria-invalid={errors.password ? "true" : "false"}
-                  aria-describedby={errors.password ? "register-password-error" : undefined}
+                  aria-describedby={errors.password ? "register-password-error" : "register-password-hint"}
                 />
               </div>
+                <span id="register-password-hint" className="input-hint">
+                  Au moins 8 caractères, dont un chiffre et un caractère spécial.
+                </span>
                 {errors.password && <span id="register-password-error" className="error-message" role="alert">{errors.password}</span>}
               </div>
 

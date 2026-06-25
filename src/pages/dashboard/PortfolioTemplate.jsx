@@ -82,6 +82,14 @@ export default function PortfolioTemplate({ userData }) {
     return eduCopy;
   };
 
+  // Formate une date (ISO ou autre) en date lisible en français
+  const formatCertDate = (value) => {
+    if (!value) return "";
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return value;
+    return d.toLocaleDateString("fr-FR", { year: "numeric", month: "long", day: "numeric" });
+  };
+
   // Fonction pour trier les certifications par date
   const getSortedCertifications = () => {
     const certCopy = [...certifications];
@@ -319,7 +327,7 @@ export default function PortfolioTemplate({ userData }) {
                 <div key={cert.id || cert.title} className="project-card">
                   <h3>{cert.title}</h3>
                   <p className="parcours-company">{cert.organization || cert.issuer || ""}</p>
-                  <p className="parcours-date">{cert.date || ""}</p>
+                  <p className="parcours-date">{formatCertDate(cert.date)}</p>
                   {cert.description && <p>{cert.description}</p>}
                 </div>
               ))}

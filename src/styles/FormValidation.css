@@ -18,6 +18,14 @@
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
 }
 
+/* Indication d'aide (ex. politique de mot de passe) */
+.input-hint {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+  display: block;
+}
+
 /* Astérisque indicateur pour champs obligatoires */
 .required-star {
   color: #dc2626;

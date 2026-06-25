@@ -113,12 +113,18 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="hero-preview" aria-hidden="true">
+        <div className="hero-preview">
           <div className="preview-card">
-            <div className="preview-placeholder">
-              <Layout size={64} />
-              <p>Aperçu de l'interface</p>
-            </div>
+            <div className="preview-avatar">👤</div>
+            <h3 className="preview-name">Marcus Diallo</h3>
+            <p className="preview-title">Consultant Senior en Transformation Digitale</p>
+            <p className="preview-bio">
+              Fort de 15 ans d'expérience dans le secteur IT, j'accompagne les
+              entreprises dans leur transition numérique.
+            </p>
+            <button className="btn btn-primary" onClick={onViewDemo}>
+              Voir l'exemple de démo
+            </button>
           </div>
         </div>
       </section>

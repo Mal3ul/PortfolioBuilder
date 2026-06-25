@@ -19,13 +19,52 @@ const parseTechnologies = (project) => ({
     : project.technologies
 });
 
+// Les colonnes DATE sont renvoyées par pg comme objets Date : on les reformate
+// en 'yyyy-MM-dd' (format attendu par <input type="date"> et l'affichage côté front).
+const toYmd = (value) => {
+  if (!value) return '';
+  if (value instanceof Date) {
+    const y = value.getFullYear();
+    const m = String(value.getMonth() + 1).padStart(2, '0');
+    const d = String(value.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+  return String(value).slice(0, 10);
+};
+
+// La base stocke en snake_case ; le front attend du camelCase (startDate/endDate…).
+const formatExperience = (exp) => ({
+  id: exp.id,
+  position: exp.position,
+  company: exp.company,
+  startDate: toYmd(exp.start_date),
+  endDate: toYmd(exp.end_date),
+  description: exp.description,
+  createdAt: exp.created_at
+});
+
+const formatEducation = (edu) => ({
+  id: edu.id,
+  diploma: edu.diploma,
+  school: edu.school,
+  startDate: toYmd(edu.start_date),
+  endDate: toYmd(edu.end_date),
+  description: edu.description,
+  createdAt: edu.created_at
+});
+
+const formatCertification = (cert) => ({
+  ...cert,
+  date: toYmd(cert.date)
+});
+
 // Met en forme les relations pour la réponse API.
 const formatRelations = (relations) => ({
   skills: relations.skills.map((s) => s.skill_name),
   projects: relations.projects.map(parseTechnologies),
-  experiences: relations.experiences,
-  education: relations.education,
-  certifications: relations.certifications,
+  experiences: relations.experiences.map(formatExperience),
+  education: relations.education.map(formatEducation),
+  certifications: relations.certifications.map(formatCertification),
   media: {
     linkedin: relations.media[0]?.linkedin || '',
     github: relations.media[0]?.github || '',
@@ -201,9 +240,9 @@ export const updatePortfolio = async (userId, data) => {
       location: portfolioFinal?.location || ''
     },
     projects: relations.projects.map(parseTechnologies),
-    experiences: relations.experiences,
-    education: relations.education,
-    certifications: relations.certifications
+    experiences: relations.experiences.map(formatExperience),
+    education: relations.education.map(formatEducation),
+    certifications: relations.certifications.map(formatCertification)
   };
 };
 

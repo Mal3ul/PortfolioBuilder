@@ -39,7 +39,7 @@ CREATE TABLE skills (
 
 
 CREATE TABLE projects (
-    id BIGINT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     portfolio_id BIGINT NOT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT,
@@ -53,7 +53,7 @@ CREATE TABLE projects (
 
 
 CREATE TABLE experiences (
-    id BIGINT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     portfolio_id BIGINT NOT NULL,
     position VARCHAR(255) NOT NULL,
     company VARCHAR(255) NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE experiences (
 
 
 CREATE TABLE education (
-    id BIGINT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     portfolio_id BIGINT NOT NULL,
     diploma VARCHAR(255) NOT NULL,
     school VARCHAR(255) NOT NULL,
@@ -79,7 +79,7 @@ CREATE TABLE education (
 
 
 CREATE TABLE certifications (
-    id BIGINT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     portfolio_id BIGINT NOT NULL,
     title VARCHAR(255) NOT NULL,
     organization VARCHAR(255),
@@ -96,6 +96,9 @@ CREATE TABLE media (
     linkedin VARCHAR(500),
     github VARCHAR(500),
     twitter VARCHAR(500),
+    profile_image TEXT,
+    cv_file TEXT,
+    cv_file_name VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (portfolio_id) REFERENCES portfolios(id) ON DELETE CASCADE
 );

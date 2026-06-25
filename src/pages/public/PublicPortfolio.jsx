@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Search, X } from "lucide-react";
 import PortfolioTemplate from "../dashboard/PortfolioTemplate";
+import demoPortfolio from "../../data/demoPortfolio";
 import "../../styles/PortfolioTemplate.css";
 
 export default function PublicPortfolio() {
@@ -52,6 +53,14 @@ export default function PublicPortfolio() {
   };
 
   useEffect(() => {
+    // Portfolio de démonstration : données statiques, sans appel à la base.
+    if (userId === "demo") {
+      setUserData(demoPortfolio);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+
     const fetchUserPortfolio = async () => {
       setLoading(true);
       setError(null);

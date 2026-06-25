@@ -210,10 +210,23 @@
 
 .btn-outline {
   background: white;
+  color: #1f2937;
   border: 1px solid #e6edf3;
   padding: 8px 12px;
   border-radius: 10px;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-outline:hover {
+  background: #f3f4f6;
+}
+
+.btn-outline:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /*  */

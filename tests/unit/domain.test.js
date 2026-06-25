@@ -40,15 +40,23 @@ describe('Email (value object)', () => {
 });
 
 describe('Password (value object)', () => {
-  it('accepte un mot de passe assez long', () => {
-    expect(new Password('secret1').value).toBe('secret1');
+  it('accepte un mot de passe valide (8+, chiffre, caractère spécial)', () => {
+    expect(new Password('secret1!').value).toBe('secret1!');
   });
 
   it('rejette un mot de passe trop court (400)', () => {
-    expect(capture(() => new Password('123'))).toMatchObject({ status: 400 });
+    expect(capture(() => new Password('Aa1!'))).toMatchObject({ status: 400 });
+  });
+
+  it('rejette un mot de passe sans chiffre (400)', () => {
+    expect(capture(() => new Password('secret!!'))).toMatchObject({ status: 400 });
+  });
+
+  it('rejette un mot de passe sans caractère spécial (400)', () => {
+    expect(capture(() => new Password('secret12'))).toMatchObject({ status: 400 });
   });
 
   it('expose la longueur minimale', () => {
-    expect(Password.minLength).toBe(6);
+    expect(Password.minLength).toBe(8);
   });
 });

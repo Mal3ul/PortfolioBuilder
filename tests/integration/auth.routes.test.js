@@ -8,7 +8,7 @@ import pool from '../../backend/config/database.js';
 // Sert de garde-fou : toute régression sur register/login/me casse ces tests.
 
 const email = `pbtest_${Date.now()}@example.com`;
-const password = 'secret123';
+const password = 'secret123!';
 let token;
 
 beforeAll(async () => {

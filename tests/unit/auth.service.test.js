@@ -28,7 +28,7 @@ describe('auth.service (unitaire, repositories mockés)', () => {
 
     it('rejette un email déjà utilisé', async () => {
       userRepository.existsByEmail.mockResolvedValue(true);
-      await expect(authService.register({ name: 'A', email: 'a@b.c', password: 'secret1' }))
+      await expect(authService.register({ name: 'A', email: 'a@b.c', password: 'secret1!' }))
         .rejects.toMatchObject({ status: 400, message: 'Email déjà utilisé' });
     });
 
@@ -40,7 +40,7 @@ describe('auth.service (unitaire, repositories mockés)', () => {
       const result = await authService.register({
         name: 'Jane Doe',
         email: 'jane@example.com',
-        password: 'secret1',
+        password: 'secret1!',
       });
 
       expect(result).toMatchObject({ email: 'jane@example.com', name: 'Jane Doe', role: 'user' });

@@ -10,6 +10,7 @@ import {
   UserPlus,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import "../../styles/AdminDashboard.css";
 
 const getInitials = (name = "") => name.split(" ").filter(Boolean).map((n) => n[0]).join("");
@@ -17,6 +18,7 @@ const getInitials = (name = "") => name.split(" ").filter(Boolean).map((n) => n[
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user: currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState("users");
   const [searchQuery, setSearchQuery] = useState("");
   const [portfolioQuery, setPortfolioQuery] = useState("");
@@ -240,12 +242,17 @@ export default function AdminDashboard() {
 
   const filteredUsers = useMemo(() => {
     const q = searchQuery.toLowerCase();
-    return users.filter((u) =>
-      u.name.toLowerCase().includes(q) ||
-      u.email.toLowerCase().includes(q) ||
-      u.role.toLowerCase().includes(q)
-    );
-  }, [searchQuery, users]);
+    const currentId = currentUser?.id != null ? String(currentUser.id) : null;
+    const currentEmail = currentUser?.email?.toLowerCase();
+    return users
+      // On n'affiche pas l'utilisateur connecté (soi-même) dans la liste
+      .filter((u) => u.id !== currentId && u.email.toLowerCase() !== currentEmail)
+      .filter((u) =>
+        u.name.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q) ||
+        u.role.toLowerCase().includes(q)
+      );
+  }, [searchQuery, users, currentUser]);
 
   const filteredPortfolios = useMemo(() => {
     const q = portfolioQuery.toLowerCase();
